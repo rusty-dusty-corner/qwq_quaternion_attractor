@@ -50,6 +50,8 @@ class QuaternionAttractor {
         // Button event listeners
         document.getElementById('randomizeBtn').addEventListener('click', () => this.randomizeParameters());
         document.getElementById('goldenRatioBtn').addEventListener('click', () => this.setGoldenRatio());
+        document.getElementById('snakeModeBtn').addEventListener('click', () => this.setSnakeMode());
+        document.getElementById('cloudModeBtn').addEventListener('click', () => this.setCloudMode());
         document.getElementById('clearBtn').addEventListener('click', () => this.clearPoints());
         document.getElementById('generateBtn').addEventListener('click', () => this.generatePoints());
         document.getElementById('animateBtn').addEventListener('click', () => this.toggleAnimation());
@@ -183,6 +185,102 @@ class QuaternionAttractor {
         };
     }
     
+    /**
+     * Generate points showing the evolution of the attractor calculation
+     */
+    generateEvolutionPoints(numPoints, rotationQuat) {
+        const params = this.getParameters();
+        
+        // Initialize state from the last point or default
+        let state;
+        if (this.points.length > 0) {
+            const lastPoint = this.points[this.points.length - 1];
+            state = {
+                x: lastPoint.original.x,
+                y: lastPoint.original.y,
+                z: lastPoint.original.z,
+                side: lastPoint.side
+            };
+        } else {
+            state = {
+                x: params.initial.x,
+                y: params.initial.y,
+                z: params.initial.z,
+                side: params.initial.side
+            };
+        }
+        
+        const newPoints = [];
+        
+        // Generate new points showing the evolution
+        for (let i = 0; i < numPoints; i++) {
+            // Apply additive operation: (x,y,z) + (a,b,c) * side
+            const newX = state.x + params.step.a * state.side;
+            const newY = state.y + params.step.b * state.side;
+            const newZ = state.z + params.step.c * state.side;
+            
+            // Check if point is outside unit ball
+            const distance = Math.sqrt(newX*newX + newY*newY + newZ*newZ);
+            
+            if (distance > 1) {
+                // Find the smallest coordinate (in absolute value)
+                const absX = Math.abs(newX);
+                const absY = Math.abs(newY);
+                const absZ = Math.abs(newZ);
+                
+                let smallestCoord = 'x';
+                if (absY < absX && absY < absZ) {
+                    smallestCoord = 'y';
+                } else if (absZ < absX && absZ < absY) {
+                    smallestCoord = 'z';
+                }
+                
+                // Negate the sign of the smallest coordinate
+                if (smallestCoord === 'x') {
+                    state.x = -newX;
+                    state.y = newY;
+                    state.z = newZ;
+                } else if (smallestCoord === 'y') {
+                    state.x = newX;
+                    state.y = -newY;
+                    state.z = newZ;
+                } else {
+                    state.x = newX;
+                    state.y = newY;
+                    state.z = -newZ;
+                }
+                
+                // Also flip side
+                state.side = -state.side;
+            } else {
+                // Update position
+                state.x = newX;
+                state.y = newY;
+                state.z = newZ;
+            }
+            
+            // Map back to 4D sphere using inverse stereographic projection
+            const quaternion = this.inverseStereographicProjection(state.x, state.y, state.z);
+            
+            // Apply rotation and project to 2D for display
+            const rotated = this.rotateVector([state.x, state.y, state.z], rotationQuat);
+            
+            // Store point with metadata
+            newPoints.push({
+                x: rotated[0],
+                y: rotated[1],
+                z: rotated[2],
+                side: state.side,
+                quaternion: quaternion,
+                original: { x: state.x, y: state.y, z: state.z },
+                step: { a: params.step.a, b: params.step.b, c: params.step.c },
+                index: this.animationStep + i
+            });
+        }
+        
+        return newPoints;
+    }
+
     /**
      * Generate additional points for rolling window animation
      */
@@ -500,6 +598,40 @@ class QuaternionAttractor {
     }
 
     /**
+     * Set snake mode - watch calculation unfold step by step
+     */
+    setSnakeMode() {
+        document.getElementById('maxPoints').value = 4;
+        document.getElementById('pointsPerFrame').value = 1;
+        
+        // Update displays
+        document.getElementById('maxPointsValue').textContent = '4';
+        document.getElementById('pointsPerFrameValue').textContent = '1';
+        
+        console.log("Set to Snake Mode:");
+        console.log("  Max Points: 4 (watch the calculation unfold)");
+        console.log("  Points per Frame: 1 (step by step evolution)");
+        console.log("  This shows the mathematical process like a snake moving through the calculation");
+    }
+
+    /**
+     * Set cloud mode - see pattern mutate with many points
+     */
+    setCloudMode() {
+        document.getElementById('maxPoints').value = 1000;
+        document.getElementById('pointsPerFrame').value = 100;
+        
+        // Update displays
+        document.getElementById('maxPointsValue').textContent = '1000';
+        document.getElementById('pointsPerFrameValue').textContent = '100';
+        
+        console.log("Set to Cloud Mode:");
+        console.log("  Max Points: 1000 (see the full pattern)");
+        console.log("  Points per Frame: 100 (rapid evolution)");
+        console.log("  This shows the attractor pattern mutating like a cloud");
+    }
+
+    /**
      * Randomize all parameters
      */
     randomizeParameters() {
@@ -567,16 +699,15 @@ class QuaternionAttractor {
     }
     
     /**
-     * Animation loop with rolling window of points
+     * Animation loop showing evolution of attractor calculation
      */
     animate() {
         if (!this.isAnimating) return;
         
-        // Slightly modify rotation quaternion for animation
         const params = this.getParameters();
         const time = Date.now() * 0.001 * params.visualization.speed;
         
-        // Create animated rotation
+        // Create animated rotation for visualization
         const animatedRotation = this.normalizeQuaternion([
             Math.cos(time * 0.1),
             Math.sin(time * 0.1) * 0.3,
@@ -600,8 +731,8 @@ class QuaternionAttractor {
         const maxPoints = params.visualization.maxPoints;
         const pointsPerFrame = params.visualization.pointsPerFrame;
         
-        // Generate new points with current rotation
-        const newPoints = this.generateAdditionalPoints(pointsPerFrame, this.animationStep);
+        // Generate new points showing the evolution of the calculation
+        const newPoints = this.generateEvolutionPoints(pointsPerFrame, animatedRotation);
         
         // Add new points to the array
         this.points.push(...newPoints);

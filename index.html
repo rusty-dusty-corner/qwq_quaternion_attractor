@@ -205,11 +205,16 @@
                 </div>
                 <div class="input-group">
                     <label for="maxPoints">Max Points: <span id="maxPointsValue">2000</span></label>
-                    <input type="range" id="maxPoints" min="500" max="5000" step="100" value="2000">
+                    <input type="range" id="maxPoints" min="4" max="5000" step="1" value="2000">
                 </div>
                 <div class="input-group">
                     <label for="pointsPerFrame">Points per Frame: <span id="pointsPerFrameValue">50</span></label>
-                    <input type="range" id="pointsPerFrame" min="10" max="200" step="10" value="50">
+                    <input type="range" id="pointsPerFrame" min="1" max="200" step="1" value="50">
+                </div>
+                <div class="info" style="margin-top: 10px; font-size: 12px;">
+                    <strong>Evolution Modes:</strong><br>
+                    • Snake: 4 points, 1 per frame (watch calculation unfold)<br>
+                    • Cloud: 1000+ points, 50+ per frame (see pattern mutate)
                 </div>
             </div>
         </div>
@@ -217,6 +222,8 @@
         <div class="buttons">
             <button id="randomizeBtn" class="randomize-btn">Randomize Parameters</button>
             <button id="goldenRatioBtn" style="background: linear-gradient(45deg, #f39c12, #e67e22);">Set Golden Ratio</button>
+            <button id="snakeModeBtn" style="background: linear-gradient(45deg, #27ae60, #2ecc71);">Snake Mode (4/1)</button>
+            <button id="cloudModeBtn" style="background: linear-gradient(45deg, #3498db, #2980b9);">Cloud Mode (1000/100)</button>
             <button id="clearBtn" class="clear-btn">Clear Points</button>
             <button id="generateBtn">Generate Points</button>
             <button id="animateBtn">Start Animation</button>
