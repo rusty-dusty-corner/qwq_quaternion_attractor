@@ -16,6 +16,7 @@ class QuaternionAttractor {
         this.animationId = null;
         this.isAnimating = false;
         this.animationStep = 0; // Track animation steps
+        this.projectionMode = 'simple'; // 'simple' or 'advanced'
         
         this.setupEventListeners();
         this.setupCanvas();
@@ -45,6 +46,16 @@ class QuaternionAttractor {
                     valueSpan.textContent = parseFloat(e.target.value).toFixed(3);
                 }
             });
+        });
+        
+        // Update projection mode display
+        document.getElementById('projectionMode').addEventListener('change', (e) => {
+            this.projectionMode = e.target.value;
+            const valueSpan = document.getElementById('projectionModeValue');
+            if (valueSpan) {
+                valueSpan.textContent = e.target.value === 'simple' ? 'Simple' : 'Advanced';
+            }
+            console.log(`Projection mode changed to: ${this.projectionMode}`);
         });
         
         // Button event listeners
@@ -120,6 +131,45 @@ class QuaternionAttractor {
     }
     
     /**
+     * Simple 2D projection - just take 2 coordinates after rotation
+     */
+    simpleProjection(rotatedVector) {
+        return [rotatedVector[0], rotatedVector[1]]; // Just x, y coordinates
+    }
+    
+    /**
+     * Advanced 2D projection - use quaternion to rotate 3D sphere point then project
+     */
+    advancedProjection(quaternion, rotationQuat) {
+        // Use the quaternion to rotate a 3D sphere point
+        // Start with a point on the 3D sphere (e.g., [1, 0, 0])
+        const spherePoint = [1, 0, 0];
+        
+        // Apply the quaternion rotation to the sphere point
+        const rotatedSpherePoint = this.rotateVector(spherePoint, quaternion);
+        
+        // Apply additional rotation quaternion for visualization
+        const finalPoint = this.rotateVector(rotatedSpherePoint, rotationQuat);
+        
+        // Project to 2D (take x, y coordinates)
+        return [finalPoint[0], finalPoint[1]];
+    }
+    
+    /**
+     * Project 3D point to 2D based on projection mode
+     */
+    projectTo2D(originalPoint, quaternion, rotationQuat, projectionMode) {
+        if (projectionMode === 'simple') {
+            // Simple projection: rotate the original point and take x,y
+            const rotated = this.rotateVector(originalPoint, rotationQuat);
+            return this.simpleProjection(rotated);
+        } else {
+            // Advanced projection: use quaternion to rotate sphere point
+            return this.advancedProjection(quaternion, rotationQuat);
+        }
+    }
+    
+    /**
      * Quaternion multiplication
      */
     quaternionMultiply(q1, q2) {
@@ -152,7 +202,7 @@ class QuaternionAttractor {
             c: 1 / (phi * phi * phi) // ≈ 0.236
         };
     }
-
+    
     /**
      * Get current parameter values from UI
      */
@@ -180,7 +230,8 @@ class QuaternionAttractor {
                 pointSize: parseFloat(document.getElementById('pointSize').value),
                 speed: parseFloat(document.getElementById('speed').value),
                 maxPoints: parseInt(document.getElementById('maxPoints').value),
-                pointsPerFrame: parseInt(document.getElementById('pointsPerFrame').value)
+                pointsPerFrame: parseInt(document.getElementById('pointsPerFrame').value),
+                projectionMode: this.projectionMode
             }
         };
     }
@@ -262,14 +313,19 @@ class QuaternionAttractor {
             // Map back to 4D sphere using inverse stereographic projection
             const quaternion = this.inverseStereographicProjection(state.x, state.y, state.z);
             
-            // Apply rotation and project to 2D for display
-            const rotated = this.rotateVector([state.x, state.y, state.z], rotationQuat);
+            // Project to 2D using the selected projection mode
+            const projected2D = this.projectTo2D(
+                [state.x, state.y, state.z], 
+                quaternion, 
+                rotationQuat, 
+                params.visualization.projectionMode
+            );
             
             // Store point with metadata
             newPoints.push({
-                x: rotated[0],
-                y: rotated[1],
-                z: rotated[2],
+                x: projected2D[0],
+                y: projected2D[1],
+                z: state.z, // Keep z for depth information
                 side: state.side,
                 quaternion: quaternion,
                 original: { x: state.x, y: state.y, z: state.z },
@@ -381,7 +437,7 @@ class QuaternionAttractor {
         
         return newPoints;
     }
-
+    
     /**
      * Generate points using the quaternion attractor algorithm
      */
@@ -452,14 +508,19 @@ class QuaternionAttractor {
             // Map back to 4D sphere using inverse stereographic projection
             const quaternion = this.inverseStereographicProjection(state.x, state.y, state.z);
             
-            // Apply rotation and project to 2D for display
-            const rotated = this.rotateVector([state.x, state.y, state.z], rotationQuat);
+            // Project to 2D using the selected projection mode
+            const projected2D = this.projectTo2D(
+                [state.x, state.y, state.z], 
+                quaternion, 
+                rotationQuat, 
+                params.visualization.projectionMode
+            );
             
             // Store point with metadata
             this.points.push({
-                x: rotated[0],
-                y: rotated[1],
-                z: rotated[2],
+                x: projected2D[0],
+                y: projected2D[1],
+                z: state.z, // Keep z for depth information
                 side: state.side,
                 quaternion: quaternion,
                 original: { x: state.x, y: state.y, z: state.z },
@@ -630,7 +691,7 @@ class QuaternionAttractor {
         console.log("  Points per Frame: 100 (rapid evolution)");
         console.log("  This shows the attractor pattern mutating like a cloud");
     }
-
+    
     /**
      * Randomize all parameters
      */
