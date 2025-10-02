@@ -1,3 +1,5 @@
+[You can see demo at](https://raw.githack.com/rusty-dusty-corner/qwq_quaternion_attractor/main/index.html)
+
 # Quaternion Attractor Visualization
 
 A mathematical visualization system that explores phyllotaxis-like patterns on the 4-dimensional unit sphere using stereographic projection and side-flipping dynamics.
