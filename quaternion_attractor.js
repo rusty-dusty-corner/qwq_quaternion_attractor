@@ -15,6 +15,7 @@ class QuaternionAttractor {
         this.points = [];
         this.animationId = null;
         this.isAnimating = false;
+        this.animationStep = 0; // Track animation steps
         
         this.setupEventListeners();
         this.setupCanvas();
@@ -175,11 +176,114 @@ class QuaternionAttractor {
             visualization: {
                 numPoints: parseInt(document.getElementById('numPoints').value),
                 pointSize: parseFloat(document.getElementById('pointSize').value),
-                speed: parseFloat(document.getElementById('speed').value)
+                speed: parseFloat(document.getElementById('speed').value),
+                maxPoints: parseInt(document.getElementById('maxPoints').value),
+                pointsPerFrame: parseInt(document.getElementById('pointsPerFrame').value)
             }
         };
     }
     
+    /**
+     * Generate additional points for rolling window animation
+     */
+    generateAdditionalPoints(numPoints, startIndex = 0) {
+        const params = this.getParameters();
+        
+        // Normalize rotation quaternion
+        const rotationQuat = this.normalizeQuaternion([
+            params.rotation.w, params.rotation.x, params.rotation.y, params.rotation.z
+        ]);
+        
+        // Initialize state from the last point or default
+        let state;
+        if (this.points.length > 0) {
+            const lastPoint = this.points[this.points.length - 1];
+            state = {
+                x: lastPoint.original.x,
+                y: lastPoint.original.y,
+                z: lastPoint.original.z,
+                side: lastPoint.side
+            };
+        } else {
+            state = {
+                x: params.initial.x,
+                y: params.initial.y,
+                z: params.initial.z,
+                side: params.initial.side
+            };
+        }
+        
+        const newPoints = [];
+        
+        // Generate new points
+        for (let i = 0; i < numPoints; i++) {
+            // Apply additive operation: (x,y,z) + (a,b,c) * side
+            const newX = state.x + params.step.a * state.side;
+            const newY = state.y + params.step.b * state.side;
+            const newZ = state.z + params.step.c * state.side;
+            
+            // Check if point is outside unit ball
+            const distance = Math.sqrt(newX*newX + newY*newY + newZ*newZ);
+            
+            if (distance > 1) {
+                // Find the smallest coordinate (in absolute value)
+                const absX = Math.abs(newX);
+                const absY = Math.abs(newY);
+                const absZ = Math.abs(newZ);
+                
+                let smallestCoord = 'x';
+                if (absY < absX && absY < absZ) {
+                    smallestCoord = 'y';
+                } else if (absZ < absX && absZ < absY) {
+                    smallestCoord = 'z';
+                }
+                
+                // Negate the sign of the smallest coordinate
+                if (smallestCoord === 'x') {
+                    state.x = -newX;
+                    state.y = newY;
+                    state.z = newZ;
+                } else if (smallestCoord === 'y') {
+                    state.x = newX;
+                    state.y = -newY;
+                    state.z = newZ;
+                } else {
+                    state.x = newX;
+                    state.y = newY;
+                    state.z = -newZ;
+                }
+                
+                // Also flip side
+                state.side = -state.side;
+            } else {
+                // Update position
+                state.x = newX;
+                state.y = newY;
+                state.z = newZ;
+            }
+            
+            // Map back to 4D sphere using inverse stereographic projection
+            const quaternion = this.inverseStereographicProjection(state.x, state.y, state.z);
+            
+            // Apply rotation and project to 2D for display
+            const rotated = this.rotateVector([state.x, state.y, state.z], rotationQuat);
+            
+            // Store point with metadata
+            newPoints.push({
+                x: rotated[0],
+                y: rotated[1],
+                z: rotated[2],
+                side: state.side,
+                quaternion: quaternion,
+                original: { x: state.x, y: state.y, z: state.z },
+                step: { a: params.step.a, b: params.step.b, c: params.step.c },
+                index: startIndex + i
+            });
+        }
+        
+        return newPoints;
+    }
+
     /**
      * Generate points using the quaternion attractor algorithm
      */
@@ -455,12 +559,15 @@ class QuaternionAttractor {
         } else {
             this.isAnimating = true;
             document.getElementById('animateBtn').textContent = 'Stop Animation';
+            // Reset animation state when starting
+            this.animationStep = 0;
+            this.points = []; // Start with empty points for rolling animation
             this.animate();
         }
     }
     
     /**
-     * Animation loop
+     * Animation loop with rolling window of points
      */
     animate() {
         if (!this.isAnimating) return;
@@ -489,7 +596,26 @@ class QuaternionAttractor {
         document.getElementById('rotYValue').textContent = animatedRotation[2].toFixed(3);
         document.getElementById('rotZValue').textContent = animatedRotation[3].toFixed(3);
         
-        // Re-render with new rotation
+        // Get current parameters for dynamic control
+        const maxPoints = params.visualization.maxPoints;
+        const pointsPerFrame = params.visualization.pointsPerFrame;
+        
+        // Generate new points with current rotation
+        const newPoints = this.generateAdditionalPoints(pointsPerFrame, this.animationStep);
+        
+        // Add new points to the array
+        this.points.push(...newPoints);
+        
+        // Remove old points if we exceed the maximum
+        if (this.points.length > maxPoints) {
+            const pointsToRemove = this.points.length - maxPoints;
+            this.points.splice(0, pointsToRemove);
+        }
+        
+        // Update animation step counter
+        this.animationStep += pointsPerFrame;
+        
+        // Re-render with new points and rotation
         this.render();
         
         this.animationId = requestAnimationFrame(() => this.animate());
