@@ -1,0 +1,32 @@
+{
+  "name": "qwq-quaternion-attractor",
+  "version": "1.0.0",
+  "description": "Quaternion attractor visualization using stereographic projection from 4D sphere to 3D space with phyllotaxis-like patterns",
+  "main": "debug_attractor.js",
+  "scripts": {
+    "debug": "node debug_attractor.js",
+    "test": "node debug_attractor.js",
+    "start": "node -e \"console.log('Open index.html in your browser to run the visualization')\""
+  },
+  "keywords": [
+    "quaternion",
+    "stereographic-projection",
+    "4d-sphere",
+    "phyllotaxis",
+    "mathematical-visualization",
+    "attractor"
+  ],
+  "author": "Eugene Jukov",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rusty-dusty-corner/qwq_quaternion_attractor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rusty-dusty-corner/qwq_quaternion_attractor/issues"
+  },
+  "homepage": "https://github.com/rusty-dusty-corner/qwq_quaternion_attractor#readme"
+}
