@@ -151,16 +151,19 @@
             <div class="control-group">
                 <h3>Step Vector (a, b, c)</h3>
                 <div class="input-group">
-                    <label for="stepA">A: <span id="stepAValue">0.1</span></label>
-                    <input type="range" id="stepA" min="-0.5" max="0.5" step="0.001" value="0.1">
+                    <label for="stepA">A: <span id="stepAValue">0.618</span></label>
+                    <input type="range" id="stepA" min="0.1" max="1.0" step="0.001" value="0.618">
                 </div>
                 <div class="input-group">
-                    <label for="stepB">B: <span id="stepBValue">0.1</span></label>
-                    <input type="range" id="stepB" min="-0.5" max="0.5" step="0.001" value="0.1">
+                    <label for="stepB">B: <span id="stepBValue">0.382</span></label>
+                    <input type="range" id="stepB" min="0.1" max="1.0" step="0.001" value="0.382">
                 </div>
                 <div class="input-group">
-                    <label for="stepC">C: <span id="stepCValue">0.1</span></label>
-                    <input type="range" id="stepC" min="-0.5" max="0.5" step="0.001" value="0.1">
+                    <label for="stepC">C: <span id="stepCValue">0.236</span></label>
+                    <input type="range" id="stepC" min="0.1" max="1.0" step="0.001" value="0.236">
+                </div>
+                <div class="info" style="margin-top: 10px; font-size: 12px;">
+                    Default values based on Golden Ratio: φ = (1+√5)/2 ≈ 1.618
                 </div>
             </div>
         </div>
@@ -205,9 +208,11 @@
         
         <div class="buttons">
             <button id="randomizeBtn" class="randomize-btn">Randomize Parameters</button>
+            <button id="goldenRatioBtn" style="background: linear-gradient(45deg, #f39c12, #e67e22);">Set Golden Ratio</button>
             <button id="clearBtn" class="clear-btn">Clear Points</button>
             <button id="generateBtn">Generate Points</button>
             <button id="animateBtn">Start Animation</button>
+            <button id="debugBtn" style="background: linear-gradient(45deg, #9b59b6, #8e44ad);">Debug Info</button>
         </div>
         
         <div class="canvas-container">

@@ -33,6 +33,7 @@ class QuaternionAttractor {
         this.canvas.style.height = rect.height + 'px';
     }
     
+    
     setupEventListeners() {
         // Update value displays for all sliders
         const sliders = document.querySelectorAll('input[type="range"]');
@@ -47,9 +48,11 @@ class QuaternionAttractor {
         
         // Button event listeners
         document.getElementById('randomizeBtn').addEventListener('click', () => this.randomizeParameters());
+        document.getElementById('goldenRatioBtn').addEventListener('click', () => this.setGoldenRatio());
         document.getElementById('clearBtn').addEventListener('click', () => this.clearPoints());
         document.getElementById('generateBtn').addEventListener('click', () => this.generatePoints());
         document.getElementById('animateBtn').addEventListener('click', () => this.toggleAnimation());
+        document.getElementById('debugBtn').addEventListener('click', () => this.debug());
         
         // Window resize
         window.addEventListener('resize', () => this.setupCanvas());
@@ -136,6 +139,18 @@ class QuaternionAttractor {
     }
     
     /**
+     * Calculate golden ratio based parameters
+     */
+    getGoldenRatioParameters() {
+        const phi = (1 + Math.sqrt(5)) / 2; // Golden ratio ≈ 1.618
+        return {
+            a: 1 / phi,           // ≈ 0.618
+            b: 1 / (phi * phi),   // ≈ 0.382
+            c: 1 / (phi * phi * phi) // ≈ 0.236
+        };
+    }
+
+    /**
      * Get current parameter values from UI
      */
     getParameters() {
@@ -196,7 +211,34 @@ class QuaternionAttractor {
             const distance = Math.sqrt(newX*newX + newY*newY + newZ*newZ);
             
             if (distance > 1) {
-                // Flip side and continue from the same position
+                // Find the smallest coordinate (in absolute value)
+                const absX = Math.abs(newX);
+                const absY = Math.abs(newY);
+                const absZ = Math.abs(newZ);
+                
+                let smallestCoord = 'x';
+                if (absY < absX && absY < absZ) {
+                    smallestCoord = 'y';
+                } else if (absZ < absX && absZ < absY) {
+                    smallestCoord = 'z';
+                }
+                
+                // Negate the sign of the smallest coordinate
+                if (smallestCoord === 'x') {
+                    state.x = -newX;
+                    state.y = newY;
+                    state.z = newZ;
+                } else if (smallestCoord === 'y') {
+                    state.x = newX;
+                    state.y = -newY;
+                    state.z = newZ;
+                } else {
+                    state.x = newX;
+                    state.y = newY;
+                    state.z = -newZ;
+                }
+                
+                // Also flip side
                 state.side = -state.side;
             } else {
                 // Update position
@@ -218,11 +260,77 @@ class QuaternionAttractor {
                 z: rotated[2],
                 side: state.side,
                 quaternion: quaternion,
-                original: { x: state.x, y: state.y, z: state.z }
+                original: { x: state.x, y: state.y, z: state.z },
+                step: { a: params.step.a, b: params.step.b, c: params.step.c },
+                index: i
             });
         }
         
         this.render();
+    }
+    
+    /**
+     * Debug method to test and validate changes
+     */
+    debug() {
+        console.log("=== Quaternion Attractor Debug ===");
+        
+        // Test golden ratio calculation
+        const goldenParamsDebug = this.getGoldenRatioParameters();
+        console.log("Golden Ratio Parameters:");
+        console.log(`  phi = ${(1 + Math.sqrt(5)) / 2}`);
+        console.log(`  a = 1/phi = ${goldenParamsDebug.a.toFixed(6)}`);
+        console.log(`  b = 1/phi² = ${goldenParamsDebug.b.toFixed(6)}`);
+        console.log(`  c = 1/phi³ = ${goldenParamsDebug.c.toFixed(6)}`);
+        
+        // Test flipping logic with sample points
+        console.log("\nTesting Flipping Logic:");
+        const testPoints = [
+            [1.2, 0.3, 0.1],  // x is largest
+            [0.2, 1.3, 0.1],  // y is largest  
+            [0.2, 0.3, 1.1],  // z is largest
+            [0.8, 0.8, 0.8]   // all equal
+        ];
+        
+        testPoints.forEach(([x, y, z], i) => {
+            const distance = Math.sqrt(x*x + y*y + z*z);
+            if (distance > 1) {
+                const absX = Math.abs(x);
+                const absY = Math.abs(y);
+                const absZ = Math.abs(z);
+                
+                let smallestCoord = 'x';
+                if (absY < absX && absY < absZ) {
+                    smallestCoord = 'y';
+                } else if (absZ < absX && absZ < absY) {
+                    smallestCoord = 'z';
+                }
+                
+                console.log(`  Test ${i+1}: (${x}, ${y}, ${z}) -> smallest: ${smallestCoord}`);
+            }
+        });
+        
+        // Show current parameters
+        const params = this.getParameters();
+        console.log("\nCurrent Parameters:");
+        console.log(`  Initial: (${params.initial.x}, ${params.initial.y}, ${params.initial.z}), side: ${params.initial.side}`);
+        console.log(`  Step (from sliders): (${params.step.a.toFixed(6)}, ${params.step.b.toFixed(6)}, ${params.step.c.toFixed(6)})`);
+        
+        // Compare with golden ratio
+        const goldenParamsCompare = this.getGoldenRatioParameters();
+        console.log(`  Golden Ratio: (${goldenParamsCompare.a.toFixed(6)}, ${goldenParamsCompare.b.toFixed(6)}, ${goldenParamsCompare.c.toFixed(6)})`);
+        console.log(`  Difference: (${(params.step.a - goldenParamsCompare.a).toFixed(6)}, ${(params.step.b - goldenParamsCompare.b).toFixed(6)}, ${(params.step.c - goldenParamsCompare.c).toFixed(6)})`);
+        console.log(`  Points generated: ${this.points.length}`);
+        
+        // Show first few points
+        if (this.points.length > 0) {
+            console.log("\nFirst 5 points:");
+            this.points.slice(0, 5).forEach((point, i) => {
+                console.log(`  ${i+1}: original(${point.original.x.toFixed(3)}, ${point.original.y.toFixed(3)}, ${point.original.z.toFixed(3)}), side: ${point.side}`);
+            });
+        }
+        
+        console.log("=== End Debug ===");
     }
     
     /**
@@ -267,6 +375,27 @@ class QuaternionAttractor {
     }
     
     /**
+     * Set step vector to golden ratio values
+     */
+    setGoldenRatio() {
+        const goldenParams = this.getGoldenRatioParameters();
+        
+        document.getElementById('stepA').value = goldenParams.a;
+        document.getElementById('stepB').value = goldenParams.b;
+        document.getElementById('stepC').value = goldenParams.c;
+        
+        // Update displays
+        document.getElementById('stepAValue').textContent = goldenParams.a.toFixed(3);
+        document.getElementById('stepBValue').textContent = goldenParams.b.toFixed(3);
+        document.getElementById('stepCValue').textContent = goldenParams.c.toFixed(3);
+        
+        console.log("Set to Golden Ratio values:");
+        console.log(`  a = ${goldenParams.a.toFixed(6)} (1/φ)`);
+        console.log(`  b = ${goldenParams.b.toFixed(6)} (1/φ²)`);
+        console.log(`  c = ${goldenParams.c.toFixed(6)} (1/φ³)`);
+    }
+
+    /**
      * Randomize all parameters
      */
     randomizeParameters() {
@@ -276,10 +405,13 @@ class QuaternionAttractor {
         document.getElementById('initZ').value = (Math.random() - 0.5) * 2;
         document.getElementById('initSide').value = Math.random() > 0.5 ? 1 : -1;
         
-        // Randomize step vector
-        document.getElementById('stepA').value = (Math.random() - 0.5) * 0.2;
-        document.getElementById('stepB').value = (Math.random() - 0.5) * 0.2;
-        document.getElementById('stepC').value = (Math.random() - 0.5) * 0.2;
+        // Randomize step vector based on golden ratio with 5% variation
+        const goldenParams = this.getGoldenRatioParameters();
+        const variation = 0.05; // 5% variation
+        
+        document.getElementById('stepA').value = goldenParams.a * (1 + (Math.random() - 0.5) * variation);
+        document.getElementById('stepB').value = goldenParams.b * (1 + (Math.random() - 0.5) * variation);
+        document.getElementById('stepC').value = goldenParams.c * (1 + (Math.random() - 0.5) * variation);
         
         // Randomize rotation quaternion
         const randomQuat = this.normalizeQuaternion([
