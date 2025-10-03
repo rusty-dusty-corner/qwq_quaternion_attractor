@@ -1,6 +1,8 @@
-[You can see demo at](https://raw.githack.com/rusty-dusty-corner/qwq_quaternion_attractor/main/index.html)
-
 # Quaternion Attractor Visualization
+
+## 🚀 **Live Demo**
+
+**[🎨 Try it now!](https://raw.githack.com/rusty-dusty-corner/qwq_quaternion_attractor/main/index.html)** - Experience the mesmerizing VJ-style patterns and living mathematical art in your browser.
 
 A mesmerizing mathematical visualization system that generates VJ-style, fractal-like patterns through Filataksis-style covering of the 4-dimensional unit sphere. Experience living, breathing mathematical art that flows, mutates, and creates stunning visual effects.
 
