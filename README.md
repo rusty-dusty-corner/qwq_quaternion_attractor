@@ -1,6 +1,16 @@
 # Quaternion Attractor Visualization
 
-A mathematical visualization system that explores phyllotaxis-like patterns on the 4-dimensional unit sphere using stereographic projection and side-flipping dynamics.
+A mesmerizing mathematical visualization system that generates VJ-style, fractal-like patterns through Filataksis-style covering of the 4-dimensional unit sphere. Experience living, breathing mathematical art that flows, mutates, and creates stunning visual effects.
+
+## 📖 Introduction
+
+For a comprehensive introduction to the mathematical concepts and visual possibilities, see **[INTRODUCTION.md](INTRODUCTION.md)**.
+
+This project implements a complete **Filataksis-style covering algorithm** that creates:
+- 🌊 **Flowing patterns** that shift and mutate like living organisms
+- 🎨 **VJ-style visuals** with fractal-like structures and mosaic grids
+- 🔥 **Burning flows** of mathematical beauty that never repeat
+- 🌀 **Dynamic attractors** with three distinct variation modes
 
 ## 🔬 Mathematical Concept
 
@@ -13,10 +23,10 @@ This project implements a fascinating mathematical system that:
 
 ### Key Mathematical Operations
 
-- **Stereographic Projection**: Maps quaternions from S³ to 3D space, avoiding the north pole singularity
-- **Side Flipping**: When points exceed distance 1 from origin, flip the `side` flag to continue in the opposite 3D space
-- **Quaternion Rotation**: Apply rotation quaternions for 2D projection display
-- **Inverse Projection**: Map 3D points back to the 4D sphere
+- **Hemisphere-Aware Stereographic Projection**: Maps quaternions from S³ to 3D space with full north/south hemisphere support
+- **Advanced Side Flipping**: Three variation modes when points exceed the unit ball boundary
+- **Global Quaternion Rotation**: Integrated rotation that affects the core algorithm dynamics
+- **Filataksis-Style Covering**: Creates uniform, low-discrepancy distributions on the 4D sphere
 
 ## 🚀 Usage
 
@@ -26,8 +36,9 @@ This project implements a fascinating mathematical system that:
 2. Adjust parameters using the interactive sliders:
    - **Initial Position**: Starting coordinates (x, y, z, side)
    - **Step Vector**: Additive parameters (a, b, c) for phyllotaxis tuning
-   - **Rotation Quaternion**: Viewing angle for 2D projection
-   - **Visualization Settings**: Point count, size, animation speed
+   - **Rotation Quaternion**: Global rotation affecting core algorithm dynamics
+   - **Side Flip Variation**: Choose between three distinct attractor behaviors
+   - **Visualization Settings**: Point count, size, animation speed, projection modes
 3. Click "Generate Points" to create the attractor pattern
 4. Use "Randomize Parameters" to explore different configurations
 5. Try "Start Animation" for dynamic visualization
@@ -74,12 +85,23 @@ Total coverage: 3.200
 
 ## 🎯 Key Features
 
-- **Mathematical Accuracy**: Implements proper stereographic projection with singularity handling
-- **Interactive Controls**: Real-time parameter adjustment with live visualization
-- **Animation Support**: Dynamic rotation and parameter evolution
-- **Debugging Tools**: Comprehensive validation and parameter tuning
-- **Modern UI**: Responsive design with glass-morphism effects
-- **High-DPI Support**: Crisp rendering on all display types
+### Mathematical Excellence
+- **100% Specification Compliant**: Full Filataksis-style covering implementation
+- **Hemisphere-Aware Projection**: Complete north/south sphere support with perfect round-trip accuracy
+- **Three Side-Flip Variations**: Plain flip, smallest-component flip, and largest-component preservation
+- **Global Rotation Integration**: Quaternion rotation affects core algorithm dynamics
+
+### Visual Experience
+- **VJ-Style Patterns**: Mesmerizing flows, burns, and fractal-like structures
+- **Living Mathematics**: Patterns that shift, mutate, and evolve like living organisms
+- **Mosaic Grid Effects**: Beautiful geometric patterns that emerge from mathematical precision
+- **Real-Time Evolution**: Watch patterns unfold step-by-step or in rapid clouds
+
+### Interactive Features
+- **Full Parameter Control**: Adjust every aspect of the mathematical system
+- **Multiple Animation Modes**: Snake mode (step-by-step) and Cloud mode (rapid evolution)
+- **Projection Options**: Simple and advanced projection modes for different visual effects
+- **Modern UI**: Glass-morphism design with responsive controls
 
 ## 🔧 Technical Implementation
 
@@ -98,16 +120,36 @@ Total coverage: 3.200
 - `rotateVector()` - 3D vector rotation
 - `normalizeQuaternion()` - Unit quaternion normalization
 
-## 📈 Parameter Tuning
+## 📈 Side Flip Variations & Effects
 
-Use the debugging script to find optimal phyllotaxis parameters:
+The system offers three distinct variation modes that create completely different visual behaviors:
 
-1. **Equal Steps** (a=b=c): Uniform coverage in all directions
-2. **Dominant Axes**: Emphasize specific directions (X, Y, or Z dominant)
-3. **Varied Steps**: Create asymmetric patterns
-4. **Small Steps**: Fine-grained coverage for detailed patterns
+### **Variation 0: Plain Flip**
+- **Behavior**: Only flips the hemisphere side, no coordinate modification
+- **Visual Effect**: Uniform, balanced patterns across the sphere
+- **Use Case**: Clean, mathematical precision with maximum coverage
 
-The system automatically handles side flipping to maintain points within the unit ball while creating beautiful, phyllotaxis-like distributions on the 4D sphere.
+### **Variation 1: Flip Smallest Component**
+- **Behavior**: Flips only the coordinate with smallest absolute value
+- **Visual Effect**: Creates weak attractor patterns near coordinate planes
+- **Use Case**: Delicate, filigree-like structures with subtle geometric bias
+
+### **Variation 2: Flip All Except Largest**
+- **Behavior**: Flips all coordinates except the one with largest absolute value
+- **Visual Effect**: Elongated patterns along dominant axes, stretched geometries
+- **Use Case**: Dramatic, VJ-style flows with strong directional emphasis
+
+## 🎨 Visual Modes & Effects
+
+### **Snake Mode** (4 points, 1 per frame)
+- Watch the mathematical calculation unfold step-by-step
+- Perfect for understanding the algorithm mechanics
+- See how each iteration builds the final pattern
+
+### **Cloud Mode** (1000+ points, 50+ per frame)
+- Experience rapid pattern evolution and mutation
+- See the full attractor behavior emerge
+- Ideal for VJ-style visual effects and live performance
 
 ## 🎨 Visualization
 

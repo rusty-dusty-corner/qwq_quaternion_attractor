@@ -33,10 +33,18 @@ class QuaternionMath {
     
     /**
      * Inverse stereographic projection from 3D to 4D sphere
+     * Maps 3D point back to quaternion on S³ with hemisphere support
      */
-    inverseStereographicProjection(x, y, z) {
+    inverseStereographicProjection(x, y, z, side = 1) {
         const r2 = x*x + y*y + z*z;
-        const w = (r2 - 1) / (r2 + 1);
+        
+        // Handle north pole singularity
+        if (r2 < 1e-10) {
+            return side > 0 ? [1, 0, 0, 0] : [-1, 0, 0, 0];
+        }
+        
+        // Hemisphere-aware w calculation
+        const w = side > 0 ? (r2 - 1) / (r2 + 1) : (1 - r2) / (r2 + 1);
         const scale = 2 / (r2 + 1);
         
         return [w, x * scale, y * scale, z * scale];

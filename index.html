@@ -218,13 +218,25 @@
                         <option value="advanced">Advanced (quaternion sphere rotation)</option>
                     </select>
                 </div>
+                <div class="input-group">
+                    <label for="sideFlipVariation">Side Flip Variation: <span id="sideFlipVariationValue">1</span></label>
+                    <select id="sideFlipVariation" style="width: 100%; padding: 8px; border: none; border-radius: 5px; background: rgba(255, 255, 255, 0.9); color: #333;">
+                        <option value="0">Plain Flip (no coordinate change)</option>
+                        <option value="1">Variation 1 (flip smallest component)</option>
+                        <option value="2">Variation 2 (flip all except largest)</option>
+                    </select>
+                </div>
                 <div class="info" style="margin-top: 10px; font-size: 12px;">
                     <strong>Evolution Modes:</strong><br>
                     • Snake: 4 points, 1 per frame (watch calculation unfold)<br>
                     • Cloud: 1000+ points, 50+ per frame (see pattern mutate)<br><br>
                     <strong>Projection Modes:</strong><br>
                     • Simple: Rotate 3D point, take x,y coordinates<br>
-                    • Advanced: Use quaternion to rotate sphere point, then project
+                    • Advanced: Use quaternion to rotate sphere point, then project<br><br>
+                    <strong>Side Flip Variations:</strong><br>
+                    • Plain: Just flip side, no coordinate change<br>
+                    • Var 1: Flip smallest component (weak attractor)<br>
+                    • Var 2: Flip all except largest (elongated patterns)
                 </div>
             </div>
         </div>

@@ -58,6 +58,17 @@ class QuaternionAttractor {
             console.log(`Projection mode changed to: ${this.projectionMode}`);
         });
         
+        // Update side flip variation display
+        document.getElementById('sideFlipVariation').addEventListener('change', (e) => {
+            const value = parseInt(e.target.value);
+            const valueSpan = document.getElementById('sideFlipVariationValue');
+            if (valueSpan) {
+                const variationNames = ['Plain Flip', 'Variation 1', 'Variation 2'];
+                valueSpan.textContent = variationNames[value] || value.toString();
+            }
+            console.log(`Side flip variation changed to: ${value}`);
+        });
+        
         // Button event listeners
         document.getElementById('randomizeBtn').addEventListener('click', () => this.randomizeParameters());
         document.getElementById('goldenRatioBtn').addEventListener('click', () => this.setGoldenRatio());
@@ -101,11 +112,18 @@ class QuaternionAttractor {
     
     /**
      * Inverse stereographic projection from 3D to 4D sphere
-     * Maps 3D point back to quaternion on S³
+     * Maps 3D point back to quaternion on S³ with hemisphere support
      */
-    inverseStereographicProjection(x, y, z) {
+    inverseStereographicProjection(x, y, z, side = 1) {
         const r2 = x*x + y*y + z*z;
-        const w = (r2 - 1) / (r2 + 1);
+        
+        // Handle north pole singularity
+        if (r2 < 1e-10) {
+            return side > 0 ? [1, 0, 0, 0] : [-1, 0, 0, 0];
+        }
+        
+        // Hemisphere-aware w calculation
+        const w = side > 0 ? (r2 - 1) / (r2 + 1) : (1 - r2) / (r2 + 1);
         const scale = 2 / (r2 + 1);
         
         return [w, x * scale, y * scale, z * scale];
@@ -204,6 +222,52 @@ class QuaternionAttractor {
     }
     
     /**
+     * Apply side flip variation when point leaves unit ball
+     */
+    applySideFlipVariation(newX, newY, newZ, variation) {
+        if (variation === 1) {
+            // Variation 1: Flip smallest component
+            const absX = Math.abs(newX);
+            const absY = Math.abs(newY);
+            const absZ = Math.abs(newZ);
+            
+            let smallestCoord = 'x';
+            if (absY < absX && absY < absZ) {
+                smallestCoord = 'y';
+            } else if (absZ < absX && absZ < absY) {
+                smallestCoord = 'z';
+            }
+            
+            if (smallestCoord === 'x') {
+                return [-newX, newY, newZ];
+            } else if (smallestCoord === 'y') {
+                return [newX, -newY, newZ];
+            } else {
+                return [newX, newY, -newZ];
+            }
+        } else if (variation === 2) {
+            // Variation 2: Flip all except largest component
+            const absX = Math.abs(newX);
+            const absY = Math.abs(newY);
+            const absZ = Math.abs(newZ);
+            
+            if (absX >= absY && absX >= absZ) {
+                // X is largest, flip Y and Z
+                return [newX, -newY, -newZ];
+            } else if (absY >= absX && absY >= absZ) {
+                // Y is largest, flip X and Z
+                return [-newX, newY, -newZ];
+            } else {
+                // Z is largest, flip X and Y
+                return [-newX, -newY, newZ];
+            }
+        } else {
+            // Plain flip (no coordinate modification)
+            return [newX, newY, newZ];
+        }
+    }
+
+    /**
      * Get current parameter values from UI
      */
     getParameters() {
@@ -232,6 +296,9 @@ class QuaternionAttractor {
                 maxPoints: parseInt(document.getElementById('maxPoints').value),
                 pointsPerFrame: parseInt(document.getElementById('pointsPerFrame').value),
                 projectionMode: this.projectionMode
+            },
+            algorithm: {
+                variation: parseInt(document.getElementById('sideFlipVariation')?.value || 1)
             }
         };
     }
@@ -265,53 +332,63 @@ class QuaternionAttractor {
         
         // Generate new points showing the evolution
         for (let i = 0; i < numPoints; i++) {
-            // Apply additive operation: (x,y,z) + (a,b,c) * side
+            // 1. Apply additive operation: (x,y,z) + (a,b,c) * side
             const newX = state.x + params.step.a * state.side;
             const newY = state.y + params.step.b * state.side;
             const newZ = state.z + params.step.c * state.side;
             
-            // Check if point is outside unit ball
+            // 2. Check if point is outside unit ball
             const distance = Math.sqrt(newX*newX + newY*newY + newZ*newZ);
             
             if (distance > 1) {
-                // Find the smallest coordinate (in absolute value)
-                const absX = Math.abs(newX);
-                const absY = Math.abs(newY);
-                const absZ = Math.abs(newZ);
-                
-                let smallestCoord = 'x';
-                if (absY < absX && absY < absZ) {
-                    smallestCoord = 'y';
-                } else if (absZ < absX && absZ < absY) {
-                    smallestCoord = 'z';
-                }
-                
-                // Negate the sign of the smallest coordinate
-                if (smallestCoord === 'x') {
-                    state.x = -newX;
-                    state.y = newY;
-                    state.z = newZ;
-                } else if (smallestCoord === 'y') {
-                    state.x = newX;
-                    state.y = -newY;
-                    state.z = newZ;
-                } else {
-                    state.x = newX;
-                    state.y = newY;
-                    state.z = -newZ;
-                }
-                
-                // Also flip side
+                // 3a. Apply variation and flip side
+                const [flippedX, flippedY, flippedZ] = this.applySideFlipVariation(
+                    newX, newY, newZ, params.algorithm.variation
+                );
+                state.x = flippedX;
+                state.y = flippedY;
+                state.z = flippedZ;
                 state.side = -state.side;
             } else {
-                // Update position
+                // 3b. Update position normally
                 state.x = newX;
                 state.y = newY;
                 state.z = newZ;
             }
             
-            // Map back to 4D sphere using inverse stereographic projection
-            const quaternion = this.inverseStereographicProjection(state.x, state.y, state.z);
+            // 4. Apply global rotation quaternion (if defined)
+            if (params.rotation.w !== 1 || params.rotation.x !== 0 || 
+                params.rotation.y !== 0 || params.rotation.z !== 0) {
+                
+                // Convert ball coordinates to quaternion (with hemisphere support)
+                const quaternion = this.inverseStereographicProjection(
+                    state.x, state.y, state.z, state.side
+                );
+                
+                // Apply global rotation: q ← r * q
+                const rotationQuat = this.normalizeQuaternion([
+                    params.rotation.w, params.rotation.x, 
+                    params.rotation.y, params.rotation.z
+                ]);
+                const rotatedQuat = this.quaternionMultiply(rotationQuat, quaternion);
+                const normalizedQuat = this.normalizeQuaternion(rotatedQuat);
+                
+                // Convert back to ball coordinates
+                const rho2 = normalizedQuat[1]*normalizedQuat[1] + 
+                           normalizedQuat[2]*normalizedQuat[2] + 
+                           normalizedQuat[3]*normalizedQuat[3];
+                const denom = rho2 + 1.0;
+                
+                state.x = normalizedQuat[1] * 2.0 / denom;
+                state.y = normalizedQuat[2] * 2.0 / denom;
+                state.z = normalizedQuat[3] * 2.0 / denom;
+                state.side = (normalizedQuat[0] >= 0) ? +1 : -1;
+            }
+            
+            // 5. Map to quaternion for visualization
+            const quaternion = this.inverseStereographicProjection(
+                state.x, state.y, state.z, state.side
+            );
             
             // Project to 2D using the selected projection mode
             const projected2D = this.projectTo2D(
@@ -371,53 +448,63 @@ class QuaternionAttractor {
         
         // Generate new points
         for (let i = 0; i < numPoints; i++) {
-            // Apply additive operation: (x,y,z) + (a,b,c) * side
+            // 1. Apply additive operation: (x,y,z) + (a,b,c) * side
             const newX = state.x + params.step.a * state.side;
             const newY = state.y + params.step.b * state.side;
             const newZ = state.z + params.step.c * state.side;
             
-            // Check if point is outside unit ball
+            // 2. Check if point is outside unit ball
             const distance = Math.sqrt(newX*newX + newY*newY + newZ*newZ);
             
             if (distance > 1) {
-                // Find the smallest coordinate (in absolute value)
-                const absX = Math.abs(newX);
-                const absY = Math.abs(newY);
-                const absZ = Math.abs(newZ);
-                
-                let smallestCoord = 'x';
-                if (absY < absX && absY < absZ) {
-                    smallestCoord = 'y';
-                } else if (absZ < absX && absZ < absY) {
-                    smallestCoord = 'z';
-                }
-                
-                // Negate the sign of the smallest coordinate
-                if (smallestCoord === 'x') {
-                    state.x = -newX;
-                    state.y = newY;
-                    state.z = newZ;
-                } else if (smallestCoord === 'y') {
-                    state.x = newX;
-                    state.y = -newY;
-                    state.z = newZ;
-                } else {
-                    state.x = newX;
-                    state.y = newY;
-                    state.z = -newZ;
-                }
-                
-                // Also flip side
+                // 3a. Apply variation and flip side
+                const [flippedX, flippedY, flippedZ] = this.applySideFlipVariation(
+                    newX, newY, newZ, params.algorithm.variation
+                );
+                state.x = flippedX;
+                state.y = flippedY;
+                state.z = flippedZ;
                 state.side = -state.side;
             } else {
-                // Update position
+                // 3b. Update position normally
                 state.x = newX;
                 state.y = newY;
                 state.z = newZ;
             }
             
-            // Map back to 4D sphere using inverse stereographic projection
-            const quaternion = this.inverseStereographicProjection(state.x, state.y, state.z);
+            // 4. Apply global rotation quaternion (if defined)
+            if (params.rotation.w !== 1 || params.rotation.x !== 0 || 
+                params.rotation.y !== 0 || params.rotation.z !== 0) {
+                
+                // Convert ball coordinates to quaternion (with hemisphere support)
+                const quaternion = this.inverseStereographicProjection(
+                    state.x, state.y, state.z, state.side
+                );
+                
+                // Apply global rotation: q ← r * q
+                const rotationQuat = this.normalizeQuaternion([
+                    params.rotation.w, params.rotation.x, 
+                    params.rotation.y, params.rotation.z
+                ]);
+                const rotatedQuat = this.quaternionMultiply(rotationQuat, quaternion);
+                const normalizedQuat = this.normalizeQuaternion(rotatedQuat);
+                
+                // Convert back to ball coordinates
+                const rho2 = normalizedQuat[1]*normalizedQuat[1] + 
+                           normalizedQuat[2]*normalizedQuat[2] + 
+                           normalizedQuat[3]*normalizedQuat[3];
+                const denom = rho2 + 1.0;
+                
+                state.x = normalizedQuat[1] * 2.0 / denom;
+                state.y = normalizedQuat[2] * 2.0 / denom;
+                state.z = normalizedQuat[3] * 2.0 / denom;
+                state.side = (normalizedQuat[0] >= 0) ? +1 : -1;
+            }
+            
+            // 5. Map to quaternion for visualization
+            const quaternion = this.inverseStereographicProjection(
+                state.x, state.y, state.z, state.side
+            );
             
             // Apply rotation and project to 2D for display
             const rotated = this.rotateVector([state.x, state.y, state.z], rotationQuat);
@@ -460,53 +547,63 @@ class QuaternionAttractor {
         
         // Generate points
         for (let i = 0; i < params.visualization.numPoints; i++) {
-            // Apply additive operation: (x,y,z) + (a,b,c) * side
+            // 1. Apply additive operation: (x,y,z) + (a,b,c) * side
             const newX = state.x + params.step.a * state.side;
             const newY = state.y + params.step.b * state.side;
             const newZ = state.z + params.step.c * state.side;
             
-            // Check if point is outside unit ball
+            // 2. Check if point is outside unit ball
             const distance = Math.sqrt(newX*newX + newY*newY + newZ*newZ);
             
             if (distance > 1) {
-                // Find the smallest coordinate (in absolute value)
-                const absX = Math.abs(newX);
-                const absY = Math.abs(newY);
-                const absZ = Math.abs(newZ);
-                
-                let smallestCoord = 'x';
-                if (absY < absX && absY < absZ) {
-                    smallestCoord = 'y';
-                } else if (absZ < absX && absZ < absY) {
-                    smallestCoord = 'z';
-                }
-                
-                // Negate the sign of the smallest coordinate
-                if (smallestCoord === 'x') {
-                    state.x = -newX;
-                    state.y = newY;
-                    state.z = newZ;
-                } else if (smallestCoord === 'y') {
-                    state.x = newX;
-                    state.y = -newY;
-                    state.z = newZ;
-                } else {
-                    state.x = newX;
-                    state.y = newY;
-                    state.z = -newZ;
-                }
-                
-                // Also flip side
+                // 3a. Apply variation and flip side
+                const [flippedX, flippedY, flippedZ] = this.applySideFlipVariation(
+                    newX, newY, newZ, params.algorithm.variation
+                );
+                state.x = flippedX;
+                state.y = flippedY;
+                state.z = flippedZ;
                 state.side = -state.side;
             } else {
-                // Update position
+                // 3b. Update position normally
                 state.x = newX;
                 state.y = newY;
                 state.z = newZ;
             }
             
-            // Map back to 4D sphere using inverse stereographic projection
-            const quaternion = this.inverseStereographicProjection(state.x, state.y, state.z);
+            // 4. Apply global rotation quaternion (if defined)
+            if (params.rotation.w !== 1 || params.rotation.x !== 0 || 
+                params.rotation.y !== 0 || params.rotation.z !== 0) {
+                
+                // Convert ball coordinates to quaternion (with hemisphere support)
+                const quaternion = this.inverseStereographicProjection(
+                    state.x, state.y, state.z, state.side
+                );
+                
+                // Apply global rotation: q ← r * q
+                const rotationQuat = this.normalizeQuaternion([
+                    params.rotation.w, params.rotation.x, 
+                    params.rotation.y, params.rotation.z
+                ]);
+                const rotatedQuat = this.quaternionMultiply(rotationQuat, quaternion);
+                const normalizedQuat = this.normalizeQuaternion(rotatedQuat);
+                
+                // Convert back to ball coordinates
+                const rho2 = normalizedQuat[1]*normalizedQuat[1] + 
+                           normalizedQuat[2]*normalizedQuat[2] + 
+                           normalizedQuat[3]*normalizedQuat[3];
+                const denom = rho2 + 1.0;
+                
+                state.x = normalizedQuat[1] * 2.0 / denom;
+                state.y = normalizedQuat[2] * 2.0 / denom;
+                state.z = normalizedQuat[3] * 2.0 / denom;
+                state.side = (normalizedQuat[0] >= 0) ? +1 : -1;
+            }
+            
+            // 5. Map to quaternion for visualization
+            const quaternion = this.inverseStereographicProjection(
+                state.x, state.y, state.z, state.side
+            );
             
             // Project to 2D using the selected projection mode
             const projected2D = this.projectTo2D(
