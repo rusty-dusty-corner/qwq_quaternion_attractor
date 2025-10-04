@@ -1,6 +1,7 @@
 async function instantiate(module, imports = {}) {
   const adaptedImports = {
     env: Object.assign(Object.create(globalThis), imports.env || {}, {
+      table: imports.env?.table || new WebAssembly.Table({ initial: 1, element: "anyfunc" }),
       abort(message, fileName, lineNumber, columnNumber) {
         // ~lib/builtins/abort(~lib/string/String | null?, ~lib/string/String | null?, u32?, u32?) => void
         message = __liftString(message >>> 0);

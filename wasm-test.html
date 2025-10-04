@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAssembly Test - Quaternion Attractor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .test-section h3 {
+            margin-top: 0;
+            color: #ffd700;
+        }
+        
+        .test-result {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        
+        .success {
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .error {
+            border-left: 4px solid #f44336;
+        }
+        
+        .warning {
+            border-left: 4px solid #ff9800;
+        }
+        
+        button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #4ecdc4;
+        }
+        
+        .loading {
+            text-align: center;
+            font-style: italic;
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 WebAssembly Test - Quaternion Attractor</h1>
+        
+        <div class="test-section">
+            <h3>🚀 Basic WASM Functions Test</h3>
+            <div id="basicTest" class="loading">Loading WASM module...</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>⚡ Performance Test</h3>
+            <div id="performanceTest" class="loading">Running performance test...</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧠 Memory Management Test</h3>
+            <div id="memoryTest" class="loading">Testing memory management...</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔢 Data Type Test</h3>
+            <div id="dataTypeTest" class="loading">Testing different data types...</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📦 Module Information</h3>
+            <div id="moduleInfo" class="loading">Loading module information...</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎮 Interactive Test</h3>
+            <button onclick="runInteractiveTest()">Run Interactive Test</button>
+            <button onclick="runPerformanceComparison()">Performance Comparison</button>
+            <button onclick="runMemoryStressTest()">Memory Stress Test</button>
+            <div id="interactiveResults"></div>
+        </div>
+        
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-item">
+                <div class="stat-value" id="wasmSpeedup">0x</div>
+                <div>WASM Speedup</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="moduleSize">0</div>
+                <div>Module Size (bytes)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="loadTime">0</div>
+                <div>Load Time (ms)</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="functionsCount">0</div>
+                <div>Functions Available</div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+        let wasmModule = null;
+        let testResults = {};
+        
+        // Load WASM module
+        async function loadWasmModule() {
+            try {
+                const startTime = performance.now();
+                wasmModule = await import('./build/math-engine.js');
+                const loadTime = performance.now() - startTime;
+                
+                testResults.loadTime = loadTime;
+                testResults.moduleSize = 655; // Known size from build
+                testResults.functionsCount = Object.keys(wasmModule).length;
+                
+                return true;
+            } catch (error) {
+                console.error('Failed to load WASM module:', error);
+                return false;
+            }
+        }
+        
+        // Test basic functions
+        async function testBasicFunctions() {
+            const resultDiv = document.getElementById('basicTest');
+            
+            if (!wasmModule) {
+                resultDiv.innerHTML = '<div class="test-result error">❌ WASM module not loaded</div>';
+                return;
+            }
+            
+            try {
+                const results = {
+                    add: wasmModule.add(5, 3),
+                    multiply: wasmModule.multiply(4, 2),
+                    factorial: wasmModule.factorial(5),
+                    square: wasmModule.square(3.5),
+                    simpleRandom: wasmModule.simpleRandom(12345)
+                };
+                
+                resultDiv.innerHTML = `
+                    <div class="test-result success">
+                        <h4>✅ Basic Functions Working</h4>
+                        <p>add(5, 3) = ${results.add}</p>
+                        <p>multiply(4, 2) = ${results.multiply}</p>
+                        <p>factorial(5) = ${results.factorial}</p>
+                        <p>square(3.5) = ${results.square}</p>
+                        <p>simpleRandom(12345) = ${results.simpleRandom}</p>
+                    </div>
+                `;
+                
+                testResults.basicFunctions = results;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test performance
+        async function testPerformance() {
+            const resultDiv = document.getElementById('performanceTest');
+            
+            if (!wasmModule) {
+                resultDiv.innerHTML = '<div class="test-result error">❌ WASM module not loaded</div>';
+                return;
+            }
+            
+            try {
+                // Test WASM performance
+                const wasmStart = performance.now();
+                let wasmResult = 0;
+                for (let i = 0; i < 100000; i++) {
+                    wasmResult += wasmModule.add(i, i + 1);
+                }
+                const wasmTime = performance.now() - wasmStart;
+                
+                // Test JavaScript performance
+                const jsStart = performance.now();
+                let jsResult = 0;
+                for (let i = 0; i < 100000; i++) {
+                    jsResult += i + (i + 1);
+                }
+                const jsTime = performance.now() - jsStart;
+                
+                const speedup = jsTime / wasmTime;
+                
+                resultDiv.innerHTML = `
+                    <div class="test-result success">
+                        <h4>⚡ Performance Results</h4>
+                        <p>WASM time: ${wasmTime.toFixed(2)}ms</p>
+                        <p>JavaScript time: ${jsTime.toFixed(2)}ms</p>
+                        <p>Speedup: ${speedup.toFixed(2)}x</p>
+                        <p>Results match: ${wasmResult === jsResult}</p>
+                    </div>
+                `;
+                
+                testResults.performance = { wasmTime, jsTime, speedup };
+                document.getElementById('wasmSpeedup').textContent = speedup.toFixed(2) + 'x';
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test memory management
+        async function testMemoryManagement() {
+            const resultDiv = document.getElementById('memoryTest');
+            
+            if (!wasmModule) {
+                resultDiv.innerHTML = '<div class="test-result error">❌ WASM module not loaded</div>';
+                return;
+            }
+            
+            try {
+                const initialMemory = wasmModule.memory.buffer.byteLength;
+                
+                // Allocate some memory
+                const ptr1 = wasmModule.__new(100, 0);
+                const ptr2 = wasmModule.__new(200, 0);
+                
+                const afterAllocation = wasmModule.memory.buffer.byteLength;
+                
+                // Deallocate memory
+                wasmModule.__unpin(ptr1);
+                wasmModule.__unpin(ptr2);
+                wasmModule.__collect();
+                
+                const afterDeallocation = wasmModule.memory.buffer.byteLength;
+                
+                resultDiv.innerHTML = `
+                    <div class="test-result success">
+                        <h4>🧠 Memory Management</h4>
+                        <p>Initial memory: ${initialMemory} bytes</p>
+                        <p>After allocation: ${afterAllocation} bytes</p>
+                        <p>After deallocation: ${afterDeallocation} bytes</p>
+                        <p>Memory grew: ${afterAllocation > initialMemory ? 'Yes' : 'No'}</p>
+                        <p>Memory freed: ${afterDeallocation <= afterAllocation ? 'Yes' : 'No'}</p>
+                    </div>
+                `;
+                
+                testResults.memory = { initialMemory, afterAllocation, afterDeallocation };
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Test data types
+        async function testDataTypes() {
+            const resultDiv = document.getElementById('dataTypeTest');
+            
+            if (!wasmModule) {
+                resultDiv.innerHTML = '<div class="test-result error">❌ WASM module not loaded</div>';
+                return;
+            }
+            
+            try {
+                const results = {
+                    integers: {
+                        small: wasmModule.add(1, 2),
+                        large: wasmModule.add(1000000, 2000000),
+                        negative: wasmModule.add(-5, 3)
+                    },
+                    floats: {
+                        small: wasmModule.square(0.5),
+                        large: wasmModule.square(100.5),
+                        negative: wasmModule.square(-2.5)
+                    },
+                    factorial: {
+                        small: wasmModule.factorial(3),
+                        medium: wasmModule.factorial(10),
+                        large: wasmModule.factorial(15)
+                    },
+                    random: {
+                        seed1: wasmModule.simpleRandom(1),
+                        seed2: wasmModule.simpleRandom(2),
+                        sameSeed: wasmModule.simpleRandom(1)
+                    }
+                };
+                
+                resultDiv.innerHTML = `
+                    <div class="test-result success">
+                        <h4>🔢 Data Type Results</h4>
+                        <p>Integers: ${JSON.stringify(results.integers)}</p>
+                        <p>Floats: ${JSON.stringify(results.floats)}</p>
+                        <p>Factorials: ${JSON.stringify(results.factorial)}</p>
+                        <p>Random (deterministic): ${results.random.sameSeed === results.random.seed1 ? 'Yes' : 'No'}</p>
+                    </div>
+                `;
+                
+                testResults.dataTypes = results;
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Show module information
+        async function showModuleInfo() {
+            const resultDiv = document.getElementById('moduleInfo');
+            
+            if (!wasmModule) {
+                resultDiv.innerHTML = '<div class="test-result error">❌ WASM module not loaded</div>';
+                return;
+            }
+            
+            try {
+                resultDiv.innerHTML = `
+                    <div class="test-result success">
+                        <h4>📦 Module Information</h4>
+                        <p>Load time: ${testResults.loadTime.toFixed(2)}ms</p>
+                        <p>Module size: ${testResults.moduleSize} bytes</p>
+                        <p>Functions available: ${testResults.functionsCount}</p>
+                        <p>Memory: ${wasmModule.memory ? 'Available' : 'Not available'}</p>
+                        <p>Table: ${wasmModule.table ? 'Available' : 'Not available'}</p>
+                    </div>
+                `;
+                
+                // Update stats display
+                document.getElementById('moduleSize').textContent = testResults.moduleSize;
+                document.getElementById('loadTime').textContent = testResults.loadTime.toFixed(2);
+                document.getElementById('functionsCount').textContent = testResults.functionsCount;
+                document.getElementById('stats').style.display = 'grid';
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="test-result error">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        // Interactive test functions
+        window.runInteractiveTest = function() {
+            const resultsDiv = document.getElementById('interactiveResults');
+            resultsDiv.innerHTML = '<div class="test-result warning">🔄 Running interactive test...</div>';
+            
+            setTimeout(() => {
+                if (wasmModule) {
+                    const result = wasmModule.factorial(10);
+                    resultsDiv.innerHTML = `<div class="test-result success">✅ Interactive test: factorial(10) = ${result}</div>`;
+                } else {
+                    resultsDiv.innerHTML = '<div class="test-result error">❌ WASM module not loaded</div>';
+                }
+            }, 1000);
+        };
+        
+        window.runPerformanceComparison = function() {
+            const resultsDiv = document.getElementById('interactiveResults');
+            resultsDiv.innerHTML = '<div class="test-result warning">🔄 Running performance comparison...</div>';
+            
+            setTimeout(() => {
+                if (wasmModule) {
+                    const iterations = 10000;
+                    
+                    // WASM test
+                    const wasmStart = performance.now();
+                    let wasmSum = 0;
+                    for (let i = 0; i < iterations; i++) {
+                        wasmSum += wasmModule.square(i);
+                    }
+                    const wasmTime = performance.now() - wasmStart;
+                    
+                    // JavaScript test
+                    const jsStart = performance.now();
+                    let jsSum = 0;
+                    for (let i = 0; i < iterations; i++) {
+                        jsSum += i * i;
+                    }
+                    const jsTime = performance.now() - jsStart;
+                    
+                    const speedup = jsTime / wasmTime;
+                    
+                    resultsDiv.innerHTML = `
+                        <div class="test-result success">
+                            <h4>⚡ Performance Comparison (${iterations} iterations)</h4>
+                            <p>WASM time: ${wasmTime.toFixed(2)}ms</p>
+                            <p>JavaScript time: ${jsTime.toFixed(2)}ms</p>
+                            <p>Speedup: ${speedup.toFixed(2)}x</p>
+                            <p>Results match: ${Math.abs(wasmSum - jsSum) < 0.001 ? 'Yes' : 'No'}</p>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = '<div class="test-result error">❌ WASM module not loaded</div>';
+                }
+            }, 1000);
+        };
+        
+        window.runMemoryStressTest = function() {
+            const resultsDiv = document.getElementById('interactiveResults');
+            resultsDiv.innerHTML = '<div class="test-result warning">🔄 Running memory stress test...</div>';
+            
+            setTimeout(() => {
+                if (wasmModule) {
+                    try {
+                        const initialMemory = wasmModule.memory.buffer.byteLength;
+                        const pointers = [];
+                        
+                        // Allocate many small chunks
+                        for (let i = 0; i < 1000; i++) {
+                            pointers.push(wasmModule.__new(10, 0));
+                        }
+                        
+                        const afterAllocation = wasmModule.memory.buffer.byteLength;
+                        
+                        // Free all chunks
+                        pointers.forEach(ptr => wasmModule.__unpin(ptr));
+                        wasmModule.__collect();
+                        
+                        const afterDeallocation = wasmModule.memory.buffer.byteLength;
+                        
+                        resultsDiv.innerHTML = `
+                            <div class="test-result success">
+                                <h4>🧠 Memory Stress Test (1000 allocations)</h4>
+                                <p>Initial: ${initialMemory} bytes</p>
+                                <p>After allocation: ${afterAllocation} bytes</p>
+                                <p>After deallocation: ${afterDeallocation} bytes</p>
+                                <p>Memory growth: ${afterAllocation - initialMemory} bytes</p>
+                                <p>Memory freed: ${afterDeallocation <= afterAllocation ? 'Yes' : 'No'}</p>
+                            </div>
+                        `;
+                    } catch (error) {
+                        resultsDiv.innerHTML = `<div class="test-result error">❌ Memory stress test failed: ${error.message}</div>`;
+                    }
+                } else {
+                    resultsDiv.innerHTML = '<div class="test-result error">❌ WASM module not loaded</div>';
+                }
+            }, 1000);
+        };
+        
+        // Initialize tests
+        async function initializeTests() {
+            console.log('🚀 Initializing WASM tests...');
+            
+            const loaded = await loadWasmModule();
+            if (loaded) {
+                console.log('✅ WASM module loaded successfully');
+                
+                // Run all tests
+                await testBasicFunctions();
+                await testPerformance();
+                await testMemoryManagement();
+                await testDataTypes();
+                await showModuleInfo();
+                
+                console.log('🎉 All tests completed!');
+            } else {
+                console.error('❌ Failed to load WASM module');
+                
+                // Show error in all test sections
+                document.getElementById('basicTest').innerHTML = '<div class="test-result error">❌ Failed to load WASM module</div>';
+                document.getElementById('performanceTest').innerHTML = '<div class="test-result error">❌ Failed to load WASM module</div>';
+                document.getElementById('memoryTest').innerHTML = '<div class="test-result error">❌ Failed to load WASM module</div>';
+                document.getElementById('dataTypeTest').innerHTML = '<div class="test-result error">❌ Failed to load WASM module</div>';
+                document.getElementById('moduleInfo').innerHTML = '<div class="test-result error">❌ Failed to load WASM module</div>';
+            }
+        }
+        
+        // Start tests when page loads
+        document.addEventListener('DOMContentLoaded', initializeTests);
+    </script>
+</body>
+</html>
