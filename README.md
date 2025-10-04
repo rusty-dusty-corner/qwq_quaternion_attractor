@@ -2,9 +2,9 @@
 
 ## 🚀 **Live Demos**
 
-**[🎨 Original Attractor](https://raw.githack.com/rusty-dusty-corner/qwq_quaternion_attractor/main/index.html)** - Experience the mesmerizing VJ-style patterns and living mathematical art in your browser.
+**[🎨 Original Attractor](https://raw.githack.com/rusty-dusty-corner/qwq_quaternion_attractor/experimental/index.html)** - Experience the mesmerizing VJ-style patterns and living mathematical art in your browser.
 
-**[⚡ WASM Performance Test](https://raw.githack.com/rusty-dusty-corner/qwq_quaternion_attractor/main/wasm-attractor-test.html)** - Test the high-performance WebAssembly implementation with 3.20x speedup!
+**[⚡ WASM Performance Test](https://raw.githack.com/rusty-dusty-corner/qwq_quaternion_attractor/experimental/wasm-attractor-test.html)** - Test the high-performance WebAssembly implementation with 3.20x speedup!
 
 A mesmerizing mathematical visualization system that generates VJ-style, fractal-like patterns through Filataksis-style covering of the 4-dimensional unit sphere. Experience living, breathing mathematical art that flows, mutates, and creates stunning visual effects.
 
