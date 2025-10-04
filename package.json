@@ -6,21 +6,21 @@
   "module": "dist/browser/main.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
-    "build:wasm": "./node_modules/.bin/asc src/wasm/hello-world.ts -b build/math-engine.wasm --optimize",
+    "build:assembly": "asc src/assembly/index.ts -b build/attractor-engine.wasm -t build/attractor-engine.wat --optimize --sourceMap",
     "build:typescript": "tsc",
-    "build:all": "npm run build:wasm && npm run build:typescript",
-    "build:watch": "npm run build:wasm && tsc --watch",
+    "build:all": "npm run build:assembly && npm run build:typescript",
+    "build:watch": "npm run build:assembly && tsc --watch",
     "dev:browser": "npm run build:all && serve -s dist/browser",
     "dev:node": "npm run build:all && node dist/node/main.js",
     "test": "jest",
     "test:watch": "jest --watch",
+    "test:api": "npm run build:typescript && node dist/examples/api-usage-example.js",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "clean": "rm -rf dist build",
+    "example:api": "npm run build:typescript && node dist/examples/api-usage-example.js",
     "example:browser": "npm run build:all && node examples/browser-example.js",
-    "example:node": "npm run build:all && node examples/node-example.js",
-    "example:batch": "npm run build:all && node examples/batch-example.js",
-    "example:animation": "npm run build:all && node examples/animation-example.js"
+    "example:node": "npm run build:all && node examples/node-example.js"
   },
   "keywords": [
     "quaternion",
