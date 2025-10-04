@@ -20,6 +20,24 @@ import {
   ProjectionType
 } from './types';
 
+// Re-export types and utilities for convenience
+export {
+  AttractorEngine,
+  AttractorConstants,
+  RenderParameters,
+  AttractorResult,
+  ValidationResult,
+  SideFlipMode,
+  ProjectionType,
+  createQuaternion,
+  createVector3D,
+  createPoint2D,
+  normalizeQuaternion,
+  multiplyQuaternions,
+  DEFAULT_CONSTANTS,
+  DEFAULT_RENDER_PARAMS
+} from './types';
+
 // ============================================================================
 // ABSTRACT BASE ENGINE
 // ============================================================================
