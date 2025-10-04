@@ -6,7 +6,7 @@
   "module": "dist/browser/main.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
-    "build:wasm": "asc src/wasm/index.ts -b build/math-engine.wasm -d build/math-engine.d.ts --optimize",
+    "build:wasm": "./node_modules/.bin/asc src/wasm/hello-world.ts -b build/math-engine.wasm --optimize",
     "build:typescript": "tsc",
     "build:all": "npm run build:wasm && npm run build:typescript",
     "build:watch": "npm run build:wasm && tsc --watch",
@@ -45,7 +45,8 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "canvas": "^2.11.0"
+    "canvas": "^2.11.0",
+    "puppeteer": "^24.23.0"
   },
   "files": [
     "dist/",

@@ -11,6 +11,15 @@ build/
 *.wat
 *.d.ts
 
+# Nix shell artifacts
+.direnv/
+result
+.direnvrc
+
+# Temporary files
+temp-*
+*.tmp
+
 # Coverage directory used by tools like istanbul
 coverage/
 *.lcov

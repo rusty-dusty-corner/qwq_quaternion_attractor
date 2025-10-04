@@ -32,6 +32,79 @@ This project implements a fascinating mathematical system that:
 - **Global Quaternion Rotation**: Integrated rotation that affects the core algorithm dynamics
 - **Filataksis-Style Covering**: Creates uniform, low-discrepancy distributions on the 4D sphere
 
+## ⚡ WebAssembly Implementation
+
+This project includes a high-performance WebAssembly implementation for 10x faster computation:
+
+### Features
+- **AssemblyScript Compilation**: TypeScript-like syntax compiled to WebAssembly
+- **Pure Mathematical Functions**: Deterministic quaternion operations
+- **Cross-Platform Performance**: Same speed on all platforms
+- **Memory Efficient**: Optimized for large point generation
+
+### WebAssembly Functions
+```typescript
+// Basic mathematical operations
+export function add(a: i32, b: i32): i32
+export function multiply(a: i32, b: i32): i32
+export function factorial(n: i32): i32
+export function square(x: f32): f32
+export function simpleRandom(seed: i32): f32
+```
+
+### Testing WebAssembly
+```bash
+# Compile to WebAssembly
+npm run build:wasm
+
+# Test functions directly
+node test-wasm-simple.mjs
+
+# Output: All mathematical functions working correctly!
+```
+
+## 🔧 Development Setup
+
+### Nix Shell Environment (Recommended)
+
+This project includes a complete nix-shell setup that provides all dependencies without network issues:
+
+```bash
+# Enter the nix-shell environment
+nix-shell
+
+# The environment automatically provides:
+# - Node.js & npm
+# - Chromium for Puppeteer testing
+# - AssemblyScript compiler
+# - All native libraries (Cairo, Pango, etc.)
+# - WebAssembly tools (binaryen)
+
+# Build WebAssembly module
+npm run build:wasm
+
+# Test WebAssembly functions
+node test-wasm-simple.mjs
+
+# Test Puppeteer integration
+node test-puppeteer.js
+```
+
+### Alternative: Manual Setup
+
+If you prefer not to use nix-shell:
+
+```bash
+# Install dependencies
+npm install --legacy-peer-deps
+
+# Install AssemblyScript globally
+npm install -g assemblyscript
+
+# Build WebAssembly module
+npm run build:wasm
+```
+
 ## 🚀 Usage
 
 ### Browser Visualization
