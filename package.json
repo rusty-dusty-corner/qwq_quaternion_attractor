@@ -1,32 +1,64 @@
 {
-  "name": "qwq-quaternion-attractor",
+  "name": "quaternion-attractor-wasm",
   "version": "1.0.0",
-  "description": "Quaternion attractor visualization using stereographic projection from 4D sphere to 3D space with phyllotaxis-like patterns",
-  "main": "debug_attractor.js",
+  "description": "High-performance quaternion attractor visualization using WebAssembly",
+  "main": "dist/node/main.js",
+  "module": "dist/browser/main.js",
+  "types": "dist/types/index.d.ts",
   "scripts": {
-    "debug": "node debug_attractor.js",
-    "test": "node debug_attractor.js",
-    "start": "node -e \"console.log('Open index.html in your browser to run the visualization')\""
+    "build:wasm": "asc src/wasm/index.ts -b build/math-engine.wasm -d build/math-engine.d.ts --optimize",
+    "build:typescript": "tsc",
+    "build:all": "npm run build:wasm && npm run build:typescript",
+    "build:watch": "npm run build:wasm && tsc --watch",
+    "dev:browser": "npm run build:all && serve -s dist/browser",
+    "dev:node": "npm run build:all && node dist/node/main.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "clean": "rm -rf dist build",
+    "example:browser": "npm run build:all && node examples/browser-example.js",
+    "example:node": "npm run build:all && node examples/node-example.js",
+    "example:batch": "npm run build:all && node examples/batch-example.js",
+    "example:animation": "npm run build:all && node examples/animation-example.js"
   },
   "keywords": [
     "quaternion",
-    "stereographic-projection",
-    "4d-sphere",
-    "phyllotaxis",
+    "attractor",
+    "webassembly",
     "mathematical-visualization",
-    "attractor"
+    "stereographic-projection",
+    "fractals"
   ],
-  "author": "Eugene Jukov",
+  "author": "Your Name",
   "license": "MIT",
-  "engines": {
-    "node": ">=14.0.0"
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "assemblyscript": "^0.27.0",
+    "eslint": "^8.0.0",
+    "jest": "^29.5.0",
+    "serve": "^14.0.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
   },
+  "dependencies": {
+    "canvas": "^2.11.0"
+  },
+  "files": [
+    "dist/",
+    "build/",
+    "README.md",
+    "LICENSE"
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/rusty-dusty-corner/qwq_quaternion_attractor.git"
+    "url": "https://github.com/yourusername/quaternion-attractor-wasm.git"
   },
   "bugs": {
-    "url": "https://github.com/rusty-dusty-corner/qwq_quaternion_attractor/issues"
+    "url": "https://github.com/yourusername/quaternion-attractor-wasm/issues"
   },
-  "homepage": "https://github.com/rusty-dusty-corner/qwq_quaternion_attractor#readme"
+  "homepage": "https://github.com/yourusername/quaternion-attractor-wasm#readme"
 }
