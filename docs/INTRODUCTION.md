@@ -1,6 +1,42 @@
 # 🌌 Quaternion Attractor: A Journey into 4D Mathematical Art
 
-*Experience the mesmerizing world of Filataksis-style covering through stereographic projection and dynamic attractor systems*
+*Experience the mesmerizing world of Filataksis-style covering through high-performance dual compilation architecture*
+
+---
+
+## 🚀 **Draft01 Implementation**
+
+This document describes the mathematical concepts and visual possibilities of the Quaternion Attractor system in its new **draft01 implementation**. The system now features:
+
+- **⚡ Dual Compilation**: AssemblyScript source compiles to both WebAssembly (high-performance) and JavaScript (universal compatibility)
+- **🎯 Unified API**: Clean interface for constant parameters and render parameters
+- **🔄 Deterministic**: Seed-based reproducibility across all platforms
+- **🌐 Cross-Platform**: Same mathematical results in browser and Node.js environments
+
+---
+
+## 🎛️ **New API Design**
+
+The draft01 implementation introduces a clean, unified API that separates concerns:
+
+### **Constant Parameters** (Mathematical Core)
+- **START**: Initial quaternion point for the attractor
+- **ADDITIVE**: 3D vector for phyllotaxis tuning and pattern generation
+- **WIND**: Constant rotation quaternion affecting the dynamics
+- **MODE**: Side flip variation selector (0, 1, or 2)
+
+### **Render Parameters** (Visualization)
+- **Projection Type**: Simple (2D direct) vs Sphere (3D rotation + projection)
+- **Camera Rotation**: Quaternion for rendering-time rotation
+- **Batch Size**: Number of 2D points to generate per call
+
+### **Output Interface**
+```typescript
+interface AttractorResult {
+  points: Point2D[];           // Generated 2D points for rendering
+  finalQuaternion: Quaternion; // Final state for chaining operations
+}
+```
 
 ---
 

@@ -6,17 +6,17 @@
 
 ## 📁 **Current Documentation Organization**
 
-### **`docs/` - Core Documentation**
-Essential documentation for the project:
+### **`docs/` - Core Documentation (Optimized)**
+Essential documentation for the draft01 implementation:
 
-- **`README.md`** - Main project overview and quick start guide
+- **`README.md`** - Updated with dual compilation strategy, API design, and quick start
 - **`INTRODUCTION.md`** - Comprehensive introduction to mathematical concepts and visual possibilities
 - **`MATHEMATICAL_DOCUMENTATION.md`** - Complete mathematical foundations and algorithms
-- **`DRAFT01_STATUS.md`** - Current status of the draft01 implementation and reorganization
+- **`DRAFT01_STATUS.md`** - Current implementation status and optimized roadmap
 - **`DOCUMENTATION_STRUCTURE.md`** - This file, explaining the documentation organization
 
-### **`docs/archive/` - Archived Documentation**
-Secondary and historical documentation:
+### **`docs/archive/` - Archived Documentation (Read-Only)**
+Secondary and historical documentation preserved for reference:
 
 - **`DOCUMENTATION_GUIDE.md`** - Guide for writing and maintaining documentation
 - **`NAVIGATION_GUIDE.md`** - Help for navigating the project structure
@@ -35,13 +35,15 @@ Secondary and historical documentation:
 Contains only the most essential documentation needed for:
 - Understanding the project concept and mathematics
 - Getting started with development
-- Current implementation status
+- Current implementation status and roadmap
+- Dual compilation strategy and API design
 
-### **Archived Documentation (`docs/archive/`)**
+### **Archived Documentation (`docs/archive/`) - Read-Only**
 Preserves all historical documentation for:
 - Reference during development
 - Understanding the evolution of the project
 - Setup and configuration guides
+- Historical context and decisions
 
 ---
 

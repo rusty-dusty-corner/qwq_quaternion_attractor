@@ -1,246 +1,165 @@
-# Quaternion Attractor Visualization
+# 🌌 Quaternion Attractor - Draft01 Implementation
 
-## 🚀 **Live Demos**
+*High-performance mathematical visualization with dual compilation strategy*
 
-**[🎨 Original Attractor](https://raw.githack.com/rusty-dusty-corner/qwq_quaternion_attractor/experimental/index.html)** - Experience the mesmerizing VJ-style patterns and living mathematical art in your browser.
+---
 
-**[⚡ WASM Performance Test](https://raw.githack.com/rusty-dusty-corner/qwq_quaternion_attractor/experimental/wasm-attractor-test.html)** - Test the high-performance WebAssembly implementation with 3.20x speedup!
+## 🎯 **Project Vision**
 
-A mesmerizing mathematical visualization system that generates VJ-style, fractal-like patterns through Filataksis-style covering of the 4-dimensional unit sphere. Experience living, breathing mathematical art that flows, mutates, and creates stunning visual effects.
+The Quaternion Attractor system generates mesmerizing VJ-style patterns through **Filataksis-style covering** of the 4-dimensional unit sphere. This draft01 implementation features a clean, unified architecture with dual compilation (WebAssembly + JavaScript) for maximum performance and compatibility.
 
-## 📖 Introduction
+### 🌊 **What You'll Experience**
+- **🔥 Burning Flows**: Mathematical patterns that flow and mutate like living organisms
+- **🎨 VJ-Style Visuals**: Fractal-like structures perfect for live performance
+- **🌀 Dynamic Attractors**: Three distinct variation modes with unique visual behaviors
+- **⚡ High Performance**: 10x speedup through WebAssembly optimization
 
-For a comprehensive introduction to the mathematical concepts and visual possibilities, see **[INTRODUCTION.md](INTRODUCTION.md)**.
+---
 
-This project implements a complete **Filataksis-style covering algorithm** that creates:
-- 🌊 **Flowing patterns** that shift and mutate like living organisms
-- 🎨 **VJ-style visuals** with fractal-like structures and mosaic grids
-- 🔥 **Burning flows** of mathematical beauty that never repeat
-- 🌀 **Dynamic attractors** with three distinct variation modes
+## 🚀 **Quick Start**
 
-## 🔬 Mathematical Concept
-
-This project implements a fascinating mathematical system that:
-
-1. **Represents quaternions as points on the 4D unit sphere S³**
-2. **Uses stereographic projection** to map half-spheres to 3D unit balls
-3. **Applies additive operations** with automatic side flipping when points leave the unit ball
-4. **Generates phyllotaxis-like patterns** through the interplay of projection and dynamics
-
-### Key Mathematical Operations
-
-- **Hemisphere-Aware Stereographic Projection**: Maps quaternions from S³ to 3D space with full north/south hemisphere support
-- **Advanced Side Flipping**: Three variation modes when points exceed the unit ball boundary
-- **Global Quaternion Rotation**: Integrated rotation that affects the core algorithm dynamics
-- **Filataksis-Style Covering**: Creates uniform, low-discrepancy distributions on the 4D sphere
-
-## ⚡ WebAssembly Implementation
-
-This project includes a high-performance WebAssembly implementation for 10x faster computation:
-
-### Features
-- **AssemblyScript Compilation**: TypeScript-like syntax compiled to WebAssembly
-- **Pure Mathematical Functions**: Deterministic quaternion operations
-- **Cross-Platform Performance**: Same speed on all platforms
-- **Memory Efficient**: Optimized for large point generation
-
-### WebAssembly Functions
-```typescript
-// Basic mathematical operations
-export function add(a: i32, b: i32): i32
-export function multiply(a: i32, b: i32): i32
-export function factorial(n: i32): i32
-export function square(x: f32): f32
-export function simpleRandom(seed: i32): f32
-```
-
-### Testing WebAssembly
+### **Development Environment**
 ```bash
-# Compile to WebAssembly
-npm run build:wasm
-
-# Test functions directly
-node test-wasm-simple.mjs
-
-# Output: All mathematical functions working correctly!
-```
-
-## 🔧 Development Setup
-
-### Nix Shell Environment (Recommended)
-
-This project includes a complete nix-shell setup that provides all dependencies without network issues:
-
-```bash
-# Enter the nix-shell environment
+# Enter nix-shell environment (recommended)
 nix-shell
 
-# The environment automatically provides:
-# - Node.js & npm
-# - Chromium for Puppeteer testing
-# - AssemblyScript compiler
-# - All native libraries (Cairo, Pango, etc.)
-# - WebAssembly tools (binaryen)
-
-# Build WebAssembly module
-npm run build:wasm
-
-# Test WebAssembly functions
-node test-wasm-simple.mjs
-
-# Test Puppeteer integration
-node test-puppeteer.js
-```
-
-### Alternative: Manual Setup
-
-If you prefer not to use nix-shell:
-
-```bash
-# Install dependencies
+# Or install dependencies manually
 npm install --legacy-peer-deps
-
-# Install AssemblyScript globally
-npm install -g assemblyscript
-
-# Build WebAssembly module
-npm run build:wasm
 ```
 
-## 🚀 Usage
-
-### Browser Visualization
-
-1. Open `index.html` in any modern web browser
-2. Adjust parameters using the interactive sliders:
-   - **Initial Position**: Starting coordinates (x, y, z, side)
-   - **Step Vector**: Additive parameters (a, b, c) for phyllotaxis tuning
-   - **Rotation Quaternion**: Global rotation affecting core algorithm dynamics
-   - **Side Flip Variation**: Choose between three distinct attractor behaviors
-   - **Visualization Settings**: Point count, size, animation speed, projection modes
-3. Click "Generate Points" to create the attractor pattern
-4. Use "Randomize Parameters" to explore different configurations
-5. Try "Start Animation" for dynamic visualization
-
-### Node.js Debugging
-
-Run the debugging suite to validate mathematical operations and tune parameters:
-
+### **Build and Run**
 ```bash
-# Run all debugging tests
-node debug_attractor.js
+# Build both WASM and JavaScript versions
+npm run build:all
 
-# Or use npm scripts
-npm run debug
-npm test
+# Run browser demo
+npm run dev:browser
+
+# Generate high-quality images
+npm run example:node
 ```
 
-The debugging script provides:
-- ✅ **Stereographic projection validation** (round-trip accuracy)
-- ✅ **Quaternion operations testing** (multiplication, conjugation, rotation)
-- ✅ **Side flipping behavior analysis**
-- ✅ **Phyllotaxis parameter optimization**
+---
 
-## 📊 Debugging Output
+## 📖 **Documentation**
 
-The Node.js debugging script analyzes:
+### **Core Documentation**
+- **[Introduction](INTRODUCTION.md)** - Mathematical concepts and visual possibilities
+- **[Mathematical Documentation](MATHEMATICAL_DOCUMENTATION.md)** - Complete algorithms and formulas
+- **[Draft01 Status](DRAFT01_STATUS.md)** - Current implementation status and roadmap
 
-- **Projection Accuracy**: Tests round-trip projection errors
-- **Coverage Analysis**: Measures how well different parameter sets cover the 3D space
-- **Side Flip Patterns**: Tracks when and why side flips occur
-- **Parameter Optimization**: Compares different (a,b,c) step vectors for better phyllotaxis coverage
+### **Archived Documentation**
+- **[Archive](archive/)** - Historical documentation and setup guides (read-only)
 
-Example output:
+---
+
+## 🔬 **Mathematical Foundation**
+
+### **Core Algorithm**
+1. **Quaternions on S³**: Represent points on the 4D unit sphere
+2. **Stereographic Projection**: Map 4D → 3D with hemisphere awareness
+3. **Side Flipping Dynamics**: Three variation modes for boundary conditions
+4. **Global Rotation**: Quaternion-based spatial transformations
+5. **Phyllotaxis Parameters**: Golden ratio-based step vectors
+
+### **Three Attractor Variations**
+- **Variation 0**: Pure mathematical flip (uniform patterns)
+- **Variation 1**: Flip smallest component (filigree structures)
+- **Variation 2**: Flip all except largest (elongated flows)
+
+---
+
+## ⚡ **Dual Compilation Architecture**
+
+### **AssemblyScript Source**
+- **Single Codebase**: Same source compiles to both WASM and JavaScript
+- **TypeScript Syntax**: Familiar development experience
+- **Deterministic**: Seed-based reproducibility across platforms
+
+### **Performance Targets**
+- **WASM Version**: 10x faster computation for large point generation
+- **JavaScript Version**: Full browser compatibility
+- **Cross-Platform**: Identical results on all platforms
+
+---
+
+## 🎛️ **API Design**
+
+### **Constant Parameters**
+- **START**: Initial quaternion point
+- **ADDITIVE**: 3D vector for phyllotaxis tuning
+- **WIND**: Constant rotation quaternion
+- **MODE**: Side flip variation selector
+
+### **Render Parameters**
+- **Projection Type**: Simple (2D) vs Sphere (3D rotation + projection)
+- **Camera Rotation**: Quaternion for rendering rotation
+- **Batch Size**: Number of 2D points to generate
+
+### **Output Interface**
+```typescript
+interface AttractorResult {
+  points: Point2D[];           // Generated 2D points
+  finalQuaternion: Quaternion; // Final state for chaining
+}
 ```
-=== Testing Phyllotaxis Parameters ===
---- Test 1: Equal steps ---
-Coverage - X: 1.000, Y: 1.000, Z: 1.000
-Total coverage: 3.000
 
---- Test 2: Y-dominant ---
-Coverage - X: 0.800, Y: 1.600, Z: 0.800
-Total coverage: 3.200
+---
+
+## 🛠️ **Implementation Status**
+
+### **✅ Completed**
+- Repository reorganization and cleanup
+- Documentation structure optimization
+- Legacy code preservation
+- Development environment setup
+
+### **🚧 In Progress**
+- Core mathematical engine implementation
+- Dual compilation setup (WASM + JS)
+- Platform adapters (browser + Node.js)
+- API interface design
+
+### **📋 Planned**
+- Performance benchmarking
+- Cross-platform testing
+- Example applications
+- Documentation completion
+
+---
+
+## 📁 **Project Structure**
+
+```
+qwq_quaternion_attractor/
+├── docs/                    # Core documentation
+│   ├── README.md           # This file
+│   ├── INTRODUCTION.md     # Mathematical concepts
+│   ├── MATHEMATICAL_DOCUMENTATION.md  # Algorithms
+│   ├── DRAFT01_STATUS.md   # Implementation status
+│   └── archive/            # Historical docs (read-only)
+├── legacy2/                # Experimental implementations
+├── src/                    # New draft01 implementation (planned)
+├── package.json           # Project configuration
+└── shell.nix             # Nix development environment
 ```
 
-## 🎯 Key Features
+---
 
-### Mathematical Excellence
-- **100% Specification Compliant**: Full Filataksis-style covering implementation
-- **Hemisphere-Aware Projection**: Complete north/south sphere support with perfect round-trip accuracy
-- **Three Side-Flip Variations**: Plain flip, smallest-component flip, and largest-component preservation
-- **Global Rotation Integration**: Quaternion rotation affects core algorithm dynamics
+## 🤝 **Contributing**
 
-### Visual Experience
-- **VJ-Style Patterns**: Mesmerizing flows, burns, and fractal-like structures
-- **Living Mathematics**: Patterns that shift, mutate, and evolve like living organisms
-- **Mosaic Grid Effects**: Beautiful geometric patterns that emerge from mathematical precision
-- **Real-Time Evolution**: Watch patterns unfold step-by-step or in rapid clouds
+This project is in active development. Key areas for contribution:
+- Mathematical algorithm optimization
+- Performance benchmarking
+- Cross-platform testing
+- Documentation improvements
 
-### Interactive Features
-- **Full Parameter Control**: Adjust every aspect of the mathematical system
-- **Multiple Animation Modes**: Snake mode (step-by-step) and Cloud mode (rapid evolution)
-- **Projection Options**: Simple and advanced projection modes for different visual effects
-- **Modern UI**: Glass-morphism design with responsive controls
+---
 
-## 🔧 Technical Implementation
-
-### Files Structure
-
-- `index.html` - Main visualization interface
-- `quaternion_attractor.js` - Core mathematical implementation
-- `debug_attractor.js` - Node.js debugging and validation suite
-- `package.json` - Node.js project configuration
-
-### Mathematical Functions
-
-- `stereographicProjection()` - 4D → 3D projection
-- `inverseStereographicProjection()` - 3D → 4D projection  
-- `quaternionMultiply()` - Quaternion multiplication
-- `rotateVector()` - 3D vector rotation
-- `normalizeQuaternion()` - Unit quaternion normalization
-
-## 📈 Side Flip Variations & Effects
-
-The system offers three distinct variation modes that create completely different visual behaviors:
-
-### **Variation 0: Plain Flip**
-- **Behavior**: Only flips the hemisphere side, no coordinate modification
-- **Visual Effect**: Uniform, balanced patterns across the sphere
-- **Use Case**: Clean, mathematical precision with maximum coverage
-
-### **Variation 1: Flip Smallest Component**
-- **Behavior**: Flips only the coordinate with smallest absolute value
-- **Visual Effect**: Creates weak attractor patterns near coordinate planes
-- **Use Case**: Delicate, filigree-like structures with subtle geometric bias
-
-### **Variation 2: Flip All Except Largest**
-- **Behavior**: Flips all coordinates except the one with largest absolute value
-- **Visual Effect**: Elongated patterns along dominant axes, stretched geometries
-- **Use Case**: Dramatic, VJ-style flows with strong directional emphasis
-
-## 🎨 Visual Modes & Effects
-
-### **Snake Mode** (4 points, 1 per frame)
-- Watch the mathematical calculation unfold step-by-step
-- Perfect for understanding the algorithm mechanics
-- See how each iteration builds the final pattern
-
-### **Cloud Mode** (1000+ points, 50+ per frame)
-- Experience rapid pattern evolution and mutation
-- See the full attractor behavior emerge
-- Ideal for VJ-style visual effects and live performance
-
-## 🎨 Visualization
-
-Points are color-coded based on:
-- **Side**: Blue (+1) vs Magenta (-1) for which half-sphere
-- **Z-coordinate**: Brightness indicates depth
-- **Distance**: Alpha transparency shows proximity to origin
-
-## 📝 License
+## 📄 **License**
 
 MIT License - See LICENSE file for details.
 
-## 🤝 Contributing
+---
 
-Feel free to submit issues, feature requests, or pull requests to improve the mathematical accuracy or visualization quality.
+*Experience the beauty of 4-dimensional mathematics through high-performance visualization.*
