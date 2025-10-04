@@ -221,10 +221,8 @@ export async function createAttractorEngine(config: EngineConfig): Promise<Attra
       }
 
     case EngineType.JAVASCRIPT:
-      // TODO: Import and create JavaScript engine
-      // const JSEngine = await import('./js-engine');
-      // return new JSEngine.JavaScriptAttractorEngine();
-      throw new Error('JavaScript engine not yet implemented');
+      const JSEngine = await import('./js-engine');
+      return new JSEngine.JavaScriptAttractorEngine();
 
     default:
       throw new Error(`Unknown engine type: ${config.type}`);

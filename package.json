@@ -19,6 +19,7 @@
     "lint:fix": "eslint src/**/*.ts --fix",
     "clean": "rm -rf dist build",
     "example:api": "npm run build:typescript && node dist/examples/api-usage-example.js",
+    "example:png": "npm run build:typescript && node dist/examples/png-generation-example.js",
     "example:browser": "npm run build:all && node examples/browser-example.js",
     "example:node": "npm run build:all && node examples/node-example.js"
   },

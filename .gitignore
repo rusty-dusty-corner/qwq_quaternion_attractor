@@ -11,6 +11,23 @@ build/
 *.wat
 *.d.ts
 
+# Generated images and output
+output/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.tiff
+
+# AssemblyScript build artifacts
+assembly/
+*.wasm.map
+
+# Performance test results
+performance-*.json
+benchmark-*.json
+
 # Nix shell artifacts
 .direnv/
 result
