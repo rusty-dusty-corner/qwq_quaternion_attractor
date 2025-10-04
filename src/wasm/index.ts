@@ -15,11 +15,20 @@ export {
   magnitude3D
 } from './quaternion-math';
 
-// Export random number generator
-export { DeterministicRandom } from './deterministic-random';
-
-// Export attractor engine
+// Export function-based API for attractor engine
 export {
-  AttractorEngine,
-  SideFlipVariation
-} from './attractor-engine';
+  createAttractorEngine,
+  generatePoints,
+  getPointCount,
+  getPointRange,
+  getAllPoints,
+  getStatistics,
+  getCurrentState,
+  updateConfig,
+  resetEngine,
+  getEngineCount,
+  clearAllEngines,
+  SIDE_FLIP_PLAIN,
+  SIDE_FLIP_SMALLEST,
+  SIDE_FLIP_ALL_EXCEPT_LARGEST
+} from './function-api';

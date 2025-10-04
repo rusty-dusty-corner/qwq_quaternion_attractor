@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WASM Debug Test</title>
+</head>
+<body>
+    <h1>WASM Debug Test</h1>
+    <div id="output"></div>
+    
+    <script>
+        async function testWasm() {
+            const output = document.getElementById('output');
+            
+            try {
+                console.log('Loading WASM module...');
+                output.innerHTML += '<p>Loading WASM module...</p>';
+                
+                const module = await import('./build/attractor-engine.js');
+                console.log('Module loaded:', module);
+                output.innerHTML += '<p>✅ Module loaded successfully</p>';
+                output.innerHTML += `<p>Available functions: ${Object.keys(module).join(', ')}</p>`;
+                
+                // Test basic function
+                if (module.createAttractorEngine) {
+                    output.innerHTML += '<p>Testing createAttractorEngine...</p>';
+                    const engineId = module.createAttractorEngine(
+                        100, 12345, 0.1, 0.2, 0.3, 0.0, 0.0, 0.0, 0, 1.0, 0.0, 0.0, 0.0
+                    );
+                    output.innerHTML += `<p>✅ Engine created with ID: ${engineId}</p>`;
+                    
+                    // Test point generation
+                    module.generatePoints(engineId, 10);
+                    const pointCount = module.getPointCount(engineId);
+                    output.innerHTML += `<p>✅ Generated ${pointCount} points</p>`;
+                    
+                    // Test getting points
+                    const points = module.getAllPoints(engineId);
+                    output.innerHTML += `<p>✅ Retrieved ${points.length} point values</p>`;
+                    
+                } else {
+                    output.innerHTML += '<p>❌ createAttractorEngine function not found</p>';
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                output.innerHTML += `<p>❌ Error: ${error.message}</p>`;
+            }
+        }
+        
+        testWasm();
+    </script>
+</body>
+</html>

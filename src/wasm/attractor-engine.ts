@@ -25,24 +25,45 @@ export enum SideFlipVariation {
 }
 
 /**
- * Attractor configuration
+ * Attractor configuration class
  */
-export interface AttractorConfig {
+export class AttractorConfig {
   seed: i32;
   stepVector: Float32Array;    // [a, b, c]
   initialPosition: Float32Array; // [x, y, z]
   sideFlipVariation: i32;      // 0, 1, or 2
   globalRotation: Float32Array; // [w, x, y, z] quaternion
+  
+  constructor(
+    seed: i32,
+    stepVector: Float32Array,
+    initialPosition: Float32Array,
+    sideFlipVariation: i32,
+    globalRotation: Float32Array
+  ) {
+    this.seed = seed;
+    this.stepVector = stepVector;
+    this.initialPosition = initialPosition;
+    this.sideFlipVariation = sideFlipVariation;
+    this.globalRotation = globalRotation;
+  }
 }
 
 /**
- * Point data structure
+ * Point data structure class
  */
-export interface AttractorPoint {
+export class AttractorPoint {
   x: f32;
   y: f32;
   z: f32;
   side: i32;  // +1 for north hemisphere, -1 for south
+  
+  constructor(x: f32, y: f32, z: f32, side: i32) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+    this.side = side;
+  }
 }
 
 /**
@@ -109,7 +130,7 @@ export class AttractorEngine {
     const newZ = this.currentZ + this.config.stepVector[2] * f32(this.currentSide);
     
     // Check boundary condition
-    const distance = Math.sqrt(newX*newX + newY*newY + newZ*newZ);
+    const distance = f32(Math.sqrt(newX*newX + newY*newY + newZ*newZ));
     
     if (distance > 1.0) {
       // Apply side flip variation
@@ -207,7 +228,10 @@ export class AttractorEngine {
    */
   private applyGlobalRotation(): void {
     // Convert current position to quaternion
-    const currentPos = new Float32Array([this.currentX, this.currentY, this.currentZ]);
+    const currentPos = new Float32Array(3);
+    currentPos[0] = this.currentX;
+    currentPos[1] = this.currentY;
+    currentPos[2] = this.currentZ;
     const quaternion = inverseStereographicProjection(currentPos);
     
     // Apply rotation: q' = r * q
@@ -277,27 +301,22 @@ export class AttractorEngine {
    * Get current state
    */
   getCurrentState(): AttractorPoint {
-    return {
-      x: this.currentX,
-      y: this.currentY,
-      z: this.currentZ,
-      side: this.currentSide
-    };
+    return new AttractorPoint(this.currentX, this.currentY, this.currentZ, this.currentSide);
   }
   
   /**
    * Get statistics
    */
   getStatistics(): Float32Array {
-    return new Float32Array([
-      f32(this.totalSteps),
-      f32(this.sideFlipCount),
-      f32(this.currentIndex),
-      this.currentX,
-      this.currentY,
-      this.currentZ,
-      f32(this.currentSide)
-    ]);
+    const result = new Float32Array(7);
+    result[0] = f32(this.totalSteps);
+    result[1] = f32(this.sideFlipCount);
+    result[2] = f32(this.currentIndex);
+    result[3] = this.currentX;
+    result[4] = this.currentY;
+    result[5] = this.currentZ;
+    result[6] = f32(this.currentSide);
+    return result;
   }
   
   /**

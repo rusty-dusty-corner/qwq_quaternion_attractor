@@ -12,6 +12,7 @@ async function instantiate(module, imports = {}) {
           throw Error(`${message} in ${fileName}:${lineNumber}:${columnNumber}`);
         })();
       },
+      table: new WebAssembly.Table({ initial: 1, element: "anyfunc" }),
     }),
   };
   const { exports } = await WebAssembly.instantiate(module, adaptedImports);
@@ -19,13 +20,13 @@ async function instantiate(module, imports = {}) {
   const adaptedExports = Object.setPrototypeOf({
     normalizeQuaternion(q) {
       // src/wasm/quaternion-math/normalizeQuaternion(~lib/typedarray/Float32Array) => ~lib/typedarray/Float32Array
-      q = __lowerTypedArray(Float32Array, 4, 2, q) || __notnull();
+      q = __lowerTypedArray(Float32Array, 5, 2, q) || __notnull();
       return __liftTypedArray(Float32Array, exports.normalizeQuaternion(q) >>> 0);
     },
     quaternionMultiply(q1, q2) {
       // src/wasm/quaternion-math/quaternionMultiply(~lib/typedarray/Float32Array, ~lib/typedarray/Float32Array) => ~lib/typedarray/Float32Array
-      q1 = __retain(__lowerTypedArray(Float32Array, 4, 2, q1) || __notnull());
-      q2 = __lowerTypedArray(Float32Array, 4, 2, q2) || __notnull();
+      q1 = __retain(__lowerTypedArray(Float32Array, 5, 2, q1) || __notnull());
+      q2 = __lowerTypedArray(Float32Array, 5, 2, q2) || __notnull();
       try {
         return __liftTypedArray(Float32Array, exports.quaternionMultiply(q1, q2) >>> 0);
       } finally {
@@ -34,18 +35,18 @@ async function instantiate(module, imports = {}) {
     },
     stereographicProjection(q) {
       // src/wasm/quaternion-math/stereographicProjection(~lib/typedarray/Float32Array) => ~lib/typedarray/Float32Array
-      q = __lowerTypedArray(Float32Array, 4, 2, q) || __notnull();
+      q = __lowerTypedArray(Float32Array, 5, 2, q) || __notnull();
       return __liftTypedArray(Float32Array, exports.stereographicProjection(q) >>> 0);
     },
     inverseStereographicProjection(p) {
       // src/wasm/quaternion-math/inverseStereographicProjection(~lib/typedarray/Float32Array) => ~lib/typedarray/Float32Array
-      p = __lowerTypedArray(Float32Array, 4, 2, p) || __notnull();
+      p = __lowerTypedArray(Float32Array, 5, 2, p) || __notnull();
       return __liftTypedArray(Float32Array, exports.inverseStereographicProjection(p) >>> 0);
     },
     rotateVector(v, q) {
       // src/wasm/quaternion-math/rotateVector(~lib/typedarray/Float32Array, ~lib/typedarray/Float32Array) => ~lib/typedarray/Float32Array
-      v = __retain(__lowerTypedArray(Float32Array, 4, 2, v) || __notnull());
-      q = __lowerTypedArray(Float32Array, 4, 2, q) || __notnull();
+      v = __retain(__lowerTypedArray(Float32Array, 5, 2, v) || __notnull());
+      q = __lowerTypedArray(Float32Array, 5, 2, q) || __notnull();
       try {
         return __liftTypedArray(Float32Array, exports.rotateVector(v, q) >>> 0);
       } finally {
@@ -54,8 +55,8 @@ async function instantiate(module, imports = {}) {
     },
     distance3D(p1, p2) {
       // src/wasm/quaternion-math/distance3D(~lib/typedarray/Float32Array, ~lib/typedarray/Float32Array) => f32
-      p1 = __retain(__lowerTypedArray(Float32Array, 4, 2, p1) || __notnull());
-      p2 = __lowerTypedArray(Float32Array, 4, 2, p2) || __notnull();
+      p1 = __retain(__lowerTypedArray(Float32Array, 5, 2, p1) || __notnull());
+      p2 = __lowerTypedArray(Float32Array, 5, 2, p2) || __notnull();
       try {
         return exports.distance3D(p1, p2);
       } finally {
@@ -64,16 +65,25 @@ async function instantiate(module, imports = {}) {
     },
     magnitude3D(v) {
       // src/wasm/quaternion-math/magnitude3D(~lib/typedarray/Float32Array) => f32
-      v = __lowerTypedArray(Float32Array, 4, 2, v) || __notnull();
+      v = __lowerTypedArray(Float32Array, 5, 2, v) || __notnull();
       return exports.magnitude3D(v);
     },
-    SideFlipVariation: (values => (
-      // src/wasm/attractor-engine/SideFlipVariation
-      values[values.PLAIN_FLIP = exports["SideFlipVariation.PLAIN_FLIP"].valueOf()] = "PLAIN_FLIP",
-      values[values.FLIP_SMALLEST = exports["SideFlipVariation.FLIP_SMALLEST"].valueOf()] = "FLIP_SMALLEST",
-      values[values.FLIP_ALL_EXCEPT_LARGEST = exports["SideFlipVariation.FLIP_ALL_EXCEPT_LARGEST"].valueOf()] = "FLIP_ALL_EXCEPT_LARGEST",
-      values
-    ))({}),
+    getPointRange(engineId, start, count) {
+      // src/wasm/function-api/getPointRange(i32, i32, i32) => ~lib/typedarray/Float32Array
+      return __liftTypedArray(Float32Array, exports.getPointRange(engineId, start, count) >>> 0);
+    },
+    getAllPoints(engineId) {
+      // src/wasm/function-api/getAllPoints(i32) => ~lib/typedarray/Float32Array
+      return __liftTypedArray(Float32Array, exports.getAllPoints(engineId) >>> 0);
+    },
+    getStatistics(engineId) {
+      // src/wasm/function-api/getStatistics(i32) => ~lib/typedarray/Float32Array
+      return __liftTypedArray(Float32Array, exports.getStatistics(engineId) >>> 0);
+    },
+    getCurrentState(engineId) {
+      // src/wasm/function-api/getCurrentState(i32) => ~lib/typedarray/Float32Array
+      return __liftTypedArray(Float32Array, exports.getCurrentState(engineId) >>> 0);
+    },
   }, exports);
   function __liftString(pointer) {
     if (!pointer) return null;
@@ -161,7 +171,20 @@ export const {
   rotateVector,
   distance3D,
   magnitude3D,
-  SideFlipVariation,
+  createAttractorEngine,
+  generatePoints,
+  getPointCount,
+  getPointRange,
+  getAllPoints,
+  getStatistics,
+  getCurrentState,
+  updateConfig,
+  resetEngine,
+  getEngineCount,
+  clearAllEngines,
+  SIDE_FLIP_PLAIN,
+  SIDE_FLIP_SMALLEST,
+  SIDE_FLIP_ALL_EXCEPT_LARGEST,
 } = await (async url => instantiate(
   await (async () => {
     const isNodeOrBun = typeof process != "undefined" && process.versions != null && (process.versions.node != null || process.versions.bun != null);
@@ -169,4 +192,4 @@ export const {
     else { return await globalThis.WebAssembly.compileStreaming(globalThis.fetch(url)); }
   })(), {
   }
-))(new URL("math-engine.wasm", import.meta.url));
+))(new URL("attractor-engine.wasm", import.meta.url));

@@ -59,12 +59,12 @@ export class DeterministicRandom {
       w = x1*x1 + x2*x2;
     } while (w >= 1.0);
     
-    const scale = Math.sqrt((1.0 - w) / w);
-    return new Float32Array([
-      x1 * scale,
-      x2 * scale,
-      1.0 - 2.0 * w
-    ]);
+    const scale = f32(Math.sqrt((1.0 - w) / w));
+    const result = new Float32Array(3);
+    result[0] = x1 * scale;
+    result[1] = x2 * scale;
+    result[2] = 1.0 - 2.0 * w;
+    return result;
   }
   
   /**
@@ -82,13 +82,13 @@ export class DeterministicRandom {
       w = x1*x1 + x2*x2 + x3*x3 + x4*x4;
     } while (w >= 1.0);
     
-    const scale = Math.sqrt((1.0 - w) / w);
-    return new Float32Array([
-      x1 * scale,
-      x2 * scale,
-      x3 * scale,
-      x4 * scale
-    ]);
+    const scale = f32(Math.sqrt((1.0 - w) / w));
+    const result = new Float32Array(4);
+    result[0] = x1 * scale;
+    result[1] = x2 * scale;
+    result[2] = x3 * scale;
+    result[3] = x4 * scale;
+    return result;
   }
   
   /**
