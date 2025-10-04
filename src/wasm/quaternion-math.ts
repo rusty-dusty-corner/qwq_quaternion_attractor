@@ -5,15 +5,15 @@
  * Compiled to WebAssembly for maximum performance.
  */
 
-// Type definitions for AssemblyScript
-export type Quaternion = Float32Array; // [w, x, y, z]
-export type Point3D = Float32Array;    // [x, y, z]
-export type Vector3D = Float32Array;   // [x, y, z]
+// Type definitions for AssemblyScript (inline types)
+// Quaternion = Float32Array; // [w, x, y, z]
+// Point3D = Float32Array;    // [x, y, z]
+// Vector3D = Float32Array;   // [x, y, z]
 
 /**
  * Normalize a quaternion to unit length
  */
-export function normalizeQuaternion(q: Quaternion): Quaternion {
+export function normalizeQuaternion(q: Float32Array): Float32Array {
   const w = q[0];
   const x = q[1];
   const y = q[2];
@@ -31,7 +31,7 @@ export function normalizeQuaternion(q: Quaternion): Quaternion {
 /**
  * Multiply two quaternions using Hamilton product
  */
-export function quaternionMultiply(q1: Quaternion, q2: Quaternion): Quaternion {
+export function quaternionMultiply(q1: Float32Array, q2: Float32Array): Float32Array {
   const w1 = q1[0];
   const x1 = q1[1];
   const y1 = q1[2];
@@ -54,7 +54,7 @@ export function quaternionMultiply(q1: Quaternion, q2: Quaternion): Quaternion {
  * Stereographic projection from 4D sphere to 3D space
  * Projects quaternion (w,x,y,z) to 3D coordinates
  */
-export function stereographicProjection(q: Quaternion): Point3D {
+export function stereographicProjection(q: Float32Array): Float32Array {
   const w = q[0];
   const x = q[1];
   const y = q[2];
@@ -73,7 +73,7 @@ export function stereographicProjection(q: Quaternion): Point3D {
  * Inverse stereographic projection from 3D space to 4D sphere
  * Maps 3D point back to quaternion on S³
  */
-export function inverseStereographicProjection(p: Point3D): Quaternion {
+export function inverseStereographicProjection(p: Float32Array): Float32Array {
   const x = p[0];
   const y = p[1];
   const z = p[2];
@@ -94,7 +94,7 @@ export function inverseStereographicProjection(p: Point3D): Quaternion {
 /**
  * Rotate a 3D vector using a quaternion
  */
-export function rotateVector(v: Vector3D, q: Quaternion): Vector3D {
+export function rotateVector(v: Float32Array, q: Float32Array): Float32Array {
   // Convert vector to pure quaternion
   const vQuat = new Float32Array([0.0, v[0], v[1], v[2]]);
   
@@ -109,7 +109,7 @@ export function rotateVector(v: Vector3D, q: Quaternion): Vector3D {
 /**
  * Calculate distance between two 3D points
  */
-export function distance3D(p1: Point3D, p2: Point3D): f32 {
+export function distance3D(p1: Float32Array, p2: Float32Array): f32 {
   const dx = p1[0] - p2[0];
   const dy = p1[1] - p2[1];
   const dz = p1[2] - p2[2];
@@ -120,6 +120,6 @@ export function distance3D(p1: Point3D, p2: Point3D): f32 {
 /**
  * Calculate magnitude of a 3D vector
  */
-export function magnitude3D(v: Vector3D): f32 {
+export function magnitude3D(v: Float32Array): f32 {
   return Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2]);
 }

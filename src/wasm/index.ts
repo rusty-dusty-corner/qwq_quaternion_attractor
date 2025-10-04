@@ -12,10 +12,7 @@ export {
   inverseStereographicProjection,
   rotateVector,
   distance3D,
-  magnitude3D,
-  type Quaternion,
-  type Point3D,
-  type Vector3D
+  magnitude3D
 } from './quaternion-math';
 
 // Export random number generator
@@ -24,7 +21,5 @@ export { DeterministicRandom } from './deterministic-random';
 // Export attractor engine
 export {
   AttractorEngine,
-  SideFlipVariation,
-  type AttractorConfig,
-  type AttractorPoint
+  SideFlipVariation
 } from './attractor-engine';

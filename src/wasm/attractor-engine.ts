@@ -11,10 +11,7 @@ import {
   stereographicProjection, 
   inverseStereographicProjection,
   rotateVector,
-  magnitude3D,
-  type Quaternion,
-  type Point3D,
-  type Vector3D
+  magnitude3D
 } from './quaternion-math';
 import { DeterministicRandom } from './deterministic-random';
 
