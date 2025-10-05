@@ -138,7 +138,8 @@ docs/
 The `archive/` directory contains valuable historical context:
 - **Project Evolution**: `archive/README.md` - Archive overview and structure evolution
 - **Restructuring History**: `archive/PROJECT_RESTRUCTURING_HISTORY.md` - Detailed refactoring documentation
-- **Session Reports**: `archive/reports/README.md` - Chronologically organized development reports (0001-0010) with git integration
+- **Session Reports**: `archive/reports/README.md` - Chronologically organized development reports (0001-0011) with git integration
+- **Project Reviews**: `archive/reviews/` - Comprehensive project structure and organization reviews
 - **Analysis Sessions**: Detailed reports from previous development sessions
 - **Visual Analysis**: Insights from PNG image analysis
 - **Nix Setup**: Environment configuration guides
