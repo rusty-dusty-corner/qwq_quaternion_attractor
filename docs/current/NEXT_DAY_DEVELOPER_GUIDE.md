@@ -71,6 +71,11 @@ npm run groq:compare -- output/png_examples/performance/performance_500.png outp
 npm run puppeteer:legacy
 # Then test: curl -X GET http://localhost:3000/api/status
 
+# 💡 RECOMMENDED WORKFLOW: Puppeteer + Direct Groq Comparison
+# 1. Use puppeteer to capture screenshots and interact with pages
+# 2. Use direct Groq tool for efficient image comparisons:
+node tools/universal-groq-analyzer.js compare screenshot1.png screenshot2.png "Compare patterns"
+
 # Build all targets (Node.js + Browser)
 npm run build:all
 ```
@@ -106,6 +111,11 @@ Performance Summary:
 - `tools/README_UNIVERSAL_GROQ_ANALYZER.md` - Complete documentation for analysis tool
 - `tools/interactive-puppeteer-automator.js` - Interactive browser automation tool (NEW)
 - `tools/README_INTERACTIVE_PUPPETEER_AUTOMATOR.md` - Complete automation tool documentation
+
+### **💡 Tool Usage Best Practices**
+- **Puppeteer**: Use for interactive testing, real-time browser control, and screenshot capture
+- **Direct Groq Tool**: Use for efficient image comparisons and batch analysis
+- **Recommended Workflow**: Puppeteer → Capture Screenshots → Direct Groq Comparison
 
 ### **Recent Improvements**
 - `docs/current/OPTIMIZATION_SUMMARY.md` - Summary of recent optimizations

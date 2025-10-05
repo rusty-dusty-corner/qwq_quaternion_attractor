@@ -34,6 +34,25 @@ npm run puppeteer:automator -- http://localhost:8080 3001
 - **Dynamic Scripting**: Run JavaScript code in browser context
 - **Real-time Feedback**: See results immediately
 
+## 💡 **Best Practices: When to Use Which Tool**
+
+### **Use Puppeteer Automator For:**
+- **Interactive Testing**: When you need to click buttons, fill forms, navigate pages
+- **Real-time Analysis**: When you want to see live browser behavior
+- **Dynamic Content**: When content changes based on user interactions
+- **Debugging**: When you need to see console logs and errors in real-time
+
+### **Use Direct Groq Tool For:**
+- **Image Comparisons**: Comparing two or more screenshots (much more efficient)
+- **Batch Analysis**: Analyzing multiple images at once
+- **Static Analysis**: When you already have screenshots saved
+- **Detailed Comparisons**: When you need precise visual difference analysis
+
+### **Workflow Recommendation:**
+1. **Use Puppeteer** to capture screenshots and interact with the page
+2. **Use Direct Groq Tool** to compare and analyze the captured screenshots
+3. **Use Puppeteer** again if you need to take more screenshots based on analysis
+
 ## 🎯 **Use Cases**
 
 ### **🧪 Testing & Debugging**
@@ -54,6 +73,10 @@ npm run puppeteer:legacy
 # Take screenshots of different parameters
 # Use Groq Vision to compare patterns
 # Identify visual differences automatically
+
+# 💡 BETTER APPROACH: Use direct Groq tool for comparisons
+node tools/universal-groq-analyzer.js compare screenshot1.png screenshot2.png "Compare these patterns"
+# This is more efficient than using the puppeteer API for comparisons
 ```
 
 ### **🔍 UI Exploration**
