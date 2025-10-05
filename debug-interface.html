@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Interface</title>
+</head>
+<body>
+    <h1>Debug Interface</h1>
+    <div>
+        <label for="seed">Seed:</label>
+        <input type="text" id="seed" value="12345">
+        <button id="randomSeed">🎲 Random Seed</button>
+    </div>
+    <div id="output"></div>
+
+    <script>
+        console.log('Debug script loaded');
+        
+        const seedInput = document.getElementById('seed');
+        const randomSeedBtn = document.getElementById('randomSeed');
+        const output = document.getElementById('output');
+        
+        console.log('Elements found:', {
+            seedInput: !!seedInput,
+            randomSeedBtn: !!randomSeedBtn,
+            output: !!output
+        });
+        
+        function generateRandomSeed() {
+            console.log('🎲 Random seed button clicked');
+            const randomSeed = Math.floor(Math.random() * 1000000);
+            console.log('🎲 Generated seed:', randomSeed);
+            seedInput.value = randomSeed.toString();
+            console.log('🎲 Input value set to:', seedInput.value);
+            output.innerHTML = `Seed changed to: ${randomSeed}`;
+        }
+        
+        randomSeedBtn.addEventListener('click', generateRandomSeed);
+        console.log('Event listener added');
+        
+        // Test direct function call
+        setTimeout(() => {
+            console.log('Testing direct function call...');
+            generateRandomSeed();
+        }, 1000);
+    </script>
+</body>
+</html>

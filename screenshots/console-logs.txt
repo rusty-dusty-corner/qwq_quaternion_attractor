@@ -1,0 +1,3 @@
+[error] Failed to load resource: the server responded with a status of 404 (File not found)
+[log] Testing direct function call from page.evaluate
+[log] Direct function call result: 7733
