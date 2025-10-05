@@ -205,16 +205,25 @@
 
     <script type="module">
         // Import the compiled JavaScript modules
-        import { createAttractorEngine, EngineType, SideFlipMode, ProjectionType, createQuaternion, createVector3D } from './dist/typescript/core/attractor-engine.js';
-        import { SimplePNGRenderer } from './dist/typescript/node/image-renderer.js';
+        import { 
+            JavaScriptAttractorEngine, 
+            AttractorConstants, 
+            RenderParameters, 
+            SideFlipMode, 
+            ProjectionType,
+            BrowserAttractorRenderer,
+            DEFAULT_ATTRACTOR_CONSTANTS,
+            DEFAULT_RENDER_PARAMETERS,
+            createQuaternion, 
+            createVector3D 
+        } from '../dist/browser/main.js';
 
         class AttractorGenerator {
             constructor() {
-                this.engine = null;
-                this.renderer = null;
+                this.engine = new JavaScriptAttractorEngine();
+                this.renderer = new BrowserAttractorRenderer(document.getElementById('canvas'));
                 this.initializeElements();
                 this.setupEventListeners();
-                this.initializeEngine();
             }
 
             initializeElements() {

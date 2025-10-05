@@ -8,7 +8,8 @@
   "scripts": {
     "build:assembly": "asc src/assembly/index.ts -b build/attractor-engine.wasm -t build/attractor-engine.wat --optimize --sourceMap",
     "build:typescript": "tsc",
-    "build:all": "npm run build:assembly && npm run build:typescript",
+    "build:browser": "tsc -p tsconfig.browser.json",
+    "build:all": "npm run build:assembly && npm run build:typescript && npm run build:browser",
     "build:watch": "npm run build:assembly && tsc --watch",
     "dev:browser": "npm run build:all && serve -s dist/browser",
     "dev:node": "npm run build:all && node dist/node/main.js",

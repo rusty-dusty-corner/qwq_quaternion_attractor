@@ -11,10 +11,19 @@ import {
   AttractorConstants,
   RenderParameters,
   AttractorResult,
-  SideFlipMode,
   ProjectionType,
   createPoint2D
 } from './attractor-engine';
+import {
+  normalizeQuaternion,
+  multiplyQuaternions,
+  conjugateQuaternion,
+  stereographicProjection,
+  inverseStereographicProjection,
+  addVector3D,
+  applySideFlipping,
+  magnitude3D
+} from '../../shared/quaternion-math';
 
 // ============================================================================
 // JAVASCRIPT ATTRACTOR ENGINE
@@ -38,8 +47,8 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
     }
 
     // Normalize input quaternions
-    const normalizedStart = this.normalizeQuaternion(constants.start);
-    const normalizedCamera = this.normalizeQuaternion(renderParams.cameraRotation);
+    const normalizedStart = normalizeQuaternion(constants.start);
+    const normalizedCamera = normalizeQuaternion(renderParams.cameraRotation);
 
     // Generate points
     const points = this.generateAttractorPoints(
@@ -95,16 +104,16 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
 
     for (let i = 0; i < renderParams.batchSize; i++) {
       // Apply wind rotation
-      currentQuaternion = this.multiplyQuaternions(currentQuaternion, constants.wind);
+      currentQuaternion = multiplyQuaternions(currentQuaternion, constants.wind);
 
       // Project to 3D space
-      const point3D = this.stereographicProjection(currentQuaternion);
+      const point3D = stereographicProjection(currentQuaternion);
 
       // Apply additive vector
-      const modifiedPoint = this.addVector3D(point3D, constants.additive);
+      const modifiedPoint = addVector3D(point3D, constants.additive);
 
       // Check if point is outside unit ball and apply side flipping
-      const processedPoint = this.applySideFlipping(
+      const processedPoint = applySideFlipping(
         modifiedPoint,
         constants.mode,
         currentQuaternion
@@ -114,7 +123,7 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
       points.push(processedPoint);
 
       // Update current quaternion for next iteration
-      currentQuaternion = this.inverseStereographicProjection(processedPoint);
+      currentQuaternion = inverseStereographicProjection(processedPoint);
     }
 
     return points;
@@ -126,12 +135,12 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
   private applyCameraRotation(points: any[], cameraRotation: any): any[] {
     return points.map(point => {
       // Convert 3D point to quaternion for rotation
-      const pointQuaternion = this.inverseStereographicProjection(point);
-      const rotatedQuaternion = this.multiplyQuaternions(
-        this.multiplyQuaternions(cameraRotation, pointQuaternion),
-        this.conjugateQuaternion(cameraRotation)
+      const pointQuaternion = inverseStereographicProjection(point);
+      const rotatedQuaternion = multiplyQuaternions(
+        multiplyQuaternions(cameraRotation, pointQuaternion),
+        conjugateQuaternion(cameraRotation)
       );
-      return this.stereographicProjection(rotatedQuaternion);
+      return stereographicProjection(rotatedQuaternion);
     });
   }
 
@@ -151,7 +160,7 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
 
         case ProjectionType.SPHERE:
           // Sphere projection - rotate 3D point then project
-          const magnitude = Math.sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
+          const magnitude = magnitude3D(point);
           if (magnitude === 0) {
             x = y = 0;
           } else {
@@ -174,39 +183,7 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
     });
   }
 
-  /**
-   * Apply side flipping based on mode
-   */
-  private applySideFlipping(
-    point: any,
-    mode: SideFlipMode,
-    currentQuaternion: any
-  ): any {
-    const magnitude = Math.sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
-
-    // If point is inside unit ball, no flipping needed
-    if (magnitude <= 1.0) {
-      return point;
-    }
-
-    // Apply side flipping based on mode
-    switch (mode) {
-      case SideFlipMode.PLAIN_FLIP:
-        // Just flip the hemisphere side
-        return this.flipHemisphere(point, currentQuaternion);
-
-      case SideFlipMode.FLIP_SMALLEST:
-        // Flip the smallest component
-        return this.flipSmallestComponent(point);
-
-      case SideFlipMode.FLIP_ALL_EXCEPT_LARGEST:
-        // Flip all components except the largest
-        return this.flipAllExceptLargest(point);
-
-      default:
-        return point;
-    }
-  }
+  // Note: applySideFlipping is now handled by shared/quaternion-math.ts
 
   /**
    * Calculate final quaternion state
@@ -219,130 +196,28 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
     let currentQuaternion = { ...startQuaternion };
 
     for (let i = 0; i < iterations; i++) {
-      currentQuaternion = this.multiplyQuaternions(currentQuaternion, constants.wind);
-      const point3D = this.stereographicProjection(currentQuaternion);
-      const modifiedPoint = this.addVector3D(point3D, constants.additive);
+      currentQuaternion = multiplyQuaternions(currentQuaternion, constants.wind);
+      const point3D = stereographicProjection(currentQuaternion);
+      const modifiedPoint = addVector3D(point3D, constants.additive);
       
       // Apply side flipping if needed
-      const magnitude = Math.sqrt(modifiedPoint.x * modifiedPoint.x + modifiedPoint.y * modifiedPoint.y + modifiedPoint.z * modifiedPoint.z);
+      const magnitude = magnitude3D(modifiedPoint);
       if (magnitude > 1.0) {
-        currentQuaternion = this.inverseStereographicProjection(
-          this.applySideFlipping(modifiedPoint, constants.mode, currentQuaternion)
+        currentQuaternion = inverseStereographicProjection(
+          applySideFlipping(modifiedPoint, constants.mode, currentQuaternion)
         );
       } else {
-        currentQuaternion = this.inverseStereographicProjection(modifiedPoint);
+        currentQuaternion = inverseStereographicProjection(modifiedPoint);
       }
     }
 
-    return this.normalizeQuaternion(currentQuaternion);
+    return normalizeQuaternion(currentQuaternion);
   }
 
   // ============================================================================
   // MATHEMATICAL HELPER METHODS
   // ============================================================================
-
-  /**
-   * Stereographic projection from 4D to 3D
-   */
-  private stereographicProjection(quaternion: any): any {
-    const { w, x, y, z } = quaternion;
-
-    // Handle north pole singularity
-    if (Math.abs(1 - w) < 1e-10) {
-      return { x: 0, y: 0, z: 0 };
-    }
-
-    const scale = 1 / (1 - w);
-    return {
-      x: x * scale,
-      y: y * scale,
-      z: z * scale
-    };
-  }
-
-  /**
-   * Inverse stereographic projection from 3D to 4D
-   */
-  private inverseStereographicProjection(point: any): any {
-    const { x, y, z } = point;
-    const r2 = x * x + y * y + z * z;
-
-    // Handle north pole singularity
-    if (r2 < 1e-10) {
-      return { w: 1, x: 0, y: 0, z: 0 };
-    }
-
-    const w = (r2 - 1) / (r2 + 1);
-    const scale = 2 / (r2 + 1);
-
-    return {
-      w: w,
-      x: x * scale,
-      y: y * scale,
-      z: z * scale
-    };
-  }
-
-  /**
-   * Add two 3D vectors
-   */
-  private addVector3D(point: any, vector: any): any {
-    return {
-      x: point.x + vector.x,
-      y: point.y + vector.y,
-      z: point.z + vector.z
-    };
-  }
-
-  /**
-   * Flip hemisphere side
-   */
-  private flipHemisphere(_point: any, quaternion: any): any {
-    // Simple hemisphere flip - negate the quaternion w component
-    const flippedQuaternion = { ...quaternion, w: -quaternion.w };
-    return this.stereographicProjection(flippedQuaternion);
-  }
-
-  /**
-   * Flip smallest component
-   */
-  private flipSmallestComponent(point: any): any {
-    const absX = Math.abs(point.x);
-    const absY = Math.abs(point.y);
-    const absZ = Math.abs(point.z);
-
-    if (absX <= absY && absX <= absZ) {
-      return { ...point, x: -point.x };
-    } else if (absY <= absZ) {
-      return { ...point, y: -point.y };
-    } else {
-      return { ...point, z: -point.z };
-    }
-  }
-
-  /**
-   * Flip all components except largest
-   */
-  private flipAllExceptLargest(point: any): any {
-    const absX = Math.abs(point.x);
-    const absY = Math.abs(point.y);
-    const absZ = Math.abs(point.z);
-
-    if (absX >= absY && absX >= absZ) {
-      return { ...point, y: -point.y, z: -point.z };
-    } else if (absY >= absZ) {
-      return { ...point, x: -point.x, z: -point.z };
-    } else {
-      return { ...point, x: -point.x, y: -point.y };
-    }
-  }
-
-  /**
-   * Generate conjugate of quaternion
-   */
-  private conjugateQuaternion(q: any): any {
-    return { w: q.w, x: -q.x, y: -q.y, z: -q.z };
-  }
+  // Note: Mathematical operations are now handled by shared/quaternion-math.ts
 
   /**
    * Generate color for point based on position and index
