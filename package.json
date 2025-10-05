@@ -22,6 +22,7 @@
     "example:png": "npm run build:typescript && node dist/examples/png-generation-example.js",
     "example:groq": "npm run build:typescript && node dist/examples/groq-vision-analysis-example.js",
     "test:groq": "npm run build:typescript && node dist/examples/test-groq-integration.js",
+    "analyze:detailed": "npm run build:typescript && node dist/examples/detailed-visual-analysis.js",
     "example:browser": "npm run build:all && node examples/browser-example.js",
     "example:node": "npm run build:all && node examples/node-example.js"
   },
