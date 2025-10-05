@@ -28,7 +28,10 @@
     "groq:quick": "node tools/universal-groq-analyzer.js quick",
     "groq:directory": "node tools/universal-groq-analyzer.js directory",
     "groq:list": "node tools/universal-groq-analyzer.js list",
-    "groq:presets": "node tools/universal-groq-analyzer.js presets"
+    "groq:presets": "node tools/universal-groq-analyzer.js presets",
+    "puppeteer:automator": "node tools/interactive-puppeteer-automator.js",
+    "puppeteer:legacy": "node tools/interactive-puppeteer-automator.js legacy2/index.html 3000",
+    "puppeteer:test": "node tools/interactive-puppeteer-automator.js http://localhost:8080 3001"
   },
   "keywords": [
     "quaternion",
@@ -55,6 +58,7 @@
   "dependencies": {
     "canvas": "^2.11.0",
     "dotenv": "^17.2.3",
+    "express": "^4.21.2",
     "groq-sdk": "^0.33.0",
     "puppeteer": "^24.23.0"
   },
