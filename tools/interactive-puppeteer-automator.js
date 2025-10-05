@@ -38,9 +38,49 @@ class InteractivePuppeteerAutomator {
     this.screenshotCounter = 0;
     this.analysisHistory = [];
     this.groqAnalyzer = new UniversalGroqAnalyzer();
+    this.pidFile = path.join(process.cwd(), `.puppeteer-automator-${this.port}.pid`);
+    this.processId = process.pid;
     
     // Setup express server
     this.setupServer();
+  }
+
+  async writePidFile() {
+    try {
+      const pidData = {
+        pid: this.processId,
+        port: this.port,
+        url: this.url,
+        startTime: new Date().toISOString(),
+        command: process.argv.join(' ')
+      };
+      await fs.writeFile(this.pidFile, JSON.stringify(pidData, null, 2));
+    } catch (error) {
+      console.warn('⚠️  Could not write PID file:', error.message);
+    }
+  }
+
+  async removePidFile() {
+    try {
+      await fs.unlink(this.pidFile);
+    } catch (error) {
+      // PID file might not exist, that's okay
+    }
+  }
+
+  async checkExistingProcess() {
+    try {
+      const pidData = JSON.parse(await fs.readFile(this.pidFile, 'utf8'));
+      console.log(`⚠️  Found existing PID file: ${this.pidFile}`);
+      console.log(`📋 Existing process info:`);
+      console.log(`   PID: ${pidData.pid}`);
+      console.log(`   Port: ${pidData.port}`);
+      console.log(`   Started: ${pidData.startTime}`);
+      console.log(`   URL: ${pidData.url}`);
+      return pidData;
+    } catch (error) {
+      return null;
+    }
   }
 
   setupServer() {
@@ -332,6 +372,20 @@ class InteractivePuppeteerAutomator {
   async start() {
     console.log('🚀 Starting Interactive Puppeteer Automator...');
     
+    // Check for existing process
+    const existingProcess = await this.checkExistingProcess();
+    if (existingProcess) {
+      console.log(`\n❌ Process already running on port ${this.port}`);
+      console.log(`   Kill existing process: kill ${existingProcess.pid}`);
+      console.log(`   Or use a different port: --port ${this.port + 1}\n`);
+      process.exit(1);
+    }
+    
+    // Write PID file
+    await this.writePidFile();
+    console.log(`📋 Process ID: ${this.processId}`);
+    console.log(`📁 PID file: ${this.pidFile}`);
+    
     // Start browser with nix-shell compatibility and session persistence
     const browserOptions = {
       headless: false, // Show browser for debugging
@@ -401,14 +455,42 @@ class InteractivePuppeteerAutomator {
     this.server = this.app.listen(this.port, () => {
       console.log(`🌐 Control interface available at: http://localhost:${this.port}`);
       console.log(`🎯 Target URL: ${fullUrl}`);
+      console.log(`📋 Process ID: ${this.processId}`);
+      console.log(`📁 PID file: ${this.pidFile}`);
       console.log('');
       console.log('🎮 Available commands:');
       console.log('  - Open http://localhost:' + this.port + ' for web interface');
       console.log('  - Press Ctrl+C to stop');
       console.log('  - Use REPL mode (coming next!)');
+      console.log('');
+      console.log('🔧 Process management:');
+      console.log(`  - Kill this process: kill ${this.processId}`);
+      console.log(`  - Check PID file: cat ${this.pidFile}`);
     });
 
+    // Setup cleanup on exit
+    this.setupCleanup();
+
     return this;
+  }
+
+  setupCleanup() {
+    const cleanup = async () => {
+      console.log('\n🛑 Shutting down Puppeteer Automator...');
+      await this.removePidFile();
+      if (this.browser) {
+        await this.browser.close();
+      }
+      if (this.server) {
+        this.server.close();
+      }
+      console.log('✅ Cleanup completed');
+      process.exit(0);
+    };
+
+    process.on('SIGINT', cleanup);
+    process.on('SIGTERM', cleanup);
+    process.on('exit', () => this.removePidFile());
   }
 
   async reconnectPage() {

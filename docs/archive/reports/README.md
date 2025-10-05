@@ -40,6 +40,8 @@ reports/
 | 0008 | 10:41 | Interactive Puppeteer Automation Tool | 19f7844 | Browser automation development |
 | 0009 | 11:18 | Interactive Puppeteer Enhancement | 2a1c6e0 | Tool enhancement and testing |
 | 0010 | 11:30 | WASM Testing & Documentation | 0aa348a | WASM validation and docs |
+| 0011 | 13:58 | Legacy Structure Organization | 5a024e0 | Project restructuring and docs |
+| 0012 | 14:34 | Puppeteer Testing & Tool Improvements | TBD | Web testing and process management |
 
 ---
 
@@ -74,6 +76,8 @@ git log --pretty=format:"%h %ad %s" --date=iso --since="2025-10-05"
 ### **Project Organization**
 - **Reports 0005-0006**: Project status, planning, and session summaries
 - **Report 0010**: WASM testing and documentation improvements
+- **Report 0011**: Legacy structure organization and documentation improvements
+- **Report 0012**: Puppeteer testing, JavaScript fixes, and tool improvements
 
 ---
 
