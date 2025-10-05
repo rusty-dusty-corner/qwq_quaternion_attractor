@@ -20,6 +20,8 @@
     "clean": "rm -rf dist build",
     "example:api": "npm run build:typescript && node dist/examples/api-usage-example.js",
     "example:png": "npm run build:typescript && node dist/examples/png-generation-example.js",
+    "example:groq": "npm run build:typescript && node dist/examples/groq-vision-analysis-example.js",
+    "test:groq": "npm run build:typescript && node dist/examples/test-groq-integration.js",
     "example:browser": "npm run build:all && node examples/browser-example.js",
     "example:node": "npm run build:all && node examples/node-example.js"
   },
@@ -47,6 +49,8 @@
   },
   "dependencies": {
     "canvas": "^2.11.0",
+    "dotenv": "^17.2.3",
+    "groq-sdk": "^0.33.0",
     "puppeteer": "^24.23.0"
   },
   "files": [
