@@ -22,6 +22,7 @@ export interface ImageConfig {
   offsetX: number;      // X offset for centering
   offsetY: number;      // Y offset for centering
   blurRadius: number;   // Blur radius for smoothing
+  normalizationMode?: 'statistics' | 'logarithmic'; // Normalization method
 }
 
 export interface RGBFloat {
@@ -342,10 +343,21 @@ export class SimplePNGRenderer {
       for (let x = 0; x < width; x++) {
         const pixel = this.grid[y][x];
         
-        // Normalize to 0-255 range using statistics
-        const r = this.normalizeValue(pixel.r, statistics.min.r, statistics.max.r);
-        const g = this.normalizeValue(pixel.g, statistics.min.g, statistics.max.g);
-        const b = this.normalizeValue(pixel.b, statistics.min.b, statistics.max.b);
+        // Choose normalization method based on configuration
+        const normalizationMode = this.config.normalizationMode || 'logarithmic'; // Default to new method
+        
+        let r, g, b;
+        if (normalizationMode === 'logarithmic') {
+          // Use advanced logarithmic + sigmoid normalization (FIXED - consistent across point counts)
+          r = this.normalizeFixedLogarithmic(pixel.r);
+          g = this.normalizeFixedLogarithmic(pixel.g);
+          b = this.normalizeFixedLogarithmic(pixel.b);
+        } else {
+          // Use legacy statistics-based normalization
+          r = this.normalizeValue(pixel.r, statistics.min.r, statistics.max.r);
+          g = this.normalizeValue(pixel.g, statistics.min.g, statistics.max.g);
+          b = this.normalizeValue(pixel.b, statistics.min.b, statistics.max.b);
+        }
 
         buffer[offset++] = Math.round(r);
         buffer[offset++] = Math.round(g);
@@ -357,11 +369,36 @@ export class SimplePNGRenderer {
   }
 
   /**
-   * Normalize value to 0-255 range
+   * Normalize value to 0-255 range (legacy statistics-based method)
    */
   private normalizeValue(value: number, min: number, max: number): number {
     if (max === min) return 0;
     return ((value - min) / (max - min)) * 255;
+  }
+
+  /**
+   * Advanced logarithmic + sigmoid normalization (FIXED - not data-dependent)
+   * This method provides consistent visual results regardless of point count
+   */
+  private normalizeFixedLogarithmic(value: number): number {
+    // Step 1: Logarithmic transformation to handle wide dynamic range
+    const logValue = Math.log(Math.abs(value) * 255 + 1);
+    
+    // Step 2: Fixed middle point (based on typical attractor data analysis)
+    const fixedMiddle = 4.5;
+    
+    // Step 3: Calculate error from fixed middle point
+    const error = logValue - fixedMiddle;
+    
+    // Step 4: Fixed normalization factor (based on typical standard deviation)
+    const fixedStdev = 1.0;
+    const normalizedError = error / fixedStdev;
+    
+    // Step 5: Apply sigmoid function for smooth, bounded transformation
+    const sigmoidOutput = 1 / (1 + Math.exp(-normalizedError));
+    
+    // Step 6: Map to 8-bit RGB (0-255)
+    return Math.round(sigmoidOutput * 255);
   }
 
   /**
