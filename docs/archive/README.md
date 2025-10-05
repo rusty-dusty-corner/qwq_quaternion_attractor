@@ -13,6 +13,7 @@ docs/archive/
 │   ├── README.md                       # Reports overview and timeline
 │   ├── 0001-0010_2025-01-05_*_REPORT.md # Sequential session reports
 ├── PROJECT_RESTRUCTURING_HISTORY.md   # Detailed restructuring documentation
+├── LEGACY_MIGRATION_PLAN.md           # Completed legacy migration plan
 ├── DRAFT01_STATUS.md                  # Draft01 branch status
 ├── PROJECT_STRUCTURE_*.md             # Structure analysis and optimization
 ├── LEGACY_*.md                        # Legacy implementation plans
@@ -120,6 +121,7 @@ project/
 ### **📊 Project Status Files**
 - **DRAFT01_STATUS.md**: Draft01 branch status and progress
 - **PROJECT_STRUCTURE_*.md**: Structure analysis and optimization plans
+- **LEGACY_MIGRATION_PLAN.md**: Completed legacy migration planning document
 - **LEGACY_*.md**: Legacy code migration planning
 
 ### **🚀 Historical Guides**
