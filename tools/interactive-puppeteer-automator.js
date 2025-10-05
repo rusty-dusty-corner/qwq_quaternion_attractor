@@ -543,7 +543,7 @@ class InteractivePuppeteerAutomator {
       
     // Save screenshot to file
     const filename = `screenshot_${Date.now()}_${this.screenshotCounter}.png`;
-    const filepath = path.join(process.cwd(), 'screenshots', 'automator', filename);
+    const filepath = path.join(process.cwd(), 'tools', 'docs', 'screenshots', 'current', 'automator', filename);
     
     // Ensure directory exists
     await fs.mkdir(path.dirname(filepath), { recursive: true });
@@ -565,7 +565,7 @@ class InteractivePuppeteerAutomator {
         });
         this.screenshotCounter++;
         const filename = `screenshot_${Date.now()}_${this.screenshotCounter}.png`;
-        const filepath = path.join(process.cwd(), 'screenshots', 'automator', filename);
+        const filepath = path.join(process.cwd(), 'tools', 'docs', 'screenshots', 'current', 'automator', filename);
         await fs.mkdir(path.dirname(filepath), { recursive: true });
         await fs.writeFile(filepath, screenshot, 'base64');
         console.log(`📸 Screenshot saved after reconnect: ${filepath}`);

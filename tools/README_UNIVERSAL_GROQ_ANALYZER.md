@@ -61,27 +61,27 @@ node tools/universal-groq-analyzer.js list <image>
 
 ### **Analyze Attractor Colors**
 ```bash
-node tools/universal-groq-analyzer.js quick output/png_examples/basic_attractor.png attractor-colors
+node tools/universal-groq-analyzer.js quick output/generated/basic_attractor.png attractor-colors
 ```
 **Creates**: `basic_attractor.groq_vision_single_ee0ec12f.json`
 
 ### **Compare Performance Tests**
 ```bash
 node tools/universal-groq-analyzer.js compare \
-  output/png_examples/performance/performance_500.png \
-  output/png_examples/performance/performance_1000.png \
+  output/generated/performance/performance_500.png \
+  output/generated/performance/performance_1000.png \
   "Compare the complexity and visual differences between these two performance test images"
 ```
 **Creates**: `performance_500.groq_vision_comparison_d818f4e2.json`
 
 ### **Check UI Screenshots**
 ```bash
-node tools/universal-groq-analyzer.js directory screenshots/browser "Do you see any UI buttons or error messages?"
+node tools/universal-groq-analyzer.js directory tools/docs/screenshots/archive/browser "Do you see any UI buttons or error messages?"
 ```
 
 ### **Mathematical Pattern Analysis**
 ```bash
-node tools/universal-groq-analyzer.js analyze output/png_examples/variations/plain_flip.png \
+node tools/universal-groq-analyzer.js analyze output/generated/variations/plain_flip.png \
   "Analyze the mathematical patterns, symmetries, and fractal properties in this quaternion attractor visualization"
 ```
 

@@ -230,7 +230,7 @@ The tool launches Puppeteer with:
 ### **Screenshots**
 Screenshots are saved to:
 ```
-screenshots/automator/
+tools/docs/screenshots/current/automator/
 ├── screenshot_1704567890123_1.png
 ├── screenshot_1704567890456_2.png
 └── temp_analysis_1704567890789.png
@@ -239,7 +239,7 @@ screenshots/automator/
 ### **Analysis Results**
 Groq Vision analyses are saved alongside screenshots:
 ```
-screenshots/automator/
+tools/docs/screenshots/current/automator/
 ├── screenshot_1704567890123_1.png
 ├── screenshot_1704567890123_1.groq_vision_single_a1b2c3d4.json
 └── screenshot_1704567890456_2.png

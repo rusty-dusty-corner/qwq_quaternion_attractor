@@ -11,8 +11,9 @@ build/
 *.wat
 *.d.ts
 
-# Generated images and output
-output/
+# Generated images and output (keep structure, ignore content)
+output/generated/
+output/test_results/
 *.png
 *.jpg
 *.jpeg
@@ -20,8 +21,13 @@ output/
 *.bmp
 *.tiff
 
-# Interactive Puppeteer Automation Tool outputs
-screenshots/
+# Keep analysis results (JSON files with explanations)
+!output/analysis/
+!*.groq_vision_*.json
+
+# Interactive Puppeteer Automation Tool outputs (keep structure, ignore content)
+tools/docs/screenshots/current/
+tools/docs/screenshots/archive/
 *.groq_vision_*.json
 automator_*.json
 
