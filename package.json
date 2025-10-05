@@ -37,7 +37,8 @@
     "strategy:high-points": "npm run build:typescript && node tools/high-point-count-generator.js",
     "strategy:experiment": "npm run build:typescript && node tools/parameter-experimenter.js",
     "strategy:random": "npm run build:typescript && node tools/random-parameter-generator.js",
-    "strategy:random-png": "npm run build:typescript && node tools/random-png-generator.js"
+    "strategy:random-png": "npm run build:typescript && node tools/random-png-generator.js",
+    "generate:mass": "npm run build:typescript && node tools/mass-image-generator.js"
   },
   "keywords": [
     "quaternion",
