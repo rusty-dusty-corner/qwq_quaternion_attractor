@@ -102,9 +102,40 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
     const points: any[] = [];
     let currentQuaternion = { ...startQuaternion };
 
+    // Add some randomness to prevent convergence to fixed points
+    const baseNoiseFactor = 0.01; // Increased noise factor
+    let iterationCount = 0;
+
     for (let i = 0; i < renderParams.batchSize; i++) {
       // Apply wind rotation
       currentQuaternion = multiplyQuaternions(currentQuaternion, constants.wind);
+
+      // Add progressive noise to prevent convergence - more noise for higher iteration counts
+      if (i % 50 === 0 && i > 0) {
+        const progressFactor = Math.min(1.0, i / 1000); // Increase noise as we progress
+        const noiseFactor = baseNoiseFactor * (1 + progressFactor);
+        
+        const noise = {
+          w: 1.0 + (Math.random() - 0.5) * noiseFactor,
+          x: (Math.random() - 0.5) * noiseFactor,
+          y: (Math.random() - 0.5) * noiseFactor,
+          z: (Math.random() - 0.5) * noiseFactor
+        };
+        currentQuaternion = multiplyQuaternions(currentQuaternion, noise);
+        currentQuaternion = normalizeQuaternion(currentQuaternion);
+      }
+
+      // Additional perturbation every 200 iterations for high iteration counts
+      if (i > 1000 && i % 200 === 0) {
+        const perturbation = {
+          w: 1.0 + (Math.random() - 0.5) * 0.05,
+          x: (Math.random() - 0.5) * 0.05,
+          y: (Math.random() - 0.5) * 0.05,
+          z: (Math.random() - 0.5) * 0.05
+        };
+        currentQuaternion = multiplyQuaternions(currentQuaternion, perturbation);
+        currentQuaternion = normalizeQuaternion(currentQuaternion);
+      }
 
       // Project to 3D space
       const point3D = stereographicProjection(currentQuaternion);
@@ -124,6 +155,8 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
 
       // Update current quaternion for next iteration
       currentQuaternion = inverseStereographicProjection(processedPoint);
+      
+      iterationCount++;
     }
 
     return points;

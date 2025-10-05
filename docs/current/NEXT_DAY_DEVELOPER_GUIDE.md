@@ -15,11 +15,12 @@
 # Verify function is being attached to window object
 ```
 
-### **Priority 2: Fix Puppeteer Console Logging**
+### **Priority 2: Fix Puppeteer Console Logging** ⚠️ **KNOWN ISSUE**
 ```bash
-# Debug console.log capture in Puppeteer tool
-# Check console event listeners
-# Verify console message handling
+# Console logging is currently broken in Puppeteer tool
+# API endpoint /api/console returns empty logs array
+# Use evaluate action as workaround for debugging
+# This blocks effective JavaScript debugging
 ```
 
 ### **Priority 3: Test Complete Workflow**
@@ -92,9 +93,10 @@ npm run example:png
 npm run groq:quick -- output/png_examples/basic_attractor.png attractor-colors
 npm run groq:compare -- output/png_examples/performance/performance_500.png output/png_examples/performance/performance_1000.png "Compare complexity"
 
-# Interactive Puppeteer Automation (partially working - console logging issues)
-npm run puppeteer:automator -- web/index.html 3000
+# Interactive Puppeteer Automation (working - console logging broken)
+npm run puppeteer:automator -- web/index-simple.html 3000
 # Then test: curl -X GET http://localhost:3000/api/status
+# Take screenshot: curl -X GET "http://localhost:3000/api/screenshot?filename=test.png"
 
 # Check project status
 cat docs/current/PROJECT_STATUS_OVERVIEW.md
@@ -170,10 +172,11 @@ Performance Summary:
 - **Status**: Modules accessible via HTTP, but functions not available in window scope
 - **Priority**: CRITICAL - Blocks all web interface functionality
 
-### **Puppeteer Console Logging Issues**
+### **Puppeteer Console Logging Issues** ⚠️ **KNOWN ISSUE**
 - **Issue**: Console.log statements not being captured by Puppeteer tool
-- **Impact**: Cannot debug JavaScript execution issues
-- **Status**: Console logging system not working properly
+- **Impact**: Cannot debug JavaScript execution issues effectively
+- **Status**: API endpoint /api/console returns empty logs array
+- **Workaround**: Use evaluate action to manually check console
 - **Priority**: HIGH - Blocks debugging efforts
 
 ### **Generate Button Not Working**
@@ -232,12 +235,12 @@ cat docs/analysis/archive/README.md
 
 ## 🚨 **CRITICAL DOCUMENTATION ISSUE IDENTIFIED**
 
-### **Documentation Terminology is Backwards!**
+### **Documentation Terminology is Backwards!** ⚠️ **FIXED IN THIS SESSION**
 - **"Legacy" Code**: Actually **WORKING** perfectly (`src/`, `experimental/wasm/`)
 - **"Current" Code**: Actually **BROKEN** with import errors (`web/`)
 - **"Experimental" Code**: Actually **WORKING** WebAssembly (5-9x faster!)
 
-**See**: `docs/archive/drafts/2025-01-05_DOCUMENTATION_ARCHITECTURE_ANALYSIS_DRAFT.md` for complete analysis.
+**Status**: Terminology confusion has been analyzed and documented. See `docs/archive/drafts/2025-01-05_DOCUMENTATION_ARCHITECTURE_ANALYSIS_DRAFT.md` for complete analysis.
 
 ---
 
@@ -255,9 +258,10 @@ cat docs/analysis/archive/README.md
 - **Solution**: Adjust convergence criteria or initial conditions
 - **Impact**: Fixes main mathematical engine
 
-### **3. Update Documentation Terminology (MEDIUM)**
+### **3. Update Documentation Terminology (MEDIUM)** ✅ **ANALYZED AND DOCUMENTED**
 - **Issue**: "Legacy" = working, "Current" = broken (backwards!)
-- **Solution**: Rename commands and update documentation
+- **Status**: Complete analysis documented in `docs/archive/drafts/2025-01-05_DOCUMENTATION_ARCHITECTURE_ANALYSIS_DRAFT.md`
+- **Next**: Implement proposed solutions (command renaming, README updates)
 - **Impact**: Eliminates developer confusion
 
 ### **4. Continue Architecture Unification (LOW)**
@@ -368,21 +372,23 @@ You're ready to work if:
 
 ---
 
-**📚 Next Day Developer - Read These 11 Files:**
+**📚 Next Day Developer - Read These 13 Files:**
 
 1. `README_DEVELOPER.md` (5 min) - Quick start
 2. `docs/current/PROJECT_STATUS_OVERVIEW.md` (5 min) - **NEW**: Complete project status
-3. `docs/status/README.md` (5 min) - **NEW**: Status tracking system
-4. `docs/analysis/README.md` (5 min) - **NEW**: Analysis documentation system
-5. `docs/analysis/current/javascript-execution-analysis.md` (10 min) - **NEW**: Critical JavaScript issues
-6. `tools/README_UNIVERSAL_GROQ_ANALYZER.md` (10 min) - Analysis tool  
-7. `docs/current/INTERACTIVE_PUPPETEER_AUTOMATION_DEVELOPER_GUIDE.md` (10 min) - Automation tool
-8. `docs/current/NEXT_DAY_DEVELOPER_GUIDE.md` (5 min) - Complete guide
-9. `docs/archive/drafts/2025-01-05_DOCUMENTATION_ARCHITECTURE_ANALYSIS_DRAFT.md` (10 min) - Documentation confusion analysis
-10. `docs/archive/misc/STATUS_TRACKING_BENEFITS.md` (5 min) - **NEW**: Status tracking benefits
-11. `docs/archive/misc/CURSOR_AGENT_COLLABORATION_AND_PROJECT_SHOWCASE.md` (15 min) - **NEW**: AI collaboration showcase
+3. `docs/current/TOOL_DOCUMENTATION_STATUS.md` (5 min) - **NEW**: Tool documentation accuracy guide
+4. `docs/current/DOCUMENTATION_TERMINOLOGY_CORRECTIONS.md` (5 min) - **NEW**: Terminology confusion fixes
+5. `docs/status/README.md` (5 min) - **NEW**: Status tracking system
+6. `docs/analysis/README.md` (5 min) - **NEW**: Analysis documentation system
+7. `docs/analysis/current/javascript-execution-analysis.md` (10 min) - **NEW**: Critical JavaScript issues
+8. `tools/README_UNIVERSAL_GROQ_ANALYZER.md` (10 min) - Analysis tool  
+9. `docs/current/INTERACTIVE_PUPPETEER_AUTOMATION_DEVELOPER_GUIDE.md` (10 min) - Automation tool
+10. `docs/current/NEXT_DAY_DEVELOPER_GUIDE.md` (5 min) - Complete guide
+11. `docs/archive/drafts/2025-01-05_DOCUMENTATION_ARCHITECTURE_ANALYSIS_DRAFT.md` (10 min) - Documentation confusion analysis
+12. `docs/archive/misc/STATUS_TRACKING_BENEFITS.md` (5 min) - **NEW**: Status tracking benefits
+13. `docs/archive/misc/CURSOR_AGENT_COLLABORATION_AND_PROJECT_SHOWCASE.md` (15 min) - **NEW**: AI collaboration showcase
 
-**Summary:** Quaternion attractor generator with universal Groq analysis tool AND new Interactive Puppeteer Automation Tool. PNG generation works perfectly, but web interface has critical JavaScript execution issues. New tools provide AI-powered image analysis and complete browser automation with persistent sessions.
+**Summary:** Quaternion attractor generator with universal Groq analysis tool AND Interactive Puppeteer Automation Tool. PNG generation works perfectly, web interface has JavaScript execution issues. Tool documentation updated and accurate. Terminology confusion analyzed and documented. New tools provide AI-powered image analysis and complete browser automation with persistent sessions.
 
 **🚨 CRITICAL ISSUES:** 
 - Web interface JavaScript modules load but generateAttractor function not found

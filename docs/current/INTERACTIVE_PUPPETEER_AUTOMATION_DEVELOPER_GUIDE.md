@@ -67,7 +67,7 @@ curl -X GET http://localhost:3000/api/status
 
 #### **GET /api/screenshot**
 ```bash
-curl -X GET http://localhost:3000/api/screenshot
+curl -X GET "http://localhost:3000/api/screenshot?filename=test_screenshot.png"
 ```
 **Response:**
 ```json
@@ -77,6 +77,7 @@ curl -X GET http://localhost:3000/api/screenshot
   "filename": "screenshot_1234567890_1.png"
 }
 ```
+**Note:** Optional `filename` parameter for custom naming.
 
 #### **POST /api/analyze**
 ```bash
@@ -113,15 +114,15 @@ curl -X GET http://localhost:3000/api/console
 ### **Example 1: Basic Button Interaction**
 ```bash
 # Take screenshot
-curl -X GET http://localhost:3000/api/screenshot
+curl -X GET "http://localhost:3000/api/screenshot?filename=before_click.png"
 
-# Click "Generate Points" button
+# Click "Generate Attractor" button (for web interface)
 curl -X POST http://localhost:3000/api/action \
   -H "Content-Type: application/json" \
-  -d '{"action": "evaluate", "text": "Array.from(document.querySelectorAll(\"button\")).find(btn => btn.textContent.includes(\"Generate Points\")).click()"}'
+  -d '{"action": "evaluate", "text": "document.getElementById(\"generate\").click()"}'
 
 # Take another screenshot
-curl -X GET http://localhost:3000/api/screenshot
+curl -X GET "http://localhost:3000/api/screenshot?filename=after_click.png"
 ```
 
 ### **Example 2: Animation Control**
@@ -213,11 +214,15 @@ tools/
 ├── README_INTERACTIVE_PUPPETEER_AUTOMATOR.md  # Complete documentation
 └── universal-groq-analyzer.js             # AI analysis integration
 
-screenshots/
-└── automator/                             # Screenshots saved here
-    ├── screenshot_1234567890_1.png
-    ├── screenshot_1234567890_2.png
-    └── [analysis results].json
+tools/docs/screenshots/                    # Screenshots saved here
+├── current/automator/                     # Current session screenshots
+│   ├── screenshot_1234567890_1.png
+│   ├── screenshot_1234567890_2.png
+│   └── [analysis results].json
+└── archive/                               # Historical screenshots
+    ├── browser/
+    ├── legacy/
+    └── wasm/
 ```
 
 ---
@@ -275,6 +280,18 @@ nix-shell --run "npm run puppeteer:legacy"
 curl -v http://localhost:3000/api/status
 
 # Check server logs in the terminal where you started the tool
+```
+
+#### **Console Logging Not Working** ⚠️ **KNOWN ISSUE**
+```bash
+# Console logging is currently broken - this is a known issue
+curl -X GET http://localhost:3000/api/console
+# Returns empty logs array even when console.log statements exist
+
+# Workaround: Use evaluate action to check console manually
+curl -X POST http://localhost:3000/api/action \
+  -H "Content-Type: application/json" \
+  -d '{"action": "evaluate", "text": "console.log(\"Test message\")"}'
 ```
 
 #### **Screenshots Not Saving**
@@ -359,14 +376,17 @@ You're ready to use this tool if:
 npm run puppeteer:legacy
 
 # Basic operations
-curl -X GET http://localhost:3000/api/screenshot
+curl -X GET "http://localhost:3000/api/screenshot?filename=test.png"
 curl -X POST http://localhost:3000/api/analyze -H "Content-Type: application/json" -d '{"preset": "ui-elements", "prompt": "What can I click?"}'
 
-# Button interaction
-curl -X POST http://localhost:3000/api/action -H "Content-Type: application/json" -d '{"action": "evaluate", "text": "Array.from(document.querySelectorAll(\"button\")).find(btn => btn.textContent.includes(\"Generate Points\")).click()"}'
+# Button interaction (for web interface)
+curl -X POST http://localhost:3000/api/action -H "Content-Type: application/json" -d '{"action": "evaluate", "text": "document.getElementById(\"generate\").click()"}'
 
 # Web interface
 # Visit: http://localhost:3000
+
+# ⚠️ Known Issue: Console logging broken
+# Use evaluate action instead of /api/console
 ```
 
 ---
