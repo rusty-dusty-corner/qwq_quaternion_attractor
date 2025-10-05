@@ -13,7 +13,7 @@
  *   node tools/interactive-puppeteer-automator.js [url] [port]
  * 
  * Examples:
- *   node tools/interactive-puppeteer-automator.js legacy2/index.html 3000
+ *   node tools/interactive-puppeteer-automator.js experimental/wasm/index.html 3000
  *   node tools/interactive-puppeteer-automator.js http://localhost:8080 3001
  */
 
@@ -29,7 +29,7 @@ const { UniversalGroqAnalyzer, PRESET_PROMPTS } = require('./universal-groq-anal
 
 class InteractivePuppeteerAutomator {
   constructor(options = {}) {
-    this.url = options.url || 'legacy2/index.html';
+    this.url = options.url || 'experimental/wasm/index.html';
     this.port = options.port || 3000;
     this.browser = null;
     this.page = null;
@@ -45,7 +45,7 @@ class InteractivePuppeteerAutomator {
 
   setupServer() {
     this.app.use(express.json());
-    this.app.use(express.static('legacy2')); // Serve static files
+    this.app.use(express.static('experimental/wasm')); // Serve static files
     
     // API endpoints
     this.app.get('/api/status', (req, res) => {
@@ -645,7 +645,7 @@ class InteractivePuppeteerAutomator {
 // CLI interface
 async function main() {
   const args = process.argv.slice(2);
-  const url = args[0] || 'legacy2/index.html';
+  const url = args[0] || 'experimental/wasm/index.html';
   const port = parseInt(args[1]) || 3000;
 
   console.log('🎯 Interactive Puppeteer Automator');

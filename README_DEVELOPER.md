@@ -15,7 +15,7 @@ npm run example:png
 
 # 3. Check what we have
 ls -la src/examples/
-ls -la legacy2/examples/
+ls -la experimental/wasm/examples/
 ```
 
 **Expected:** Beautiful PNG images generated successfully!
@@ -26,7 +26,7 @@ ls -la legacy2/examples/
 
 ### **✅ Complete System**
 - **TypeScript Engine**: Full quaternion math + PNG rendering
-- **WebAssembly Engine**: Working WASM in `legacy2/`
+- **WebAssembly Engine**: Experimental WASM in `experimental/wasm/`
 - **Browser PNG**: Generate PNG in browser without files
 - **Node.js PNG**: Generate PNG files to disk
 - **Analysis Tools**: Universal Groq Vision API + Puppeteer
@@ -128,11 +128,12 @@ Performance Summary:
 - `src/examples/png-generation-example.ts` - Working examples
 - `src/shared/quaternion-math.ts` - Shared mathematical utilities (NEW)
 - `src/browser/main.ts` - Browser-compatible API (NEW)
-- `legacy2/src/wasm/attractor-engine.ts` - WASM engine (works perfectly)
+- `experimental/wasm/src/wasm/attractor-engine.ts` - Experimental WASM engine (works perfectly)
 
-### **Analysis Reports**
-- `docs/archive/2025-01-05_VISUAL_ANALYSIS_INSIGHTS_REPORT.md` - Under-sampling analysis
-- `docs/archive/2025-01-05_ANALYSIS_SESSION_SUMMARY.md` - Critical issues found
+### **Development Reports**
+- `docs/archive/reports/README.md` - Complete development timeline (0001-0010)
+- `docs/archive/reports/0002_2025-01-05_VISUAL_ANALYSIS_INSIGHTS_REPORT.md` - Under-sampling analysis
+- `docs/archive/reports/0003_2025-01-05_ANALYSIS_SESSION_SUMMARY.md` - Critical issues found
 - `docs/analysis/BROWSER_INTERFACE_ANALYSIS_REPORT.md` - Browser issues
 
 ### **Recent Improvements**
@@ -165,7 +166,7 @@ exit && nix-shell
 You're ready to work if:
 - ✅ `npm run example:png` works
 - ✅ You understand the under-sampling bug is the main issue
-- ✅ You know we have working WASM in `legacy2/`
+- ✅ You know we have experimental WASM in `experimental/wasm/`
 - ✅ You understand browser integration now works with ES modules
 - ✅ You know project structure has been optimized and organized
 

@@ -58,7 +58,7 @@ curl -X GET http://localhost:3000/api/status
 ```json
 {
   "status": "running",
-  "url": "legacy2/index.html",
+  "url": "experimental/wasm/index.html",
   "port": 3000,
   "screenshots": 0,
   "analyses": 0
@@ -331,7 +331,7 @@ DEBUG=puppeteer* npm run puppeteer:legacy
 ## 📚 **Related Documentation**
 
 - **`tools/README_INTERACTIVE_PUPPETEER_AUTOMATOR.md`** - Complete tool documentation
-- **`docs/archive/2025-01-05_INTERACTIVE_PUPPETEER_AUTOMATION_TOOL_REPORT.md`** - Development report
+- **`docs/archive/reports/0008_2025-01-05_INTERACTIVE_PUPPETEER_AUTOMATION_TOOL_REPORT.md`** - Development report
 - **`tools/universal-groq-analyzer.js`** - AI analysis tool integration
 - **`docs/current/NEXT_DAY_DEVELOPER_GUIDE.md`** - Main developer guide
 

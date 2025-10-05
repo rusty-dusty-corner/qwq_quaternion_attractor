@@ -5,14 +5,14 @@
 ## 🚀 **Quick Start**
 
 ```bash
-# Start with legacy2/index.html (default)
+# Start with experimental/wasm/index.html (default)
 npm run puppeteer:legacy
 
 # Or with custom URL and port
 npm run puppeteer:automator -- [url] [port]
 
 # Examples
-npm run puppeteer:automator -- legacy2/index.html 3000
+npm run puppeteer:automator -- experimental/wasm/index.html 3000
 npm run puppeteer:automator -- http://localhost:8080 3001
 ```
 
@@ -342,7 +342,7 @@ npm run groq:quick -- image.png ui-elements
 ### **Port Already in Use**
 ```bash
 # Use different port
-npm run puppeteer:automator -- legacy2/index.html 3001
+npm run puppeteer:automator -- experimental/wasm/index.html 3001
 ```
 
 ## 🎉 **Benefits**

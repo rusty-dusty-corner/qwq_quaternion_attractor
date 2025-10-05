@@ -94,7 +94,9 @@ quaternion_attractor/
 │   ├── analysis_results/               # Analysis JSON results
 │   └── test_results/                   # Test outputs
 ├── 📁 docs/                            # Documentation
-└── 📁 legacy2/                         # Legacy WebAssembly
+├── 📁 experimental/                    # Experimental implementations
+│   └── wasm/                          # Experimental WebAssembly
+└── 📁 legacy/                         # Legacy code archive
 ```
 
 ---

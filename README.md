@@ -4,7 +4,7 @@
 
 [![Nix](https://img.shields.io/badge/Environment-Nix-blue.svg)](shell.nix)
 [![TypeScript](https://img.shields.io/badge/Code-TypeScript-blue.svg)](src/typescript/)
-[![WebAssembly](https://img.shields.io/badge/Engine-WebAssembly-green.svg)](legacy2/)
+[![WebAssembly](https://img.shields.io/badge/Engine-WebAssembly-green.svg)](experimental/wasm/)
 [![Performance](https://img.shields.io/badge/Performance-11K%20pts%2Fsec-green.svg)](src/examples/)
 
 ---

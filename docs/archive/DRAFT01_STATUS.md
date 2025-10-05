@@ -8,7 +8,7 @@
 
 ### **1. Repository Reorganization**
 - ✅ **Created `draft01` branch** from `experimental` branch
-- ✅ **Moved all experimental code** to `legacy2/` folder for preservation
+- ✅ **Moved all experimental code** to `experimental/wasm/` folder for preservation
 - ✅ **Clean workspace** ready for new implementation
 - ✅ **Preserved all development history** and documentation
 
@@ -20,31 +20,31 @@
 - ✅ **Created documentation structure guide** for easy navigation
 
 ### **3. Legacy Code Preservation**
-All experimental implementations have been moved to `legacy2/`:
+All experimental implementations have been moved to `experimental/wasm/`:
 
 #### **Original HTML/JavaScript Implementation**
-- `legacy2/index.html` - Original browser interface
-- `legacy2/quaternion_attractor.js` - Core JavaScript implementation
-- `legacy2/legacy/` - Previous legacy folder content
+- `experimental/wasm/index.html` - Original browser interface
+- `experimental/wasm/quaternion_attractor.js` - Core JavaScript implementation
+- `experimental/wasm/legacy/` - Previous legacy folder content
 
 #### **WebAssembly Implementation**
-- `legacy2/src/` - Complete WASM source code (AssemblyScript)
-- `legacy2/build/` - Compiled WASM artifacts
-- `legacy2/examples/` - Browser and Node.js examples
-- `legacy2/tests/` - Test framework and test files
+- `experimental/wasm/src/` - Complete WASM source code (AssemblyScript)
+- `experimental/wasm/build/` - Compiled WASM artifacts
+- `experimental/wasm/examples/` - Browser and Node.js examples
+- `experimental/wasm/tests/` - Test framework and test files
 
 #### **Documentation and Configuration**
-- `legacy2/README_WASM.md` - WASM implementation guide
-- `legacy2/WASM_*.md` - All WASM-related documentation
-- `legacy2/asconfig.json` - AssemblyScript configuration
-- `legacy2/tsconfig.json` - TypeScript configuration
-- `legacy2/jest.config.js` - Test configuration
+- `experimental/wasm/README_WASM.md` - WASM implementation guide
+- `experimental/wasm/WASM_*.md` - All WASM-related documentation
+- `experimental/wasm/asconfig.json` - AssemblyScript configuration
+- `experimental/wasm/tsconfig.json` - TypeScript configuration
+- `experimental/wasm/jest.config.js` - Test configuration
 
 #### **Test Files and Screenshots**
-- `legacy2/test-*.js` - All test files
-- `legacy2/*test*.html` - HTML test files
-- `legacy2/wasm-attractor-test-*.png` - Screenshots
-- `legacy2/screenshot-wasm.js` - Screenshot generation
+- `experimental/wasm/test-*.js` - All test files
+- `experimental/wasm/*test*.html` - HTML test files
+- `experimental/wasm/wasm-attractor-test-*.png` - Screenshots
+- `experimental/wasm/screenshot-wasm.js` - Screenshot generation
 
 ---
 
@@ -71,7 +71,7 @@ All experimental implementations have been moved to `legacy2/`:
 │       ├── NIX_SETUP.md
 │       ├── PROJECT_STATUS.md
 │       └── [other archived docs]
-└── legacy2/                # All experimental code preserved
+└── experimental/wasm/                # All experimental code preserved
     ├── src/                # WASM source code
     ├── build/              # WASM build artifacts
     ├── examples/           # Example applications
@@ -178,7 +178,7 @@ interface AttractorEngine {
 The workspace is now optimized and ready for implementing the new draft01 version with:
 
 - ✅ **Clean slate** for new implementation
-- ✅ **All experimental work preserved** in `legacy2/`
+- ✅ **All experimental work preserved** in `experimental/wasm/`
 - ✅ **Optimized documentation structure** with clear separation
 - ✅ **Development environment ready** (nix-shell, dependencies)
 - ✅ **Clear roadmap** for implementation

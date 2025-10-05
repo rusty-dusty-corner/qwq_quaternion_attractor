@@ -19,8 +19,9 @@ legacy/groq-analysis/
 │   └── test-groq-integration.ts
 ├── core/               # Old core analyzer class
 │   └── groq-vision-analyzer.ts
-└── scripts/            # Old JavaScript scripts
-    └── analyze-browser-screenshots.js
+├── scripts/            # Old JavaScript scripts
+│   └── analyze-browser-screenshots.js
+└── README.md           # This file
 ```
 
 ---

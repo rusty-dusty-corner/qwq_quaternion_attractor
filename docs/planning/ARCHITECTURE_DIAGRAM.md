@@ -12,12 +12,12 @@
 │                        CURRENT STATE                            │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  src/typescript/core/          legacy2/src/typescript/core/     │
+│  src/typescript/core/          experimental/wasm/src/typescript/core/     │
 │  ├── attractor-engine.ts       ├── attractor-wrapper.ts         │
 │  ├── js-engine.ts              ├── types.ts                     │
 │  └── types.ts                  └── wasm-loader.ts               │
 │                                                                 │
-│  src/typescript/node/          legacy2/src/wasm/                │
+│  src/typescript/node/          experimental/wasm/src/wasm/                │
 │  ├── image-renderer.ts         ├── attractor-engine.ts          │
 │  └── groq-vision-analyzer.ts   ├── quaternion-math.ts           │
 │                                 └── deterministic-random.ts     │

@@ -23,7 +23,7 @@ The quaternion attractor project has a **solid foundation** with working TypeScr
 
 ### **✅ What's Working Well**
 - **Complete TypeScript Implementation**: Full mathematical engine with PNG rendering
-- **Working WebAssembly**: Legacy implementation in `legacy2/` with good performance
+- **Working WebAssembly**: Experimental implementation in `experimental/wasm/` with good performance
 - **Comprehensive Examples**: PNG generation, API usage, analysis tools
 - **Nix Environment**: Well-configured development environment with all dependencies
 - **Documentation**: Good project structure analysis and session reports
@@ -42,7 +42,7 @@ The quaternion attractor project has a **solid foundation** with working TypeScr
    - Inconsistent import paths
 
 3. **Architecture Fragmentation**
-   - `legacy2/` contains working WASM but isolated from main codebase
+   - `experimental/wasm/` contains working WASM but isolated from main codebase
    - No unified interface between engines
    - Inconsistent APIs and return types
    - Missing shared abstractions
