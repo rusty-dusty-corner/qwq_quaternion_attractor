@@ -35,7 +35,7 @@ async function testSimpleInterface() {
       console.log(`Browser: [${msg.type()}] ${msg.text()}`);
     });
     
-    await page.goto('http://localhost:8080/index-simple.html', { 
+    await page.goto('http://localhost:8080/index-simple.html?v=' + Date.now(), { 
       waitUntil: 'networkidle0',
       timeout: 30000 
     });

@@ -203,16 +203,42 @@
         <div id="error" class="error" style="display: none;"></div>
     </div>
 
-    <script>
-        console.log('🚀 Simple interface script loaded');
+    <script type="module">
+        console.log('🚀 Simple interface script loaded - VERSION 2.0 WITH REAL ENGINE');
         
-        // Simple interface without complex modules
+        // Import the real attractor engine
+        import { createAttractorEngine, EngineType, SideFlipMode, ProjectionType, createQuaternion, createVector3D } from './dist/typescript/core/attractor-engine.js';
+        import { SimplePNGRenderer } from './dist/typescript/node/image-renderer.js';
+        
+        // Simple interface with real engine integration
         class SimpleAttractorInterface {
             constructor() {
                 console.log('🔧 Initializing simple interface...');
+                this.engine = null;
+                this.renderer = null;
                 this.initializeElements();
                 this.setupEventListeners();
-                this.showMessage('Interface loaded successfully! Try clicking the Random Seed button.');
+                this.initializeEngine();
+            }
+            
+            async initializeEngine() {
+                try {
+                    console.log('🔧 Initializing attractor engine...');
+                    this.engine = await createAttractorEngine({ type: EngineType.JAVASCRIPT });
+                    this.renderer = new SimplePNGRenderer({
+                        width: 800,
+                        height: 600,
+                        scale: parseFloat(this.scaleInput.value),
+                        offsetX: 400,
+                        offsetY: 300,
+                        blurRadius: 1.5
+                    });
+                    console.log('✅ Engine initialized successfully');
+                    this.showMessage('Engine ready! Try generating an attractor.');
+                } catch (error) {
+                    console.error('❌ Failed to initialize engine:', error);
+                    this.showError('Failed to initialize engine: ' + error.message);
+                }
             }
 
             initializeElements() {
@@ -266,39 +292,146 @@
             async generateAttractor() {
                 console.log('🎨 Starting attractor generation...');
                 
+                if (!this.engine || !this.renderer) {
+                    console.error('❌ Engine not initialized');
+                    this.showError('Engine not initialized yet. Please wait...');
+                    return;
+                }
+
                 this.showLoading(true);
                 this.updateProgress('Initializing...');
                 this.hideError();
                 this.hideImage();
-                
+
                 try {
-                    // Simulate generation process
-                    await this.simulateGeneration();
+                    const seed = parseInt(this.seedInput.value);
+                    const points = parseInt(this.pointsInput.value);
+                    const mode = parseInt(this.modeSelect.value);
+                    const scale = parseFloat(this.scaleInput.value);
+
+                    console.log(`📊 Parameters: seed=${seed}, points=${points}, mode=${mode}, scale=${scale}`);
+
+                    // Update renderer scale
+                    this.renderer = new SimplePNGRenderer({
+                        width: 800,
+                        height: 600,
+                        scale: scale,
+                        offsetX: 400,
+                        offsetY: 300,
+                        blurRadius: 1.5
+                    });
+
+                    console.log('🔧 Renderer configured');
+                    this.updateProgress('Configuring renderer...');
+
+                    // Generate seed-based parameters
+                    const params = this.generateParametersFromSeed(seed);
+                    console.log('🎯 Generated parameters:', params);
+                    this.updateProgress('Generating parameters...');
+
+                    console.log('⚡ Starting point generation...');
+                    this.updateProgress('Generating attractor points...');
                     
-                    // For now, show a placeholder message
-                    this.showMessage('Attractor generation completed! (This is a demo version)');
+                    // Generate points with timeout
+                    const generationPromise = this.engine.generateBatch({
+                        start: params.start,
+                        additive: params.additive,
+                        wind: params.wind,
+                        mode: mode
+                    }, {
+                        projectionType: ProjectionType.SIMPLE,
+                        cameraRotation: createQuaternion(1.0, 0.0, 0.0, 0.0),
+                        batchSize: points
+                    });
+
+                    // Add timeout to prevent hanging
+                    const timeoutPromise = new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Generation timeout after 15 seconds')), 15000)
+                    );
+
+                    const result = await Promise.race([generationPromise, timeoutPromise]);
+                    console.log(`✅ Generated ${result.points.length} points in ${result.metadata?.computationTime}ms`);
+                    this.updateProgress(`Generated ${result.points.length} points, rendering PNG...`);
+
+                    console.log('🖼️ Starting PNG rendering...');
+                    // Render to PNG data URL with timeout
+                    const renderPromise = this.renderer.renderPointsToDataURL(result.points);
+                    const renderTimeoutPromise = new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Rendering timeout after 10 seconds')), 10000)
+                    );
+
+                    const renderResult = await Promise.race([renderPromise, renderTimeoutPromise]);
+                    console.log(`✅ PNG rendering completed in ${renderResult.renderTime}ms`);
                     
+                    // Display the image
+                    this.attractorImage.src = renderResult.imageData;
+                    this.showImage();
+                    
+                    // Show statistics
+                    this.showStats(renderResult, result);
+                    console.log('🎉 Attractor generation completed successfully!');
+                    this.showMessage('Attractor generated successfully!');
+
                 } catch (error) {
-                    console.error('❌ Error:', error);
-                    this.showError('Error: ' + error.message);
+                    console.error('❌ Error generating attractor:', error);
+                    this.showError('Error generating attractor: ' + error.message);
                 } finally {
                     this.showLoading(false);
+                    console.log('🏁 Generation process finished');
                 }
             }
 
-            async simulateGeneration() {
-                const steps = [
-                    'Parsing parameters...',
-                    'Generating seed-based parameters...',
-                    'Creating attractor points...',
-                    'Rendering visualization...',
-                    'Finalizing image...'
-                ];
+            generateParametersFromSeed(seed) {
+                // Use seed to generate deterministic but varied parameters
+                const rng = this.seededRandom(seed);
+                
+                // Generate quaternion components
+                const startW = 0.5 + rng() * 0.4; // 0.5 to 0.9
+                const startX = rng() * 0.6 - 0.3; // -0.3 to 0.3
+                const startY = rng() * 0.6 - 0.3; // -0.3 to 0.3
+                const startZ = rng() * 0.6 - 0.3; // -0.3 to 0.3
 
-                for (let i = 0; i < steps.length; i++) {
-                    this.updateProgress(steps[i]);
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                }
+                // Generate additive vector
+                const additiveX = 0.05 + rng() * 0.1; // 0.05 to 0.15
+                const additiveY = 0.05 + rng() * 0.1; // 0.05 to 0.15
+                const additiveZ = 0.05 + rng() * 0.1; // 0.05 to 0.15
+
+                // Generate wind quaternion
+                const windW = 0.85 + rng() * 0.1; // 0.85 to 0.95
+                const windX = rng() * 0.2 - 0.1; // -0.1 to 0.1
+                const windY = rng() * 0.2 - 0.1; // -0.1 to 0.1
+                const windZ = rng() * 0.2 - 0.1; // -0.1 to 0.1
+
+                return {
+                    start: createQuaternion(startW, startX, startY, startZ),
+                    additive: createVector3D(additiveX, additiveY, additiveZ),
+                    wind: createQuaternion(windW, windX, windY, windZ)
+                };
+            }
+
+            seededRandom(seed) {
+                // Simple seeded random number generator
+                let state = seed;
+                return function() {
+                    state = (state * 9301 + 49297) % 233280;
+                    return state / 233280;
+                };
+            }
+
+            showStats(renderResult, generationResult) {
+                const stats = `
+                    <strong>Generation Stats:</strong><br>
+                    Points: ${renderResult.pointCount}<br>
+                    Generation Time: ${generationResult.metadata?.computationTime?.toFixed(2)}ms<br>
+                    Render Time: ${renderResult.renderTime}ms<br>
+                    Total Time: ${(generationResult.metadata?.computationTime + renderResult.renderTime).toFixed(2)}ms<br>
+                    <br>
+                    <strong>Image Stats:</strong><br>
+                    Min RGB: (${renderResult.statistics.min.r.toFixed(2)}, ${renderResult.statistics.min.g.toFixed(2)}, ${renderResult.statistics.min.b.toFixed(2)})<br>
+                    Max RGB: (${renderResult.statistics.max.r.toFixed(2)}, ${renderResult.statistics.max.g.toFixed(2)}, ${renderResult.statistics.max.b.toFixed(2)})<br>
+                    Mean RGB: (${renderResult.statistics.mean.r.toFixed(2)}, ${renderResult.statistics.mean.g.toFixed(2)}, ${renderResult.statistics.mean.b.toFixed(2)})
+                `;
+                this.stats.innerHTML = stats;
             }
 
             showLoading(show) {
