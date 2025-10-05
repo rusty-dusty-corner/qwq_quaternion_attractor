@@ -45,6 +45,11 @@ Previous analysis work and historical data:
 - **`performance-reports/`** - Historical performance analysis
 - **`error-reports/`** - Historical error analysis
 
+### **`misc/`** - Special Documentation
+Special documentation and showcases:
+- **`CURSOR_AGENT_COLLABORATION_AND_PROJECT_SHOWCASE.md`** - **NEW** - AI collaboration showcase
+- **`STATUS_TRACKING_BENEFITS.md`** - Status tracking system benefits
+
 ---
 
 ## 🔄 **Analysis Workflow**
