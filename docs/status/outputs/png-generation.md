@@ -33,30 +33,30 @@
 
 ## Test Results
 
-### **Last Test Run**
+### **Last Test Run (January 5, 2025)**
 ```bash
 $ npm run example:png
 ✅ SUCCESS - Generated all PNG examples
 
 Generated Images:
-- basic_attractor.png (1000 points, 2531ms)
-- variations/plain_flip.png (1500 points, 584ms)
-- variations/flip_smallest.png (1500 points, 352ms)
-- variations/flip_all_except_largest.png (1500 points, 523ms)
-- animations/frame_000-007.png (8 frames, 200 points each)
-- performance/performance_500.png (500 points, 498ms)
-- performance/performance_1000.png (1000 points, 323ms)
-- performance/performance_2000.png (2000 points, 425ms)
-- performance/performance_5000.png (5000 points, 350ms)
+- basic_attractor.png (1000 points, 2444ms)
+- variations/plain_flip.png (1500 points, 578ms)
+- variations/flip_smallest.png (1500 points, 398ms)
+- variations/flip_all_except_largest.png (1500 points, 583ms)
+- animations/frame_000-007.png (8 frames, 200 points each, avg 281.5ms)
+- performance/performance_500.png (500 points, 373ms)
+- performance/performance_1000.png (1000 points, 322ms)
+- performance/performance_2000.png (2000 points, 409ms)
+- performance/performance_5000.png (5000 points, 836ms)
 ```
 
 ### **Performance Metrics**
 ```
-Performance Summary:
-  500 points:   1004 pts/sec,  498ms total
- 1000 points:   3096 pts/sec,  323ms total
- 2000 points:   4706 pts/sec,  425ms total
- 5000 points:  14286 pts/sec,  350ms total
+Performance Summary (Latest Test):
+  500 points:   1340 pts/sec,  373ms total
+ 1000 points:   3106 pts/sec,  322ms total
+ 2000 points:   4890 pts/sec,  409ms total
+ 5000 points:   5981 pts/sec,  836ms total
 ```
 
 ### **Quality Metrics**

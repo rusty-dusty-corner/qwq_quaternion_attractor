@@ -86,6 +86,8 @@ class InteractivePuppeteerAutomator {
   setupServer() {
     this.app.use(express.json());
     this.app.use(express.static('experimental/wasm')); // Serve static files
+    this.app.use(express.static('dist')); // Serve dist files for browser builds
+    this.app.use(express.static('.')); // Serve root directory files
     
     // API endpoints
     this.app.get('/api/status', (req, res) => {
@@ -621,7 +623,30 @@ class InteractivePuppeteerAutomator {
     try {
       switch (action) {
         case 'click':
+          console.log(`🎯 Attempting to click selector: "${selector}"`);
+          
+          // First, check if element exists
+          const elementExists = await this.page.$(selector);
+          if (!elementExists) {
+            console.log(`❌ Element not found for selector: "${selector}"`);
+            
+            // Try to find similar elements for debugging
+            const allButtons = await this.page.$$eval('button', buttons => 
+              buttons.map(btn => ({
+                id: btn.id,
+                className: btn.className,
+                textContent: btn.textContent.trim(),
+                onclick: btn.onclick ? btn.onclick.toString() : 'none'
+              }))
+            );
+            console.log('🔍 Available buttons:', JSON.stringify(allButtons, null, 2));
+            
+            throw new Error(`No element found for selector: ${selector}`);
+          }
+          
+          console.log(`✅ Element found, clicking...`);
           await this.page.click(selector);
+          console.log(`✅ Click successful`);
           return { action: 'click', selector };
           
         case 'type':
@@ -650,6 +675,7 @@ class InteractivePuppeteerAutomator {
       if (this.page) {
         switch (action) {
           case 'click':
+            console.log(`🔄 Retrying click after reconnection...`);
             await this.page.click(selector);
             return { action: 'click', selector };
           case 'type':

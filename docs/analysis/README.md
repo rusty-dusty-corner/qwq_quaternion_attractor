@@ -26,8 +26,9 @@ This analysis system is designed to work seamlessly with the `docs/status/` syst
 ### **`current/`** - Active Analysis
 Current analysis work and ongoing research:
 - **`performance-analysis.md`** - Current performance analysis
-- **`quality-analysis.md`** - Output quality assessment
 - **`error-analysis.md`** - Error pattern analysis
+- **`javascript-execution-analysis.md`** - **NEW** - Critical JavaScript module execution issues
+- **`quality-analysis.md`** - Output quality assessment
 - **`feature-analysis.md`** - Feature development analysis
 
 ### **`research/`** - Research and Development

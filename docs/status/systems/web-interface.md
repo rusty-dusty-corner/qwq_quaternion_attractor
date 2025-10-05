@@ -37,32 +37,48 @@
    - **Impact**: Limited JavaScript functionality
    - **Priority**: High
 
-2. **Resource Loading Errors**
+2. **Resource Loading Errors** ✅ **PARTIALLY FIXED**
    - **Error**: "Failed to load resource: net::ERR_FILE_NOT_FOUND"
    - **Context**: Multiple resources failing to load
-   - **Impact**: Some functionality may not work
+   - **Fix Applied**: Added static file serving for dist/ and root directory
+   - **Status**: JavaScript modules now accessible, but function still not found
    - **Priority**: Medium
 
-3. **Attractor Generation Not Working**
+3. **Attractor Generation Not Working** ❌ **CRITICAL ISSUE**
    - **Issue**: Generate button doesn't produce attractors
-   - **Impact**: Main functionality broken
+   - **Root Cause**: JavaScript modules load but generateAttractor function not found
+   - **Impact**: Main functionality completely broken
+   - **Priority**: Critical
+
+4. **Console Logging Not Working** ❌ **NEW ISSUE**
+   - **Issue**: Puppeteer console.log statements not being captured
+   - **Impact**: Cannot debug JavaScript execution issues
    - **Priority**: High
+
+5. **JavaScript Module Execution Issues** ❌ **NEW ISSUE**
+   - **Issue**: Modules accessible via HTTP but functions not available in window scope
+   - **Impact**: All JavaScript functionality broken
+   - **Priority**: Critical
 
 ---
 
 ## Test Results
 
-### **Puppeteer Testing Results**
+### **Puppeteer Testing Results (January 5, 2025)**
 ```bash
 # Interface loads correctly
 ✅ UI Elements visible: seed, points, mode, scale, buttons
 ✅ No error messages in interface
 ✅ Buttons clickable
+✅ FIXED: Static file serving (added dist/ and root directory)
+✅ FIXED: JavaScript modules now accessible via HTTP
+✅ SUCCESS: Generate button clickable (#generate selector works)
 
 # JavaScript execution issues
-❌ Evaluate function errors
-❌ Resource loading failures
-❌ Attractor generation not working
+⚠️  JavaScript modules loading but generateAttractor function not found
+❌ Console logging not working in Puppeteer tool
+❌ Generate button click doesn't trigger attractor generation
+❌ Resource loading failures (partially fixed)
 ```
 
 ### **Screenshot Analysis**
