@@ -29,7 +29,7 @@ ls -la legacy2/examples/
 - **WebAssembly Engine**: Working WASM in `legacy2/`
 - **Browser PNG**: Generate PNG in browser without files
 - **Node.js PNG**: Generate PNG files to disk
-- **Analysis Tools**: Puppeteer + Groq Vision API
+- **Analysis Tools**: Universal Groq Vision API + Puppeteer
 - **Nix Environment**: All dependencies ready
 
 ### **✅ Capabilities**
@@ -71,11 +71,9 @@ npm run example:png
 # Run API examples (works perfectly)
 npm run example:api
 
-# Analyze with Groq Vision (works perfectly)
-npm run analyze:detailed
-
-# Test browser interface (has issues)
-npm run analyze:screenshots
+# Universal Groq Analysis (NEW - works perfectly)
+npm run groq:quick -- output/png_examples/basic_attractor.png attractor-colors
+npm run groq:compare -- image1.png image2.png "Compare these patterns"
 
 # Build WASM (works perfectly)
 npm run build:assembly

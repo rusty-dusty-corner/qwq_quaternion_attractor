@@ -31,7 +31,7 @@ ls -la legacy2/examples/
 - **WebAssembly Engine**: Working WASM in `legacy2/`
 - **Browser PNG**: Generate PNG in browser without files ✅ **FIXED**
 - **Node.js PNG**: Generate PNG files to disk
-- **Analysis Tools**: Puppeteer + Groq Vision API
+- **Analysis Tools**: Universal Groq Vision API + Puppeteer
 - **Nix Environment**: All dependencies ready
 
 ### **✅ Recent Optimizations Completed**
@@ -63,14 +63,9 @@ ls -la legacy2/examples/
 # Generate PNG examples (works perfectly)
 npm run example:png
 
-# Run API examples (works perfectly)
-npm run example:api
-
-# Analyze with Groq Vision (works perfectly)
-npm run analyze:detailed
-
-# Test browser interface (now works!)
-npm run analyze:screenshots
+# Universal Groq Analysis (NEW)
+npm run groq:quick -- output/png_examples/basic_attractor.png attractor-colors
+npm run groq:compare -- output/png_examples/performance/performance_500.png output/png_examples/performance/performance_1000.png "Compare complexity"
 
 # Build all targets (Node.js + Browser)
 npm run build:all
@@ -102,9 +97,14 @@ Performance Summary:
 - `src/browser/main.ts` - Browser-compatible API (NEW)
 - `legacy2/src/wasm/attractor-engine.ts` - WASM engine (works perfectly)
 
+### **New Universal Tools**
+- `tools/universal-groq-analyzer.js` - Universal Groq image analysis tool (NEW)
+- `tools/README_UNIVERSAL_GROQ_ANALYZER.md` - Complete documentation for analysis tool
+
 ### **Recent Improvements**
 - `docs/current/OPTIMIZATION_SUMMARY.md` - Summary of recent optimizations
 - `docs/current/FILE_ORGANIZATION_TASK.md` - Completed project structure cleanup
+- `docs/archive/2025-01-05_UNIVERSAL_GROQ_TOOL_AND_LEGACY_MIGRATION_REPORT.md` - Latest session report
 
 ---
 
@@ -142,6 +142,65 @@ exit && nix-shell
 
 ---
 
+## 📝 **Documentation and Reporting**
+
+### **Creating Session Reports**
+When you complete significant work, create a report in `docs/archive/`:
+
+#### **Report Naming Convention**
+```
+docs/archive/YYYY-MM-DD_DESCRIPTIVE_NAME_REPORT.md
+```
+
+#### **Examples from This Project**
+- `2025-01-05_ANALYSIS_SESSION_SUMMARY.md`
+- `2025-01-05_GROQ_VISION_INTEGRATION_REPORT.md`
+- `2025-01-05_UNIVERSAL_GROQ_TOOL_AND_LEGACY_MIGRATION_REPORT.md`
+
+#### **Report Structure Template**
+```markdown
+# 🎯 [Session Name] Report
+
+**Date:** [Date]
+**Session:** [What you worked on]
+**Duration:** [How long it took]
+**Status:** ✅ **COMPLETED SUCCESSFULLY**
+
+---
+
+## 🎯 **Session Objectives**
+[What you planned to do]
+
+## 🚀 **Major Accomplishments**
+[What you actually achieved]
+
+## 🧪 **Testing Results**
+[How you verified it works]
+
+## 📊 **Impact Analysis**
+[Before vs After comparison]
+
+## 📁 **Files Created/Modified**
+[List of all changes]
+
+## 🎯 **Conclusion**
+[Summary and next steps]
+```
+
+### **Documentation Updates**
+Always update relevant documentation when making changes:
+- **README.md** - User-facing commands and features
+- **README_DEVELOPER.md** - Developer entry point and immediate commands
+- **docs/current/NEXT_DAY_DEVELOPER_GUIDE.md** - This guide
+- **package.json** - Script changes
+
+### **Legacy Code Management**
+- Move old code to `legacy/` directory when replacing with new implementations
+- Create `legacy/[category]/README.md` explaining what was moved and why
+- Update documentation to point to new tools/approaches
+
+---
+
 ## 🎯 **Success Criteria**
 
 You're ready to work if:
@@ -150,6 +209,7 @@ You're ready to work if:
 - ✅ You know we have working WASM in `legacy2/`
 - ✅ You understand browser integration now works with ES modules
 - ✅ You know project structure has been optimized and organized
+- ✅ You know how to document your work and create reports
 
 **Time to productive**: 5 minutes (not hours!)
 

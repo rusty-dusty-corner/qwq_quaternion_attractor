@@ -21,12 +21,14 @@
     "clean": "rm -rf dist build",
     "example:api": "npm run build:typescript && node dist/examples/api-usage-example.js",
     "example:png": "npm run build:typescript && node dist/examples/png-generation-example.js",
-    "example:groq": "npm run build:typescript && node dist/examples/groq-vision-analysis-example.js",
-    "test:groq": "npm run build:typescript && node dist/examples/test-groq-integration.js",
-    "analyze:detailed": "npm run build:typescript && node dist/examples/detailed-visual-analysis.js",
-    "analyze:screenshots": "npm run build:typescript && node dist/examples/analyze-legacy-screenshots.js",
     "example:browser": "npm run build:all && node examples/browser-example.js",
-    "example:node": "npm run build:all && node examples/node-example.js"
+    "example:node": "npm run build:all && node examples/node-example.js",
+    "groq:analyze": "node tools/universal-groq-analyzer.js analyze",
+    "groq:compare": "node tools/universal-groq-analyzer.js compare",
+    "groq:quick": "node tools/universal-groq-analyzer.js quick",
+    "groq:directory": "node tools/universal-groq-analyzer.js directory",
+    "groq:list": "node tools/universal-groq-analyzer.js list",
+    "groq:presets": "node tools/universal-groq-analyzer.js presets"
   },
   "keywords": [
     "quaternion",

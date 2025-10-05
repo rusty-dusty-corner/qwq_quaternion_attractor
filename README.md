@@ -57,15 +57,18 @@ Performance Summary:
 # Generate Examples
 npm run example:png        # Generate PNG examples
 npm run example:api        # Run API usage examples
-npm run example:groq       # Run Groq vision analysis
 
 # Development
 npm run build:typescript   # Build TypeScript code
 npm run build:assembly     # Build WebAssembly
 
-# Analysis
-npm run analyze:detailed  # Detailed visual analysis
-npm run analyze:screenshots # Analyze legacy screenshots
+# Universal Groq Analysis (NEW)
+npm run groq:analyze       # Analyze single image with custom prompt
+npm run groq:compare       # Compare two images
+npm run groq:quick         # Quick analysis with presets
+npm run groq:directory     # Analyze directory of images
+npm run groq:list          # List existing analyses
+npm run groq:presets       # Show available preset prompts
 ```
 
 ---
