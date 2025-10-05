@@ -20,6 +20,11 @@ output/
 *.bmp
 *.tiff
 
+# Interactive Puppeteer Automation Tool outputs
+screenshots/
+*.groq_vision_*.json
+automator_*.json
+
 # AssemblyScript build artifacts
 assembly/
 *.wasm.map
@@ -27,6 +32,13 @@ assembly/
 # Performance test results
 performance-*.json
 benchmark-*.json
+
+# Analysis and automation tool outputs
+analysis-results/
+*.analysis.json
+*.vision.json
+puppeteer-*.log
+automation-*.log
 
 # Nix shell artifacts
 .direnv/

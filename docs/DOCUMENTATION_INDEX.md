@@ -81,6 +81,7 @@ docs/
 - **Start Here**: `current/NEXT_DAY_DEVELOPER_GUIDE.md`
 - **Get Running**: `current/QUICK_START.md`
 - **Current Status**: `current/PROJECT_STATUS.md`
+- **Interactive Automation**: `current/INTERACTIVE_PUPPETEER_AUTOMATION_DEVELOPER_GUIDE.md`
 
 ### **For Architecture Understanding**
 - **Big Picture**: `current/ANALYSIS_SUMMARY.md`

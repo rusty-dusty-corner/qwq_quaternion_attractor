@@ -67,6 +67,10 @@ npm run example:png
 npm run groq:quick -- output/png_examples/basic_attractor.png attractor-colors
 npm run groq:compare -- output/png_examples/performance/performance_500.png output/png_examples/performance/performance_1000.png "Compare complexity"
 
+# Interactive Puppeteer Automation (NEW)
+npm run puppeteer:legacy
+# Then test: curl -X GET http://localhost:3000/api/status
+
 # Build all targets (Node.js + Browser)
 npm run build:all
 ```
@@ -100,6 +104,8 @@ Performance Summary:
 ### **New Universal Tools**
 - `tools/universal-groq-analyzer.js` - Universal Groq image analysis tool (NEW)
 - `tools/README_UNIVERSAL_GROQ_ANALYZER.md` - Complete documentation for analysis tool
+- `tools/interactive-puppeteer-automator.js` - Interactive browser automation tool (NEW)
+- `tools/README_INTERACTIVE_PUPPETEER_AUTOMATOR.md` - Complete automation tool documentation
 
 ### **Recent Improvements**
 - `docs/current/OPTIMIZATION_SUMMARY.md` - Summary of recent optimizations
@@ -221,13 +227,14 @@ You're ready to work if:
 
 ---
 
-**📚 Next Day Developer - Read These 3 Files:**
+**📚 Next Day Developer - Read These 4 Files:**
 
 1. `README_DEVELOPER.md` (5 min) - Quick start
 2. `tools/README_UNIVERSAL_GROQ_ANALYZER.md` (10 min) - New analysis tool  
-3. `docs/current/NEXT_DAY_DEVELOPER_GUIDE.md` (5 min) - Complete guide
+3. `docs/current/INTERACTIVE_PUPPETEER_AUTOMATION_DEVELOPER_GUIDE.md` (10 min) - New automation tool
+4. `docs/current/NEXT_DAY_DEVELOPER_GUIDE.md` (5 min) - Complete guide
 
-**Summary:** Quaternion attractor generator with universal Groq analysis tool. Main system works, has under-sampling bug with large point counts. New tool analyzes any image with custom prompts and saves results persistently.
+**Summary:** Quaternion attractor generator with universal Groq analysis tool AND new Interactive Puppeteer Automation Tool. Main system works, has under-sampling bug with large point counts. New tools provide AI-powered image analysis and complete browser automation with persistent sessions.
 
 ---
 
