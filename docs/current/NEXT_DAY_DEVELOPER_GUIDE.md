@@ -120,24 +120,48 @@ Performance Summary:
 ### **Recent Improvements**
 - `docs/current/OPTIMIZATION_SUMMARY.md` - Summary of recent optimizations
 - `docs/current/FILE_ORGANIZATION_TASK.md` - Completed project structure cleanup
-- `docs/archive/reports/` - Chronologically organized development reports (0001-0010)
+- `docs/archive/reports/` - Chronologically organized development reports (0001-0012)
+- `docs/archive/misc/` - **NEW**: Organized miscellaneous archive files with detailed documentation
 
 ### **Development History**
 - `docs/archive/reports/README.md` - Complete timeline and git integration
-- `docs/archive/reports/0007_2025-01-05_UNIVERSAL_GROQ_TOOL_AND_LEGACY_MIGRATION_REPORT.md` - Latest session report
-- `docs/archive/reports/0008-0009_*_INTERACTIVE_PUPPETEER_*_REPORT.md` - Browser automation development
+- `docs/archive/reports/0012_2025-10-05_PUPPETEER_TESTING_AND_TOOL_IMPROVEMENTS_REPORT.md` - Latest session report
+- `docs/archive/drafts/2025-01-05_DOCUMENTATION_ARCHITECTURE_ANALYSIS_DRAFT.md` - **NEW**: Documentation confusion analysis
+- `docs/archive/misc/` - **NEW**: Comprehensive historical documentation organized by category
+
+---
+
+## 🚨 **CRITICAL DOCUMENTATION ISSUE IDENTIFIED**
+
+### **Documentation Terminology is Backwards!**
+- **"Legacy" Code**: Actually **WORKING** perfectly (`src/`, `experimental/wasm/`)
+- **"Current" Code**: Actually **BROKEN** with import errors (`web/`)
+- **"Experimental" Code**: Actually **WORKING** WebAssembly (5-9x faster!)
+
+**See**: `docs/archive/drafts/2025-01-05_DOCUMENTATION_ARCHITECTURE_ANALYSIS_DRAFT.md` for complete analysis.
 
 ---
 
 ## 🎯 **Next Steps (Priority Order)**
 
-### **1. Fix Under-Sampling Bug (CRITICAL)**
+### **1. Fix Web Interface (CRITICAL)**
+- **File**: `web/index.html`, `web/index-simple.html`
+- **Issue**: Import errors - trying to import from wrong paths
+- **Solution**: Fix import paths to work with existing build system
+- **Impact**: Makes the "fresh" web interface actually work
+
+### **2. Fix Under-Sampling Bug (HIGH)**
 - **File**: `src/typescript/core/js-engine.ts`
 - **Issue**: Algorithm converges to fixed points
 - **Solution**: Adjust convergence criteria or initial conditions
 - **Impact**: Fixes main mathematical engine
 
-### **2. Continue Architecture Unification (MEDIUM)**
+### **3. Update Documentation Terminology (MEDIUM)**
+- **Issue**: "Legacy" = working, "Current" = broken (backwards!)
+- **Solution**: Rename commands and update documentation
+- **Impact**: Eliminates developer confusion
+
+### **4. Continue Architecture Unification (LOW)**
 - **Status**: Shared math utilities implemented
 - **Next**: Unify remaining components (config, rendering, etc.)
 - **Impact**: Complete code deduplication
@@ -225,10 +249,12 @@ Always update relevant documentation when making changes:
 ## 🎯 **Success Criteria**
 
 You're ready to work if:
-- ✅ `npm run example:png` works
-- ✅ You understand the under-sampling bug is the main issue
-- ✅ You know we have experimental WASM in `experimental/wasm/`
-- ✅ You understand browser integration now works with ES modules
+- ✅ `npm run example:png` works (generates beautiful PNG images)
+- ✅ You understand the **documentation terminology is backwards**
+- ✅ You know **"legacy" code actually works perfectly**
+- ✅ You know **"current" web code has import errors**
+- ✅ You know we have **working WASM in `experimental/wasm/`** (5-9x faster!)
+- ✅ You understand the **web interface needs fixing** (import path issues)
 - ✅ You know project structure has been optimized and organized
 - ✅ You know how to document your work and create reports
 
@@ -242,17 +268,21 @@ You're ready to work if:
 
 ---
 
-**📚 Next Day Developer - Read These 4 Files:**
+**📚 Next Day Developer - Read These 6 Files:**
 
 1. `README_DEVELOPER.md` (5 min) - Quick start
 2. `tools/README_UNIVERSAL_GROQ_ANALYZER.md` (10 min) - New analysis tool  
 3. `docs/current/INTERACTIVE_PUPPETEER_AUTOMATION_DEVELOPER_GUIDE.md` (10 min) - New automation tool
 4. `docs/current/NEXT_DAY_DEVELOPER_GUIDE.md` (5 min) - Complete guide
+5. `docs/archive/drafts/2025-01-05_DOCUMENTATION_ARCHITECTURE_ANALYSIS_DRAFT.md` (10 min) - **NEW**: Documentation confusion analysis
+6. `docs/archive/misc/README.md` (5 min) - **NEW**: Archive organization overview
 
 **Summary:** Quaternion attractor generator with universal Groq analysis tool AND new Interactive Puppeteer Automation Tool. Main system works, has under-sampling bug with large point counts. New tools provide AI-powered image analysis and complete browser automation with persistent sessions.
 
----
+**🚨 CRITICAL FINDING:** Documentation terminology is backwards - "legacy" code actually works perfectly, "current" web code has import errors. See draft analysis for details.
 
 ---
 
-*This project is 90% complete with one critical mathematical bug. Fix the under-sampling issue and you'll have a perfect system.*
+---
+
+*This project has excellent working code but confusing documentation. The main issues are: 1) Web interface import errors, 2) Under-sampling bug, 3) Backwards documentation terminology. Fix these and you'll have a perfect system.*

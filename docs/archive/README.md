@@ -11,16 +11,23 @@ docs/archive/
 ├── README.md                           # This file - archive overview
 ├── reports/                            # Organized session reports
 │   ├── README.md                       # Reports overview and timeline
-│   ├── 0001-0011_2025-10-05_*_REPORT.md # Sequential session reports
+│   └── 0001-0012_2025-10-05_*_REPORT.md # Sequential session reports
 ├── reviews/                            # Project structure reviews
 │   └── 2025-10-05_PROJECT_STRUCTURE_REVIEW.md # Comprehensive structure review
-├── PROJECT_RESTRUCTURING_HISTORY.md   # Detailed restructuring documentation
-├── LEGACY_MIGRATION_PLAN.md           # Completed legacy migration plan
-├── DRAFT01_STATUS.md                  # Draft01 branch status
-├── PROJECT_STRUCTURE_*.md             # Structure analysis and optimization
-├── LEGACY_*.md                        # Legacy implementation plans
-├── QUICK_START_*.md                   # Historical quick start guides
-└── [other historical files]
+├── drafts/                             # Draft documents and analysis
+│   └── 2025-01-05_DOCUMENTATION_ARCHITECTURE_ANALYSIS_DRAFT.md
+├── misc/                               # Miscellaneous archive files
+│   ├── README.md                       # Misc files overview
+│   ├── README_BENEFITS.md              # Benefits of using misc files
+│   ├── setup-guides/                   # Environment setup documentation
+│   ├── implementation-docs/            # Implementation documentation
+│   ├── project-status/                 # Project status and planning
+│   ├── structure-analysis/             # Project structure documentation
+│   ├── legacy-docs/                    # Legacy implementation docs
+│   ├── guides/                         # Various guides and documentation
+│   ├── success-celebrations/           # Success and achievement docs
+│   └── integration-docs/               # Integration and tool docs
+└── PROJECT_RESTRUCTURING_HISTORY.md   # Detailed restructuring documentation
 ```
 
 ---
@@ -129,6 +136,20 @@ project/
 ### **📊 Project Reviews**
 - **2025-10-05_PROJECT_STRUCTURE_REVIEW.md**: Comprehensive review of project structure reorganization
 
+### **📝 Draft Documents**
+- **2025-01-05_DOCUMENTATION_ARCHITECTURE_ANALYSIS_DRAFT.md**: Analysis of documentation confusion and proposed solutions
+
+### **📦 Miscellaneous Files**
+- **misc/**: Organized collection of historical documentation, guides, and implementation details
+  - **setup-guides/**: Environment setup and configuration documentation
+  - **implementation-docs/**: Detailed implementation documentation and WASM guides
+  - **project-status/**: Historical project status and planning documents
+  - **structure-analysis/**: Project structure analysis and optimization documentation
+  - **legacy-docs/**: Legacy implementation plans and migration documentation
+  - **guides/**: Various guides, documentation standards, and navigation help
+  - **success-celebrations/**: Achievement documentation and milestone celebrations
+  - **integration-docs/**: Tool integration and validation documentation
+
 ### **🚀 Historical Guides**
 - **QUICK_START_*.md**: Old quick start guides (superseded)
 - **NEXT_DAY_DEVELOPER_GUIDE_LONG.md**: Extended version of current guide
@@ -150,6 +171,7 @@ project/
 1. **Use current documentation** - `docs/current/` directory
 2. **Reference main READMEs** - `README.md`, `README_DEVELOPER.md`
 3. **Check tools documentation** - `tools/README_*.md`
+4. **Browse misc files** - `misc/` directory for detailed historical context
 
 ### **For Historical Context:**
 1. **Session reports** show development progression
