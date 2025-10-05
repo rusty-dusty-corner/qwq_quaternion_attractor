@@ -35,10 +35,10 @@ Generates stunning mathematical attractor patterns using quaternion mathematics 
 
 ### **Features**
 - ✅ **Mathematical Engine**: Complete quaternion attractor implementation
-- ✅ **PNG Rendering**: High-quality image generation with statistics
+- ✅ **PNG Rendering**: High-quality image generation (⚠️ normalization bug in Node.js)
 - ✅ **Multiple Algorithms**: Plain flip, flip smallest, flip all except largest
 - ✅ **High Performance**: 11,000+ points/second generation
-- ✅ **Cross-Platform**: Works in Node.js and browser
+- ⚠️ **Cross-Platform**: Works in Node.js and browser (⚠️ rendering inconsistencies)
 
 ### **Example Output**
 ```
@@ -118,8 +118,8 @@ Current performance benchmarks:
 - Analysis tools with AI
 
 ### **🚧 Known Issues**
-- Browser integration (ES module issues)
-- Under-sampling bug with large point counts
+- Browser integration (ES module issues) ✅ **FIXED**
+- Statistics-based normalization bug in Node.js renderer ⚠️ **CRITICAL**
 - Code duplication between implementations
 
 ---

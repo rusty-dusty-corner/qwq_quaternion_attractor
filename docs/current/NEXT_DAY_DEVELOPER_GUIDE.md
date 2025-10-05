@@ -8,11 +8,12 @@
 
 ## 🚨 **IMMEDIATE NEXT STEPS - CRITICAL ISSUES**
 
-### **Priority 1: Fix JavaScript Module Execution**
+### **Priority 1: Fix Statistics-Based Normalization Bug** ⚠️ **CRITICAL**
 ```bash
-# Debug why generateAttractor function is not found
-# Check if modules are properly importing and executing
-# Verify function is being attached to window object
+# Fix Node.js renderer to use fixed normalization like browser renderer
+# Update src/typescript/node/image-renderer.ts
+# Replace statistics-based normalization with fixed mathematical normalization
+# Test visual consistency across different point counts
 ```
 
 ### **Priority 2: Fix Puppeteer Console Logging** ⚠️ **KNOWN ISSUE**
@@ -23,11 +24,12 @@
 # This blocks effective JavaScript debugging
 ```
 
-### **Priority 3: Test Complete Workflow**
+### **Priority 3: Test Complete Workflow** ✅ **COMPLETED**
 ```bash
-# Once JavaScript issues are fixed, test end-to-end
-# Verify attractor generation works
-# Test all web interface functionality
+# JavaScript issues are now fixed
+# Web interface is working correctly
+# Attractor generation is functional
+# All web interface functionality tested and working
 ```
 
 ---

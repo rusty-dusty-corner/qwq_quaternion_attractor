@@ -1,7 +1,7 @@
 # 🎨 PNG Generation Status
 
 **Last Updated:** January 5, 2025  
-**Status:** ✅ **WORKING PERFECTLY**  
+**Status:** ⚠️ **WORKING WITH KNOWN ISSUE**  
 **Version:** Current
 
 ---
@@ -14,6 +14,11 @@
 - **Performance**: Excellent speed and efficiency
 - **Variations**: Multiple parameter variations working
 - **Animations**: 8-frame animation sequences working
+
+### ⚠️ **Known Issue**
+- **Statistics-Based Normalization Bug**: Node.js renderer uses statistics-based normalization causing visual inconsistencies
+- **Impact**: Same mathematical convergence points appear in different visual positions for different point counts
+- **Status**: Identified and documented, fix in progress
 
 ### 📊 **Output Quality**
 - **Resolution**: High-quality PNG images
