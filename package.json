@@ -31,7 +31,13 @@
     "groq:presets": "node tools/universal-groq-analyzer.js presets",
     "puppeteer:automator": "node tools/interactive-puppeteer-automator.js",
     "puppeteer:legacy": "node tools/interactive-puppeteer-automator.js experimental/wasm/index.html 3000",
-    "puppeteer:test": "node tools/interactive-puppeteer-automator.js http://localhost:8080 3001"
+    "puppeteer:test": "node tools/interactive-puppeteer-automator.js http://localhost:8080 3001",
+    "strategy:complete": "npm run build:typescript && node tools/complete-strategy-executor.js",
+    "strategy:batch": "npm run build:typescript && node tools/enhanced-batch-generator.js",
+    "strategy:high-points": "npm run build:typescript && node tools/high-point-count-generator.js",
+    "strategy:experiment": "npm run build:typescript && node tools/parameter-experimenter.js",
+    "strategy:random": "npm run build:typescript && node tools/random-parameter-generator.js",
+    "strategy:random-png": "npm run build:typescript && node tools/random-png-generator.js"
   },
   "keywords": [
     "quaternion",

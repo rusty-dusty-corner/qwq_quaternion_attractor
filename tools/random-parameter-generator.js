@@ -131,7 +131,7 @@ class RandomParameterGenerator {
       },
       
       // Random projection type
-      projectionType: this.getRandomProjectionType(),
+      projectionType: this.getRandomProjectionType() === ProjectionType.STEREOGRAPHIC ? 'stereographic' : 'simple',
       
       // Small camera rotation (for rendering, not core algorithm)
       cameraRotation: this.generateSmallRotationQuaternion(0.2)
