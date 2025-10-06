@@ -38,6 +38,8 @@ export interface Point2D {
   y: number;
   color?: string;  // Optional color for visualization
   alpha?: number;  // Optional transparency
+  side?: number;   // Hemisphere information (+1 or -1)
+  index?: number;  // Point generation index
 }
 
 // ============================================================================
@@ -233,13 +235,19 @@ export function createVector3D(x: number, y: number, z: number): Vector3D {
 /**
  * Create a 2D point
  */
-export function createPoint2D(x: number, y: number, color?: string, alpha?: number): Point2D {
+export function createPoint2D(x: number, y: number, color?: string, alpha?: number, side?: number, index?: number): Point2D {
   const point: Point2D = { x, y };
   if (color !== undefined) {
     point.color = color;
   }
   if (alpha !== undefined) {
     point.alpha = alpha;
+  }
+  if (side !== undefined) {
+    point.side = side;
+  }
+  if (index !== undefined) {
+    point.index = index;
   }
   return point;
 }

@@ -195,7 +195,14 @@ export class SimplePNGRenderer {
     // Reset grid
     this.initializeGrid();
 
+    // Parse the default color string only once
+    const defaultColorStr = 'hsl(200, 70%, 50%)';
+    const baseHsl = this.parseColorString(defaultColorStr);
+
     for (const point of points) {
+      // Apply side and index variations (fast operation per point)
+      const rgb = this.applyColorVariations(baseHsl, point.side, point.index);
+      
       // Convert world coordinates to grid coordinates
       const gridX = Math.round(point.x * this.config.scale + this.config.offsetX);
       const gridY = Math.round(point.y * this.config.scale + this.config.offsetY);
@@ -203,9 +210,6 @@ export class SimplePNGRenderer {
       // Check bounds
       if (gridX >= 0 && gridX < this.config.width && 
           gridY >= 0 && gridY < this.config.height) {
-        
-        // Parse color from HSL string or use default
-        const rgb = this.parseColor(point.color || 'hsl(200, 70%, 50%)');
         
         // Add to grid (accumulate values)
         this.grid[gridY][gridX].r += rgb.r;
@@ -250,8 +254,8 @@ export class SimplePNGRenderer {
           // Compute distance from center
           const distance = Math.sqrt(randomX * randomX + randomY * randomY);
           
-          // Discard if distance > 0.999 (outside unit circle)
-          if (distance > 0.999) continue;
+          // Discard if distance > 0.9999999 (outside unit circle)
+          if (distance > 0.9999999) continue;
           
           // Normalize x and y by distance
           const normalizedX = randomX / distance;
@@ -450,41 +454,75 @@ export class SimplePNGRenderer {
 
 
   /**
-   * Parse color string to RGB
+   * Parse color string to extract HSL components (called once per unique color string)
+   * @param colorStr Color string (HSL format)
+   * @returns Parsed HSL components
    */
-  private parseColor(colorStr: string): RGBFloat {
-    // Simple HSL to RGB conversion for common cases
+  private parseColorString(colorStr: string): { hue: number; saturation: number; lightness: number } {
+    let hue = 200; // Default blue
+    let saturation = 70;
+    let lightness = 50;
+    
+    // Parse existing HSL format if present
     if (colorStr.startsWith('hsl(')) {
       const match = colorStr.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
       if (match) {
-        const h = parseInt(match[1]) / 360;
-        const s = parseInt(match[2]) / 100;
-        const l = parseInt(match[3]) / 100;
-        
-        const c = (1 - Math.abs(2 * l - 1)) * s;
-        const x = c * (1 - Math.abs((h * 6) % 2 - 1));
-        const m = l - c / 2;
-        
-        let r = 0, g = 0, b = 0;
-        if (h < 1/6) { r = c; g = x; b = 0; }
-        else if (h < 2/6) { r = x; g = c; b = 0; }
-        else if (h < 3/6) { r = 0; g = c; b = x; }
-        else if (h < 4/6) { r = 0; g = x; b = c; }
-        else if (h < 5/6) { r = x; g = 0; b = c; }
-        else { r = c; g = 0; b = x; }
-        
-        const rgb = { r: (r + m) * 255, g: (g + m) * 255, b: (b + m) * 255 };
-        return {
-          ...rgb,
-          logR: Math.log(rgb.r + 1),
-          logG: Math.log(rgb.g + 1),
-          logB: Math.log(rgb.b + 1)
-        };
+        hue = parseInt(match[1]);
+        saturation = parseInt(match[2]);
+        lightness = parseInt(match[3]);
       }
     }
     
-    // Default blue color
-    const rgb = { r: 100, g: 150, b: 255 };
+    return { hue, saturation, lightness };
+  }
+
+  /**
+   * Apply side and index variations to HSL components and convert to RGB
+   * @param baseHsl Base HSL components from parseColorString
+   * @param side Hemisphere information (+1 or -1)
+   * @param index Point generation index for temporal gradient
+   * @returns RGB color with precomputed logarithmic values
+   */
+  private applyColorVariations(baseHsl: { hue: number; saturation: number; lightness: number }, side?: number, index?: number): RGBFloat {
+    let hue = baseHsl.hue;
+    let saturation = baseHsl.saturation;
+    let lightness = baseHsl.lightness;
+    
+    // Extract side information for blue vs magenta distinction
+    if (side !== undefined) {
+      hue = side > 0 ? 200 : 320; // Blue vs Magenta
+    }
+    
+    // Apply temporal gradient if index is available
+    if (index !== undefined) {
+      const indexVariation = Math.sin(index * 0.1) * 10; // ±10° variation
+      hue = (hue + indexVariation + 360) % 360;
+    }
+    
+    return this.hslToRgb(hue, saturation, lightness);
+  }
+
+  /**
+   * Convert HSL to RGB with precomputed logarithmic values
+   */
+  private hslToRgb(h: number, s: number, l: number): RGBFloat {
+    const hNorm = h / 360;
+    const sNorm = s / 100;
+    const lNorm = l / 100;
+    
+    const c = (1 - Math.abs(2 * lNorm - 1)) * sNorm;
+    const x = c * (1 - Math.abs((hNorm * 6) % 2 - 1));
+    const m = lNorm - c / 2;
+    
+    let r = 0, g = 0, b = 0;
+    if (hNorm < 1/6) { r = c; g = x; b = 0; }
+    else if (hNorm < 2/6) { r = x; g = c; b = 0; }
+    else if (hNorm < 3/6) { r = 0; g = c; b = x; }
+    else if (hNorm < 4/6) { r = 0; g = x; b = c; }
+    else if (hNorm < 5/6) { r = x; g = 0; b = c; }
+    else { r = c; g = 0; b = x; }
+    
+    const rgb = { r: (r + m) * 255, g: (g + m) * 255, b: (b + m) * 255 };
     return {
       ...rgb,
       logR: Math.log(rgb.r + 1),

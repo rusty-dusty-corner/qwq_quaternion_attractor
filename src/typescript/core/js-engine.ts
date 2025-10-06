@@ -137,10 +137,15 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
         currentQuaternion = normalizeQuaternion(currentQuaternion);
       }
 
-      // Project to 3D space
+      // Determine side based on the sign of the w component of the current quaternion
+      // This matches the original WASM implementation: side = (quat.w >= 0) ? +1 : -1
+      const side = currentQuaternion.w >= 0 ? 1 : -1;
+
+      // Project to 3D space (this gives us coordinates on the infinite plane)
       const point3D = stereographicProjection(currentQuaternion);
 
-      // Apply additive vector
+      // Apply additive vector in 3D space (matching WASM implementation)
+      // The additive vector is applied to 3D coordinates, not quaternion coordinates
       const modifiedPoint = addVector3D(point3D, constants.additive);
 
       // Check if point is outside unit ball and apply side flipping
@@ -150,11 +155,16 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
         currentQuaternion
       );
 
-      // Store the 3D point (will be projected to 2D later)
-      points.push(processedPoint);
+      // Determine if hemisphere was flipped by checking if point was outside unit ball
+      const wasOutsideUnitBall = magnitude3D(modifiedPoint) > 1.0;
+      const finalSide = wasOutsideUnitBall ? -side : side; // Flip side if hemisphere was flipped
+
+      // Store the 3D point with side and index information (will be projected to 2D later)
+      points.push({ ...processedPoint, side: finalSide, index: i });
 
       // Update current quaternion for next iteration
-      currentQuaternion = inverseStereographicProjection(processedPoint);
+      // Pass the FINAL side information to the inverse projection to maintain hemisphere consistency
+      currentQuaternion = this.inverseStereographicProjectionWithSide(processedPoint, finalSide);
       
       iterationCount++;
     }
@@ -212,11 +222,34 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
       const color = this.generateColor(point, index);
       const alpha = Math.max(0.1, 1.0 - Math.sqrt(point.x * point.x + point.y * point.y) / 2.0);
 
-      return createPoint2D(x, y, color, alpha);
+      // Use side information from the point (already determined before flipping)
+      const side = point.side || 1; // Default to 1 if side not set
+
+      return createPoint2D(x, y, color, alpha, side, index);
     });
   }
 
   // Note: applySideFlipping is now handled by shared/quaternion-math.ts
+
+  /**
+   * Inverse stereographic projection with hemisphere support
+   * Matches the WASM implementation for proper side handling
+   */
+  private inverseStereographicProjectionWithSide(point: any, side: number): any {
+    const { x, y, z } = point;
+    const r2 = x * x + y * y + z * z;
+    
+    // Handle north pole singularity
+    if (r2 < 1e-10) {
+      return side > 0 ? { w: 1, x: 0, y: 0, z: 0 } : { w: -1, x: 0, y: 0, z: 0 };
+    }
+    
+    // Hemisphere-aware w calculation
+    const w = side > 0 ? (r2 - 1) / (r2 + 1) : (1 - r2) / (r2 + 1);
+    const scale = 2 / (r2 + 1);
+    
+    return { w, x: x * scale, y: y * scale, z: z * scale };
+  }
 
   /**
    * Calculate final quaternion state
