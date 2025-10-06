@@ -132,6 +132,25 @@ export function inverseStereographicProjection(point: Vector3D): Quaternion {
 }
 
 /**
+ * Hemisphere-aware inverse stereographic projection from 3D to 4D
+ */
+export function inverseStereographicProjectionWithSide(point: Vector3D, side: number): Quaternion {
+  const { x, y, z } = point;
+  const r2 = x * x + y * y + z * z;
+  
+  // Handle north pole singularity
+  if (r2 < 1e-10) {
+    return side > 0 ? { w: 1, x: 0, y: 0, z: 0 } : { w: -1, x: 0, y: 0, z: 0 };
+  }
+  
+  // Hemisphere-aware w calculation
+  const w = side > 0 ? (r2 - 1) / (r2 + 1) : (1 - r2) / (r2 + 1);
+  const scale = 2 / (r2 + 1);
+  
+  return { w, x: x * scale, y: y * scale, z: z * scale };
+}
+
+/**
  * Add two 3D vectors
  */
 export function addVector3D(point: Vector3D, vector: Vector3D): Vector3D {

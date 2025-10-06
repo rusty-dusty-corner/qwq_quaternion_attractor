@@ -88,24 +88,18 @@ class MathTraceDebugger {
       // Calculate distance from center of phyllotaxis sphere (0,0,0)
       const distanceFromCenter = this.magnitude3D(modifiedPoint);
       
-      // Apply side flipping if point is outside unit sphere
-      // Standard stereographic projection should keep points within reasonable bounds
+      // With hemisphere-aware projection, normalized quaternions map to |P| ≤ 1
+      // Additive vectors may push points outside, which is expected behavior
       let processedPoint = modifiedPoint;
       let finalSide = quaternionSide;
       let sphereAction = 'INSIDE';
       
       if (distanceFromCenter > 1.0) {
-        sphereAction = 'OUTSIDE - FLIPPING';
-        // Point is outside unit ball - apply hemisphere flipping
-        // For simplicity, use plain flip mode
-        const flippedQuaternion = { 
-          w: -currentQuaternion.w, 
-          x: -currentQuaternion.x, 
-          y: -currentQuaternion.y, 
-          z: -currentQuaternion.z 
-        };
-        processedPoint = this.stereographicProjection(flippedQuaternion);
-        finalSide = -quaternionSide; // Flip the side
+        sphereAction = 'OUTSIDE - ADDITIVE EFFECT';
+        // Point is outside unit ball due to additive vector
+        // This is normal behavior with hemisphere-aware projection
+        processedPoint = modifiedPoint;
+        finalSide = quaternionSide;
       } else {
         sphereAction = 'INSIDE';
       }
