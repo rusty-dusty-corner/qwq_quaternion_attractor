@@ -19,10 +19,9 @@ import {
   multiplyQuaternions,
   conjugateQuaternion,
   stereographicProjection,
-  inverseStereographicProjection,
+  stereographicProjectionWithSide,
   inverseStereographicProjectionWithSide,
   addVector3D,
-  applySideFlipping,
   magnitude3D
 } from '../../shared/quaternion-math';
 
@@ -103,69 +102,49 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
     const points: any[] = [];
     let currentQuaternion = { ...startQuaternion };
 
-    // Add some randomness to prevent convergence to fixed points
-    const baseNoiseFactor = 0.01; // Increased noise factor
+    // Deterministic evolution without noise
     let iterationCount = 0;
 
     for (let i = 0; i < renderParams.batchSize; i++) {
-      // Apply wind rotation
+      // Apply wind rotation (deterministic)
       currentQuaternion = multiplyQuaternions(currentQuaternion, constants.wind);
+      currentQuaternion = normalizeQuaternion(currentQuaternion);
 
-      // Add progressive noise to prevent convergence - more noise for higher iteration counts
-      if (i % 50 === 0 && i > 0) {
-        const progressFactor = Math.min(1.0, i / 1000); // Increase noise as we progress
-        const noiseFactor = baseNoiseFactor * (1 + progressFactor);
-        
-        const noise = {
-          w: 1.0 + (Math.random() - 0.5) * noiseFactor,
-          x: (Math.random() - 0.5) * noiseFactor,
-          y: (Math.random() - 0.5) * noiseFactor,
-          z: (Math.random() - 0.5) * noiseFactor
+      // Project to 3D space with side information (deterministic)
+      const projectionResult = stereographicProjectionWithSide(currentQuaternion);
+      const point3D = projectionResult.point;
+      const side = projectionResult.side;
+
+      // Apply additive vector scaled by the hemisphere side
+      const scaledAdditive = {
+        x: constants.additive.x * side,
+        y: constants.additive.y * side,
+        z: constants.additive.z * side
+      };
+
+      // Test if adding the additive would push us outside the sphere
+      const testPoint = addVector3D(point3D, scaledAdditive);
+      const testDistance = magnitude3D(testPoint);
+      
+      let finalPoint;
+      if (testDistance <= 1.0) {
+        // Inside sphere: commit the change
+        finalPoint = testPoint;
+      } else {
+        // Outside sphere: flip the current point (which is close to surface)
+        finalPoint = {
+          x: -point3D.x,
+          y: -point3D.y,
+          z: -point3D.z
         };
-        currentQuaternion = multiplyQuaternions(currentQuaternion, noise);
-        currentQuaternion = normalizeQuaternion(currentQuaternion);
       }
-
-      // Additional perturbation every 200 iterations for high iteration counts
-      if (i > 1000 && i % 200 === 0) {
-        const perturbation = {
-          w: 1.0 + (Math.random() - 0.5) * 0.05,
-          x: (Math.random() - 0.5) * 0.05,
-          y: (Math.random() - 0.5) * 0.05,
-          z: (Math.random() - 0.5) * 0.05
-        };
-        currentQuaternion = multiplyQuaternions(currentQuaternion, perturbation);
-        currentQuaternion = normalizeQuaternion(currentQuaternion);
-      }
-
-      // Determine side based on the sign of the w component of the current quaternion
-      // This matches the original WASM implementation: side = (quat.w >= 0) ? +1 : -1
-      const side = currentQuaternion.w >= 0 ? 1 : -1;
-
-      // Project to 3D space (this gives us coordinates on the infinite plane)
-      const point3D = stereographicProjection(currentQuaternion);
-
-      // Apply additive vector in 3D space (matching WASM implementation)
-      // The additive vector is applied to 3D coordinates, not quaternion coordinates
-      const modifiedPoint = addVector3D(point3D, constants.additive);
-
-      // Check if point is outside unit ball and apply side flipping
-      const processedPoint = applySideFlipping(
-        modifiedPoint,
-        constants.mode,
-        currentQuaternion
-      );
-
-      // Determine if hemisphere was flipped by checking if point was outside unit ball
-      const wasOutsideUnitBall = magnitude3D(modifiedPoint) > 1.0;
-      const finalSide = wasOutsideUnitBall ? -side : side; // Flip side if hemisphere was flipped
 
       // Store the 3D point with side and index information (will be projected to 2D later)
-      points.push({ ...processedPoint, side: finalSide, index: i });
+      points.push({ ...finalPoint, side: side, index: i });
 
       // Update current quaternion for next iteration
-      // Pass the FINAL side information to the inverse projection to maintain hemisphere consistency
-      currentQuaternion = this.inverseStereographicProjectionWithSide(processedPoint, finalSide);
+      // Use the side from the original projection (before any flipping)
+      currentQuaternion = inverseStereographicProjectionWithSide(finalPoint, side);
       
       iterationCount++;
     }
@@ -233,25 +212,6 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
 
   // Note: applySideFlipping is now handled by shared/quaternion-math.ts
 
-  /**
-   * Inverse stereographic projection with hemisphere support
-   * Matches the WASM implementation for proper side handling
-   */
-  private inverseStereographicProjectionWithSide(point: any, side: number): any {
-    const { x, y, z } = point;
-    const r2 = x * x + y * y + z * z;
-    
-    // Handle north pole singularity
-    if (r2 < 1e-10) {
-      return side > 0 ? { w: 1, x: 0, y: 0, z: 0 } : { w: -1, x: 0, y: 0, z: 0 };
-    }
-    
-    // Hemisphere-aware w calculation
-    const w = side > 0 ? (r2 - 1) / (r2 + 1) : (1 - r2) / (r2 + 1);
-    const scale = 2 / (r2 + 1);
-    
-    return { w, x: x * scale, y: y * scale, z: z * scale };
-  }
 
   /**
    * Calculate final quaternion state
@@ -264,21 +224,41 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
     let currentQuaternion = { ...startQuaternion };
 
     for (let i = 0; i < iterations; i++) {
+      // Apply wind rotation (deterministic)
       currentQuaternion = multiplyQuaternions(currentQuaternion, constants.wind);
-      const point3D = stereographicProjection(currentQuaternion);
-      const modifiedPoint = addVector3D(point3D, constants.additive);
+      currentQuaternion = normalizeQuaternion(currentQuaternion);
       
-      // Apply side flipping if needed
-      const magnitude = magnitude3D(modifiedPoint);
-      if (magnitude > 1.0) {
-        currentQuaternion = inverseStereographicProjection(
-          applySideFlipping(modifiedPoint, constants.mode, currentQuaternion)
-        );
+      // Project to 3D space with side information (deterministic)
+      const projectionResult = stereographicProjectionWithSide(currentQuaternion);
+      const point3D = projectionResult.point;
+      const side = projectionResult.side;
+      
+      // Apply additive vector scaled by the hemisphere side
+      const scaledAdditive = {
+        x: constants.additive.x * side,
+        y: constants.additive.y * side,
+        z: constants.additive.z * side
+      };
+
+      // Test if adding the additive would push us outside the sphere
+      const testPoint = addVector3D(point3D, scaledAdditive);
+      const testDistance = magnitude3D(testPoint);
+      
+      let finalPoint;
+      if (testDistance <= 1.0) {
+        // Inside sphere: commit the change
+        finalPoint = testPoint;
       } else {
-        // Use hemisphere-aware projection with current side
-        const side = currentQuaternion.w >= 0 ? 1 : -1;
-        currentQuaternion = inverseStereographicProjectionWithSide(modifiedPoint, side);
+        // Outside sphere: flip the current point (which is close to surface)
+        finalPoint = {
+          x: -point3D.x,
+          y: -point3D.y,
+          z: -point3D.z
+        };
       }
+      
+      // Use hemisphere-aware projection with the correct side
+      currentQuaternion = inverseStereographicProjectionWithSide(finalPoint, side);
     }
 
     return normalizeQuaternion(currentQuaternion);

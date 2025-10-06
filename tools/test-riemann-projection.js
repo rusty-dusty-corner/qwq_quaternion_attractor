@@ -134,14 +134,16 @@ function testCircleToLineMapping() {
 // =============================================================================
 
 function stereographicProjection2D(x, y, z) {
-    // Project from north pole (0, 0, 1)
-    if (z >= 1 - 1e-10) {
-        // Near north pole - map to infinity
-        return [Infinity, Infinity];
+    // Use hemisphere-aware projection
+    if (z >= 0) {
+        // Upper hemisphere
+        const scale = 1 / (1 + z);
+        return [x * scale, y * scale];
+    } else {
+        // Lower hemisphere
+        const scale = 1 / (1 - z);
+        return [x * scale, y * scale];
     }
-    
-    const scale = 1 / (1 - z);
-    return [x * scale, y * scale];
 }
 
 function hemisphereAwareProjection2D(x, y, z, hemisphere) {

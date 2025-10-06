@@ -247,6 +247,29 @@ z = 0.333 × 1.500 = 0.500
 
 **Solution:** Always preserve the hemisphere side (`side = w ≥ 0 ? 1 : -1`) when doing round-trip projections.
 
+### **Critical Implementation Detail: South Pole Singularity Handling**
+
+**Mathematical Issue:** The quadratic equation for inverse projection can produce the solution `w = -1`, which creates a singularity because the scale factor becomes `1 + w = 0`.
+
+**Implementation Solution:**
+```typescript
+// For lower hemisphere, avoid w = -1 singularity
+if (side > 0) {
+  w = Math.max(w1, w2);  // Upper hemisphere: choose positive solution
+} else {
+  // Lower hemisphere: choose solution that's not exactly -1
+  if (Math.abs(w1 - (-1)) < 1e-10) {
+    w = w2;  // Avoid w = -1 singularity
+  } else if (Math.abs(w2 - (-1)) < 1e-10) {
+    w = w1;  // Avoid w = -1 singularity
+  } else {
+    w = Math.min(w1, w2);
+  }
+}
+```
+
+**Why This Matters:** Without this handling, all lower hemisphere quaternions would map to the south pole `(-1,0,0,0)`, causing infinite loops in quaternion evolution systems.
+
 ---
 
 ## 🎯 **Mathematical Derivation of Inverse Projection**
@@ -313,6 +336,7 @@ c = r² - 1
 
 ### **4. Numerical Stability**
 - Avoids singularities at the poles through hemisphere separation
+- **Critical:** South pole singularity (`w = -1`) is explicitly handled in inverse projection
 - Provides smooth transitions between hemispheres
 - Maintains mathematical consistency across the entire 3-sphere
 

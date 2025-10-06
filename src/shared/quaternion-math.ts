@@ -109,6 +109,43 @@ export function stereographicProjection(quaternion: Quaternion): Vector3D {
 }
 
 /**
+ * Stereographic projection that returns both the 3D point and the hemisphere side
+ */
+export function stereographicProjectionWithSide(quaternion: Quaternion): { point: Vector3D; side: number } {
+  const { w, x, y, z } = quaternion;
+
+  // Handle pole singularities
+  if (Math.abs(1 - w) < 1e-10) {
+    return { point: { x: 0, y: 0, z: 0 }, side: 1 };
+  }
+  if (Math.abs(-1 - w) < 1e-10) {
+    return { point: { x: 0, y: 0, z: 0 }, side: -1 };
+  }
+
+  // Hemisphere-aware projection
+  // Determine hemisphere based on w component
+  const side = w >= 0 ? 1 : -1;
+  
+  let scale;
+  if (side > 0) {
+    // Upper hemisphere: project from north pole (1, 0, 0, 0)
+    scale = 1 / (1 + w);
+  } else {
+    // Lower hemisphere: project from south pole (-1, 0, 0, 0)
+    scale = 1 / (1 - w);
+  }
+  
+  return {
+    point: {
+      x: x * scale,
+      y: y * scale,
+      z: z * scale
+    },
+    side: side
+  };
+}
+
+/**
  * Inverse stereographic projection from 3D to 4D
  */
 export function inverseStereographicProjection(point: Vector3D): Quaternion {
@@ -155,7 +192,23 @@ export function inverseStereographicProjectionWithSide(point: Vector3D, side: nu
   const w2 = (-b - Math.sqrt(discriminant)) / (2 * a);
   
   // Choose the correct w based on hemisphere
-  const w = side > 0 ? Math.max(w1, w2) : Math.min(w1, w2);
+  // For lower hemisphere, we need to avoid w = -1 (singularity)
+  // We should choose the solution that gives us a valid quaternion
+  let w;
+  if (side > 0) {
+    // Upper hemisphere: choose the larger w (positive)
+    w = Math.max(w1, w2);
+  } else {
+    // Lower hemisphere: choose the larger w that's not -1
+    // If both solutions are valid, choose the one closer to -1 but not exactly -1
+    if (Math.abs(w1 - (-1)) < 1e-10) {
+      w = w2;
+    } else if (Math.abs(w2 - (-1)) < 1e-10) {
+      w = w1;
+    } else {
+      w = Math.min(w1, w2);
+    }
+  }
   
   // Calculate x, y, z components
   const scale = 1 + w;

@@ -125,7 +125,20 @@ function inverseStereographicProjectionWithSide(point, side) {
   const w2 = (-b - Math.sqrt(discriminant)) / (2 * a);
   
   // Choose the correct w based on hemisphere
-  const w = side > 0 ? Math.max(w1, w2) : Math.min(w1, w2);
+  // CRITICAL: Avoid w = -1 singularity for lower hemisphere
+  let w;
+  if (side > 0) {
+    w = Math.max(w1, w2);  // Upper hemisphere: choose positive solution
+  } else {
+    // Lower hemisphere: avoid w = -1 singularity
+    if (Math.abs(w1 - (-1)) < 1e-10) {
+      w = w2;
+    } else if (Math.abs(w2 - (-1)) < 1e-10) {
+      w = w1;
+    } else {
+      w = Math.min(w1, w2);
+    }
+  }
   
   // Calculate x, y, z components
   const scale = 1 + w;
