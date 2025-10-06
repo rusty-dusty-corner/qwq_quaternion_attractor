@@ -21,8 +21,18 @@ This report provides a direct comparison of Groq Vision AI analysis results betw
 ### Comparison 1: Flip Smallest Mode
 
 **Images Compared:**
-- **Previous Generation:** mass_0935_flip_smallest_simple_9071pts.png
-- **Current Generation:** uniform_0057_flip_smallest_simple_7353pts.png
+
+**Previous Generation:**
+- **Image Path:** `output/mass_generation/2025-10-05T16-19-57-373Z/mass_0935_flip_smallest_simple_9071pts.png`
+- **Parameter Path:** `output/mass_generation/2025-10-05T16-19-57-373Z/mass_0935_flip_smallest_simple_9071pts_params.json`
+- **Generation Session:** 2025-10-05T16-19-57-373Z
+- **Method:** Mass generation with random parameters
+
+**Current Generation:**
+- **Image Path:** `output/uniform_mass_generation/2025-10-06T04-10-40-279Z/uniform_0057_flip_smallest_simple_7353pts.png`
+- **Parameter Path:** `output/uniform_mass_generation/2025-10-06T04-10-40-279Z/uniform_0057_flip_smallest_simple_7353pts_params.json`
+- **Generation Session:** 2025-10-06T04-10-40-279Z
+- **Method:** Uniform generation with systematic sampling
 
 **Groq Vision Direct Comparison Analysis:**
 
@@ -51,8 +61,18 @@ This report provides a direct comparison of Groq Vision AI analysis results betw
 ### Comparison 2: Flip All Except Largest Mode
 
 **Images Compared:**
-- **Previous Generation:** mass_0154_flip_all_except_largest_simple_8894pts.png
-- **Current Generation:** uniform_0188_flip_all_except_largest_simple_5010pts.png
+
+**Previous Generation:**
+- **Image Path:** `output/mass_generation/2025-10-05T16-19-57-373Z/mass_0154_flip_all_except_largest_simple_8894pts.png`
+- **Parameter Path:** `output/mass_generation/2025-10-05T16-19-57-373Z/mass_0154_flip_all_except_largest_simple_8894pts_params.json`
+- **Generation Session:** 2025-10-05T16-19-57-373Z
+- **Method:** Mass generation with random parameters
+
+**Current Generation:**
+- **Image Path:** `output/uniform_mass_generation/2025-10-06T04-10-40-279Z/uniform_0188_flip_all_except_largest_simple_5010pts.png`
+- **Parameter Path:** `output/uniform_mass_generation/2025-10-06T04-10-40-279Z/uniform_0188_flip_all_except_largest_simple_5010pts_params.json`
+- **Generation Session:** 2025-10-06T04-10-40-279Z
+- **Method:** Uniform generation with systematic sampling
 
 **Groq Vision Direct Comparison Analysis:**
 
