@@ -11,6 +11,13 @@
  * - Quaternion normalization and cube mapping
  */
 
+// Import shared math functions to avoid duplication
+const { 
+    stereographicProjection: sharedStereographicProjection,
+    inverseStereographicProjection: sharedInverseStereographicProjection,
+    inverseStereographicProjectionWithSide: sharedInverseStereographicProjectionWithSide
+} = require('../dist/shared/quaternion-math');
+
 // =============================================================================
 // UTILITY FUNCTIONS
 // =============================================================================
@@ -187,30 +194,15 @@ function testSphereToPlaneProjection() {
 // =============================================================================
 
 function stereographicProjection3D(w, x, y, z) {
-    // Project from north pole (1, 0, 0, 0)
-    if (w >= 1 - 1e-10) {
-        // Near north pole
-        return [Infinity, Infinity, Infinity];
-    }
-    
-    const scale = 1 / (1 - w);
-    return [x * scale, y * scale, z * scale];
+    // Use shared implementation
+    const quaternion = { w, x, y, z };
+    const result = sharedStereographicProjection(quaternion);
+    return [result.x, result.y, result.z];
 }
 
 function inverseStereographicProjectionWithSide(point, side) {
-    const { x, y, z } = point;
-    const r2 = x * x + y * y + z * z;
-    
-    // Handle north pole singularity
-    if (r2 < 1e-10) {
-        return side > 0 ? { w: 1, x: 0, y: 0, z: 0 } : { w: -1, x: 0, y: 0, z: 0 };
-    }
-    
-    // Hemisphere-aware w calculation
-    const w = side > 0 ? (r2 - 1) / (r2 + 1) : (1 - r2) / (r2 + 1);
-    const scale = 2 / (r2 + 1);
-    
-    return { w, x: x * scale, y: y * scale, z: z * scale };
+    // Use shared implementation
+    return sharedInverseStereographicProjectionWithSide(point, side);
 }
 
 function test3SphereTo3DMapping() {

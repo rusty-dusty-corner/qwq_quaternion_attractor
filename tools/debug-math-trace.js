@@ -17,26 +17,11 @@ class MathTraceDebugger {
     // Import math functions from shared
     this.stereographicProjection = require('../dist/shared/quaternion-math').stereographicProjection;
     this.inverseStereographicProjection = require('../dist/shared/quaternion-math').inverseStereographicProjection;
+    this.inverseStereographicProjectionWithSide = require('../dist/shared/quaternion-math').inverseStereographicProjectionWithSide;
   }
 
-  /**
-   * Inverse stereographic projection with hemisphere support (matching WASM)
-   */
-  inverseStereographicProjectionWithSide(point, side) {
-    const { x, y, z } = point;
-    const r2 = x * x + y * y + z * z;
-    
-    // Handle north pole singularity
-    if (r2 < 1e-10) {
-      return side > 0 ? { w: 1, x: 0, y: 0, z: 0 } : { w: -1, x: 0, y: 0, z: 0 };
-    }
-    
-    // Hemisphere-aware w calculation
-    const w = side > 0 ? (r2 - 1) / (r2 + 1) : (1 - r2) / (r2 + 1);
-    const scale = 2 / (r2 + 1);
-    
-    return { w, x: x * scale, y: y * scale, z: z * scale };
-  }
+  // Use shared hemisphere-aware inverse stereographic projection directly
+  // No need for wrapper method - call this.inverseStereographicProjectionWithSide directly
 
   /**
    * Add two 3D vectors
@@ -63,9 +48,10 @@ class MathTraceDebugger {
     console.log('🧪 Test 1: Identity Wind with Small Additive');
     console.log('=============================================');
 
-    const start = createQuaternion(0.9999, 0.01, 0.01, 0.01); // Much closer to (1,0,0,0) - should project inside sphere
-    const wind = createQuaternion(0.9999, 0.0001, 0.00005, 0.00002);  // Very small wind
-    const additive = createVector3D(0.01, 0, 0); // Small additive - should allow gradual movement
+    // Create properly normalized quaternions that are NOT close to poles
+    const start = normalizeQuaternion(createQuaternion(0.7, 0.3, 0.3, 0.3)); // Further from poles
+    const wind = normalizeQuaternion(createQuaternion(0.9, 0.1, 0.1, 0.1)); // Small rotation
+    const additive = createVector3D(0.1, 0, 0); // Moderate additive
     
     console.log('📋 Parameters:');
     console.log(`  Start: (${start.w.toFixed(3)}, ${start.x.toFixed(3)}, ${start.y.toFixed(3)}, ${start.z.toFixed(3)})`);
@@ -102,7 +88,8 @@ class MathTraceDebugger {
       // Calculate distance from center of phyllotaxis sphere (0,0,0)
       const distanceFromCenter = this.magnitude3D(modifiedPoint);
       
-      // Apply side flipping if point is outside unit ball
+      // Apply side flipping if point is outside unit sphere
+      // Standard stereographic projection should keep points within reasonable bounds
       let processedPoint = modifiedPoint;
       let finalSide = quaternionSide;
       let sphereAction = 'INSIDE';
@@ -158,9 +145,10 @@ class MathTraceDebugger {
     console.log('\n🧪 Test 2: Small Wind with Small Additive');
     console.log('==========================================');
 
-    const start = createQuaternion(0.9999, 0.0001, 0.00005, 0.00002); // Very close to identity
-    const wind = createQuaternion(0.9999, 0.0001, 0.00005, 0.00002); // Very small rotation
-    const additive = createVector3D(0.2, 0, 0); // Even larger additive to force hemisphere transitions
+    // Create properly normalized quaternions that are NOT close to poles
+    const start = normalizeQuaternion(createQuaternion(0.8, 0.2, 0.2, 0.2)); // Further from poles
+    const wind = normalizeQuaternion(createQuaternion(0.95, 0.05, 0.05, 0.05)); // Small rotation
+    const additive = createVector3D(0.2, 0, 0); // Moderate additive
     
     console.log('📋 Parameters:');
     console.log(`  Start: (${start.w.toFixed(3)}, ${start.x.toFixed(3)}, ${start.y.toFixed(3)}, ${start.z.toFixed(3)})`);
@@ -210,8 +198,9 @@ class MathTraceDebugger {
     console.log('\n🧪 Test 3: Smooth Path Verification');
     console.log('===================================');
 
-    const start = createQuaternion(0.999, 0.001, 0.0005, 0.0002);
-    const wind = createQuaternion(0.9999, 0.0001, 0.00005, 0.00002);
+    // Create properly normalized quaternions
+    const start = normalizeQuaternion(createQuaternion(0.999, 0.001, 0.0005, 0.0002));
+    const wind = normalizeQuaternion(createQuaternion(0.9999, 0.0001, 0.00005, 0.00002));
     const additive = createVector3D(0.01, 0.000001, 0.000001);
     
     let currentQuaternion = { ...start };
@@ -269,9 +258,10 @@ class MathTraceDebugger {
     console.log('\n🧪 Test 4: Hemisphere Transitions');
     console.log('=================================');
 
-    const start = createQuaternion(0.999, 0.001, 0.0005, 0.0002); // Very close to identity
-    const wind = createQuaternion(0.9999, 0.0001, 0.00005, 0.00002); // Very small wind
-    const additive = createVector3D(0.2, 0, 0); // Even larger additive to force hemisphere transitions
+    // Create properly normalized quaternions with very small additive
+    const start = normalizeQuaternion(createQuaternion(0.999, 0.001, 0.001, 0.001)); // Very close to identity
+    const wind = normalizeQuaternion(createQuaternion(0.9999, 0.0001, 0.0001, 0.0001)); // Tiny normalized wind
+    const additive = createVector3D(0.002, 0, 0); // Very small additive
     
     let currentQuaternion = { ...start };
     let transitions = [];

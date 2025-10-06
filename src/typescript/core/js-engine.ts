@@ -20,6 +20,7 @@ import {
   conjugateQuaternion,
   stereographicProjection,
   inverseStereographicProjection,
+  inverseStereographicProjectionWithSide,
   addVector3D,
   applySideFlipping,
   magnitude3D
@@ -177,8 +178,9 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
    */
   private applyCameraRotation(points: any[], cameraRotation: any): any[] {
     return points.map(point => {
-      // Convert 3D point to quaternion for rotation
-      const pointQuaternion = inverseStereographicProjection(point);
+      // Convert 3D point to quaternion for rotation using hemisphere-aware projection
+      const side = point.side || (point.w >= 0 ? 1 : -1); // Use stored side or determine from point
+      const pointQuaternion = inverseStereographicProjectionWithSide(point, side);
       const rotatedQuaternion = multiplyQuaternions(
         multiplyQuaternions(cameraRotation, pointQuaternion),
         conjugateQuaternion(cameraRotation)
@@ -273,7 +275,9 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
           applySideFlipping(modifiedPoint, constants.mode, currentQuaternion)
         );
       } else {
-        currentQuaternion = inverseStereographicProjection(modifiedPoint);
+        // Use hemisphere-aware projection with current side
+        const side = currentQuaternion.w >= 0 ? 1 : -1;
+        currentQuaternion = inverseStereographicProjectionWithSide(modifiedPoint, side);
       }
     }
 
