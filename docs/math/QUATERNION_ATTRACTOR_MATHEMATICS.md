@@ -78,8 +78,15 @@ The **additive vector** represents the phyllotaxis effect:
 ## Stereographic Projection
 
 ### Mathematical Definition
-Stereographic projection maps the 3-sphere S³ to 3D Euclidean space ℝ³:
+Hemisphere-aware stereographic projection maps the 3-sphere S³ to 3D Euclidean space ℝ³:
 
+**Upper Hemisphere (w ≥ 0):**
+```
+P: S³ → ℝ³
+P(w, x, y, z) = (x/(1+w), y/(1+w), z/(1+w))
+```
+
+**Lower Hemisphere (w < 0):**
 ```
 P: S³ → ℝ³
 P(w, x, y, z) = (x/(1-w), y/(1-w), z/(1-w))

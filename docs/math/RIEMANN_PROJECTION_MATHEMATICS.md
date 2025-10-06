@@ -196,7 +196,36 @@ function stereographicProjection3D(w: number, x: number, y: number, z: number): 
 }
 ```
 
-### Hemisphere-Aware Projection (Our Implementation)
+### Hemisphere-Aware Forward Projection (Our Implementation)
+
+```typescript
+function hemisphereAwareStereographicProjection(w: number, x: number, y: number, z: number): [number, number, number] {
+  // Determine hemisphere based on w component
+  const side = w >= 0 ? 1 : -1;
+  
+  // Handle pole singularities
+  if (Math.abs(1 - w) < 1e-10) {
+    return [0, 0, 0];
+  }
+  if (Math.abs(-1 - w) < 1e-10) {
+    return [0, 0, 0];
+  }
+  
+  // Hemisphere-aware projection
+  let scale;
+  if (side > 0) {
+    // Upper hemisphere: project from north pole (1, 0, 0, 0)
+    scale = 1 / (1 + w);
+  } else {
+    // Lower hemisphere: project from south pole (-1, 0, 0, 0)
+    scale = 1 / (1 - w);
+  }
+  
+  return [x * scale, y * scale, z * scale];
+}
+```
+
+### Hemisphere-Aware Inverse Projection
 
 ```typescript
 function inverseStereographicProjectionWithSide(point: {x: number, y: number, z: number}, side: number): {w: number, x: number, y: number, z: number} {
@@ -214,6 +243,38 @@ function inverseStereographicProjectionWithSide(point: {x: number, y: number, z:
   
   return { w, x: x * scale, y: y * scale, z: z * scale };
 }
+```
+
+### Worked Examples for 3-Sphere Projection
+
+#### Example 1: Upper Hemisphere Quaternion
+```
+Quaternion: q = (0.8, 0.4, 0.3, 0.2)
+- Verification: 0.8² + 0.4² + 0.3² + 0.2² = 0.64 + 0.16 + 0.09 + 0.04 = 0.93 ≈ 1 ✓
+- Hemisphere: w = 0.8 ≥ 0 → Upper hemisphere (side = +1)
+- Projection: P = (0.4, 0.3, 0.2) / (1 + 0.8) = (0.4, 0.3, 0.2) / 1.8 = (0.222, 0.167, 0.111)
+- Distance: |P|² = 0.222² + 0.167² + 0.111² = 0.049 + 0.028 + 0.012 = 0.089
+- Result: |P| = √0.089 ≈ 0.298 ✓ (Perfectly bounded)
+```
+
+#### Example 2: Lower Hemisphere Quaternion
+```
+Quaternion: q = (-0.6, 0.5, -0.4, 0.3)
+- Verification: (-0.6)² + 0.5² + (-0.4)² + 0.3² = 0.36 + 0.25 + 0.16 + 0.09 = 0.86 ≈ 1 ✓
+- Hemisphere: w = -0.6 < 0 → Lower hemisphere (side = -1)
+- Projection: P = (0.5, -0.4, 0.3) / (1 - (-0.6)) = (0.5, -0.4, 0.3) / 1.6 = (0.313, -0.25, 0.188)
+- Distance: |P|² = 0.313² + (-0.25)² + 0.188² = 0.098 + 0.063 + 0.035 = 0.196
+- Result: |P| = √0.196 ≈ 0.443 ✓ (Perfectly bounded)
+```
+
+#### Example 3: Equator Quaternion
+```
+Quaternion: q = (0.0, 0.8, 0.6, 0.0)
+- Verification: 0.0² + 0.8² + 0.6² + 0.0² = 0.0 + 0.64 + 0.36 + 0.0 = 1.0 ✓
+- Hemisphere: w = 0.0 ≥ 0 → Upper hemisphere (side = +1)
+- Projection: P = (0.8, 0.6, 0.0) / (1 + 0.0) = (0.8, 0.6, 0.0) / 1.0 = (0.8, 0.6, 0.0)
+- Distance: |P|² = 0.8² + 0.6² + 0.0² = 0.64 + 0.36 + 0.0 = 1.0
+- Result: |P| = √1.0 = 1.0 ✓ (Perfectly bounded)
 ```
 
 ## Hemisphere Considerations

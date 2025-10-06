@@ -37,12 +37,12 @@ The stereographic projection maps the 3-sphere onto two complementary 3D unit ba
 
 **North Hemisphere Projection (w ≥ 0):**
 ```
-p = v/(1-w), where v = (x,y,z)
+p = v/(1+w), where v = (x,y,z)
 ```
 
 **South Hemisphere Projection (w ≤ 0):**
 ```
-p = v/(1+w), where v = (x,y,z)
+p = v/(1-w), where v = (x,y,z)
 ```
 
 Both projections map closed hemispheres **bijectively** onto the unit ball:
