@@ -279,7 +279,7 @@ class ImprovedMassImageGenerator {
         scale: scale,
         offsetX: parameters.imageSize.width / 2,
         offsetY: parameters.imageSize.height / 2,
-        blurRadius: 1.5,
+        blurRadius: 0.75,
         normalizationMode: 'logarithmic'
       };
       

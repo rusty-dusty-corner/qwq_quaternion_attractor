@@ -138,7 +138,7 @@ class ImageRegenerator {
         scale: scale,
         offsetX: imageSize.width / 2,
         offsetY: imageSize.height / 2,
-        blurRadius: 1.5,
+        blurRadius: 0.75,
         normalizationMode: 'logarithmic'
       };
       

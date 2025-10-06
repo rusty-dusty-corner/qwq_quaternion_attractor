@@ -22,13 +22,16 @@ export interface ImageConfig {
   offsetX: number;      // X offset for centering
   offsetY: number;      // Y offset for centering
   blurRadius: number;   // Blur radius for smoothing
-  normalizationMode?: 'statistics' | 'logarithmic'; // Normalization method
 }
 
 export interface RGBFloat {
   r: number;
   g: number;
   b: number;
+  // Precomputed logarithmic values for efficiency
+  logR: number;
+  logG: number;
+  logB: number;
 }
 
 export interface Statistics {
@@ -180,7 +183,7 @@ export class SimplePNGRenderer {
     for (let y = 0; y < this.config.height; y++) {
       this.grid[y] = [];
       for (let x = 0; x < this.config.width; x++) {
-        this.grid[y][x] = { r: 0, g: 0, b: 0 };
+        this.grid[y][x] = { r: 0, g: 0, b: 0, logR: 0, logG: 0, logB: 0 };
       }
     }
   }
@@ -216,41 +219,76 @@ export class SimplePNGRenderer {
    * Apply blur for smoothing
    */
   private applyBlur(): void {
-    if (this.config.blurRadius <= 0) return;
+    if (this.config.blurRadius <= 0) {
+      // Even without blur, compute log values
+      this.computeLogValues();
+      return;
+    }
 
     const newGrid: RGBFloat[][] = [];
     for (let y = 0; y < this.config.height; y++) {
       newGrid[y] = [];
       for (let x = 0; x < this.config.width; x++) {
-        newGrid[y][x] = { r: 0, g: 0, b: 0 };
+        newGrid[y][x] = { r: 0, g: 0, b: 0, logR: 0, logG: 0, logB: 0 };
       }
     }
 
-    const radius = Math.floor(this.config.blurRadius);
-    const totalWeight = (2 * radius + 1) * (2 * radius + 1);
+    // Probabilistic blur implementation
+    const samplesPerPixel = 16; // Number of random samples per pixel
+    const radius = 0.75; // Fixed blur radius for optimal quality
 
     for (let y = 0; y < this.config.height; y++) {
       for (let x = 0; x < this.config.width; x++) {
         let r = 0, g = 0, b = 0;
+        let validSamples = 0;
 
-        for (let dy = -radius; dy <= radius; dy++) {
-          for (let dx = -radius; dx <= radius; dx++) {
-            const ny = y + dy;
-            const nx = x + dx;
-
-            if (ny >= 0 && ny < this.config.height && 
-                nx >= 0 && nx < this.config.width) {
-              r += this.grid[ny][nx].r;
-              g += this.grid[ny][nx].g;
-              b += this.grid[ny][nx].b;
-            }
+        for (let sample = 0; sample < samplesPerPixel; sample++) {
+          // Generate random x, y between -1 and 1
+          const randomX = (Math.random() - 0.5) * 2; // Range: [-1, 1]
+          const randomY = (Math.random() - 0.5) * 2; // Range: [-1, 1]
+          
+          // Compute distance from center
+          const distance = Math.sqrt(randomX * randomX + randomY * randomY);
+          
+          // Discard if distance > 0.999 (outside unit circle)
+          if (distance > 0.999) continue;
+          
+          // Normalize x and y by distance
+          const normalizedX = randomX / distance;
+          const normalizedY = randomY / distance;
+          
+          // Compute atanh(distance) * radius
+          const atanhDistance = Math.atanh(distance) * radius;
+          
+          // Multiply by this factor to get final offset
+          const offsetX = normalizedX * atanhDistance;
+          const offsetY = normalizedY * atanhDistance;
+          
+          // Calculate sample position
+          const sampleX = Math.round(x + offsetX);
+          const sampleY = Math.round(y + offsetY);
+          
+          // Check bounds
+          if (sampleY >= 0 && sampleY < this.config.height && 
+              sampleX >= 0 && sampleX < this.config.width) {
+            r += this.grid[sampleY][sampleX].r;
+            g += this.grid[sampleY][sampleX].g;
+            b += this.grid[sampleY][sampleX].b;
+            validSamples++;
           }
         }
 
+        const blurredR = validSamples > 0 ? r / validSamples : 0;
+        const blurredG = validSamples > 0 ? g / validSamples : 0;
+        const blurredB = validSamples > 0 ? b / validSamples : 0;
+
         newGrid[y][x] = {
-          r: r / totalWeight,
-          g: g / totalWeight,
-          b: b / totalWeight
+          r: blurredR,
+          g: blurredG,
+          b: blurredB,
+          logR: Math.log(blurredR + 1),
+          logG: Math.log(blurredG + 1),
+          logB: Math.log(blurredB + 1)
         };
       }
     }
@@ -259,30 +297,60 @@ export class SimplePNGRenderer {
   }
 
   /**
-   * Calculate statistics for the grid
+   * Compute logarithmic values for all pixels (used when no blur is applied)
    */
-  private calculateStatistics(): Statistics {
-    let minR = Infinity, minG = Infinity, minB = Infinity;
-    let maxR = -Infinity, maxG = -Infinity, maxB = -Infinity;
-    let sumR = 0, sumG = 0, sumB = 0;
-    let count = 0;
-
-    // First pass: find min, max, and mean
+  private computeLogValues(): void {
     for (let y = 0; y < this.config.height; y++) {
       for (let x = 0; x < this.config.width; x++) {
         const pixel = this.grid[y][x];
+        this.grid[y][x] = {
+          ...pixel,
+          logR: Math.log(pixel.r + 1),
+          logG: Math.log(pixel.g + 1),
+          logB: Math.log(pixel.b + 1)
+        };
+      }
+    }
+  }
+
+  /**
+   * Calculate statistics for the grid
+   */
+  private calculateStatistics(): Statistics {
+    // Use logarithmic statistics with precomputed log values
+    let minLogR = 0, minLogG = 0, minLogB = 0;
+    let maxLogR = 0, maxLogG = 0, maxLogB = 0;
+    let sumLogR = 0, sumLogG = 0, sumLogB = 0;
+    let count = 0;
+
+    // First pass: find min, max, and mean using log values
+    let firstPixel = true;
+    for (let y = 0; y < this.config.height; y++) {
+      for (let x = 0; x < this.config.width; x++) {
+        const pixel = this.grid[y][x];
+        // Use precomputed log values for statistics
         if (pixel.r > 0 || pixel.g > 0 || pixel.b > 0) {
-          minR = Math.min(minR, pixel.r);
-          minG = Math.min(minG, pixel.g);
-          minB = Math.min(minB, pixel.b);
+          if (firstPixel) {
+            minLogR = pixel.logR;
+            minLogG = pixel.logG;
+            minLogB = pixel.logB;
+            maxLogR = pixel.logR;
+            maxLogG = pixel.logG;
+            maxLogB = pixel.logB;
+            firstPixel = false;
+          } else {
+            minLogR = Math.min(minLogR, pixel.logR);
+            minLogG = Math.min(minLogG, pixel.logG);
+            minLogB = Math.min(minLogB, pixel.logB);
+            
+            maxLogR = Math.max(maxLogR, pixel.logR);
+            maxLogG = Math.max(maxLogG, pixel.logG);
+            maxLogB = Math.max(maxLogB, pixel.logB);
+          }
           
-          maxR = Math.max(maxR, pixel.r);
-          maxG = Math.max(maxG, pixel.g);
-          maxB = Math.max(maxB, pixel.b);
-          
-          sumR += pixel.r;
-          sumG += pixel.g;
-          sumB += pixel.b;
+          sumLogR += pixel.logR;
+          sumLogG += pixel.logG;
+          sumLogB += pixel.logB;
           count++;
         }
       }
@@ -290,38 +358,41 @@ export class SimplePNGRenderer {
 
     if (count === 0) {
       return {
-        min: { r: 0, g: 0, b: 0 },
-        max: { r: 0, g: 0, b: 0 },
-        mean: { r: 0, g: 0, b: 0 },
-        stdev: { r: 0, g: 0, b: 0 }
+        min: { r: 0, g: 0, b: 0, logR: 0, logG: 0, logB: 0 },
+        max: { r: 0, g: 0, b: 0, logR: 0, logG: 0, logB: 0 },
+        mean: { r: 0, g: 0, b: 0, logR: 0, logG: 0, logB: 0 },
+        stdev: { r: 0, g: 0, b: 0, logR: 0, logG: 0, logB: 0 }
       };
     }
 
-    const meanR = sumR / count;
-    const meanG = sumG / count;
-    const meanB = sumB / count;
+    const meanLogR = sumLogR / count;
+    const meanLogG = sumLogG / count;
+    const meanLogB = sumLogB / count;
 
-    // Second pass: calculate standard deviation
-    let sumVarR = 0, sumVarG = 0, sumVarB = 0;
+    // Second pass: calculate standard deviation using log values
+    let sumVarLogR = 0, sumVarLogG = 0, sumVarLogB = 0;
     for (let y = 0; y < this.config.height; y++) {
       for (let x = 0; x < this.config.width; x++) {
         const pixel = this.grid[y][x];
         if (pixel.r > 0 || pixel.g > 0 || pixel.b > 0) {
-          sumVarR += (pixel.r - meanR) * (pixel.r - meanR);
-          sumVarG += (pixel.g - meanG) * (pixel.g - meanG);
-          sumVarB += (pixel.b - meanB) * (pixel.b - meanB);
+          sumVarLogR += (pixel.logR - meanLogR) * (pixel.logR - meanLogR);
+          sumVarLogG += (pixel.logG - meanLogG) * (pixel.logG - meanLogG);
+          sumVarLogB += (pixel.logB - meanLogB) * (pixel.logB - meanLogB);
         }
       }
     }
 
     return {
-      min: { r: minR, g: minG, b: minB },
-      max: { r: maxR, g: maxG, b: maxB },
-      mean: { r: meanR, g: meanG, b: meanB },
+      min: { r: minLogR, g: minLogG, b: minLogB, logR: minLogR, logG: minLogG, logB: minLogB },
+      max: { r: maxLogR, g: maxLogG, b: maxLogB, logR: maxLogR, logG: maxLogG, logB: maxLogB },
+      mean: { r: meanLogR, g: meanLogG, b: meanLogB, logR: meanLogR, logG: meanLogG, logB: meanLogB },
       stdev: {
-        r: Math.sqrt(sumVarR / count),
-        g: Math.sqrt(sumVarG / count),
-        b: Math.sqrt(sumVarB / count)
+        r: Math.sqrt(sumVarLogR / count),
+        g: Math.sqrt(sumVarLogG / count),
+        b: Math.sqrt(sumVarLogB / count),
+        logR: Math.sqrt(sumVarLogR / count),
+        logG: Math.sqrt(sumVarLogG / count),
+        logB: Math.sqrt(sumVarLogB / count)
       }
     };
   }
@@ -343,21 +414,10 @@ export class SimplePNGRenderer {
       for (let x = 0; x < width; x++) {
         const pixel = this.grid[y][x];
         
-        // Choose normalization method based on configuration
-        const normalizationMode = this.config.normalizationMode || 'logarithmic'; // Default to new method
-        
-        let r, g, b;
-        if (normalizationMode === 'logarithmic') {
-          // Use advanced logarithmic + sigmoid normalization (FIXED - consistent across point counts)
-          r = this.normalizeFixedLogarithmic(pixel.r);
-          g = this.normalizeFixedLogarithmic(pixel.g);
-          b = this.normalizeFixedLogarithmic(pixel.b);
-        } else {
-          // Use legacy statistics-based normalization
-          r = this.normalizeValue(pixel.r, statistics.min.r, statistics.max.r);
-          g = this.normalizeValue(pixel.g, statistics.min.g, statistics.max.g);
-          b = this.normalizeValue(pixel.b, statistics.min.b, statistics.max.b);
-        }
+        // Use precomputed log values with statistics-based normalization
+        const r = this.normalizeFromLogValues(pixel.logR, statistics);
+        const g = this.normalizeFromLogValues(pixel.logG, statistics);
+        const b = this.normalizeFromLogValues(pixel.logB, statistics);
 
         buffer[offset++] = Math.round(r);
         buffer[offset++] = Math.round(g);
@@ -368,38 +428,26 @@ export class SimplePNGRenderer {
     return buffer;
   }
 
-  /**
-   * Normalize value to 0-255 range (legacy statistics-based method)
-   */
-  private normalizeValue(value: number, min: number, max: number): number {
-    if (max === min) return 0;
-    return ((value - min) / (max - min)) * 255;
-  }
 
   /**
-   * Advanced logarithmic + sigmoid normalization (FIXED - not data-dependent)
-   * This method provides consistent visual results regardless of point count
+   * Normalize precomputed log values using actual statistics
+   * This provides mathematically sound normalization based on real data
    */
-  private normalizeFixedLogarithmic(value: number): number {
-    // Step 1: Logarithmic transformation to handle wide dynamic range
-    const logValue = Math.log(Math.abs(value) * 255 + 1);
+  private normalizeFromLogValues(logValue: number, statistics: Statistics): number {
+    // Use actual mean and standard deviation from log-transformed data
+    const mean = (statistics.mean.logR + statistics.mean.logG + statistics.mean.logB) / 3;
+    const stdev = (statistics.stdev.logR + statistics.stdev.logG + statistics.stdev.logB) / 3;
     
-    // Step 2: Fixed middle point (based on typical attractor data analysis)
-    const fixedMiddle = 4.5;
+    // Calculate normalized value (standardized to mean=0, stdev=1)
+    const normalizedValue = (logValue - mean) / stdev;
     
-    // Step 3: Calculate error from fixed middle point
-    const error = logValue - fixedMiddle;
+    // Apply sigmoid function for smooth, bounded transformation
+    const sigmoidOutput = 1 / (1 + Math.exp(-normalizedValue));
     
-    // Step 4: Fixed normalization factor (based on typical standard deviation)
-    const fixedStdev = 1.0;
-    const normalizedError = error / fixedStdev;
-    
-    // Step 5: Apply sigmoid function for smooth, bounded transformation
-    const sigmoidOutput = 1 / (1 + Math.exp(-normalizedError));
-    
-    // Step 6: Map to 8-bit RGB (0-255)
-    return Math.round(sigmoidOutput * 255);
+    // Map to 8-bit RGB (0-255)
+    return sigmoidOutput * 255;
   }
+
 
   /**
    * Parse color string to RGB
@@ -425,12 +473,24 @@ export class SimplePNGRenderer {
         else if (h < 5/6) { r = x; g = 0; b = c; }
         else { r = c; g = 0; b = x; }
         
-        return { r: (r + m) * 255, g: (g + m) * 255, b: (b + m) * 255 };
+        const rgb = { r: (r + m) * 255, g: (g + m) * 255, b: (b + m) * 255 };
+        return {
+          ...rgb,
+          logR: Math.log(rgb.r + 1),
+          logG: Math.log(rgb.g + 1),
+          logB: Math.log(rgb.b + 1)
+        };
       }
     }
     
     // Default blue color
-    return { r: 100, g: 150, b: 255 };
+    const rgb = { r: 100, g: 150, b: 255 };
+    return {
+      ...rgb,
+      logR: Math.log(rgb.r + 1),
+      logG: Math.log(rgb.g + 1),
+      logB: Math.log(rgb.b + 1)
+    };
   }
 
   /**

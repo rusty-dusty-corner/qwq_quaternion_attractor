@@ -40,6 +40,8 @@
     "strategy:random-png": "npm run build:typescript && node tools/random-png-generator.js",
     "generate:mass": "npm run build:typescript && node tools/mass-image-generator.js",
     "generate:improved-mass": "npm run build:typescript && node tools/improved-mass-image-generator.js",
+    "generate:uniform-mass": "npm run build:typescript && node tools/uniform-mass-generator.js",
+    "generate:uniform-params": "node tools/uniform-parameter-generator.js",
     "regenerate:single": "npm run build:typescript && node tools/image-regenerator.js single",
     "regenerate:batch": "npm run build:typescript && node tools/image-regenerator.js batch",
     "regenerate:variations": "npm run build:typescript && node tools/image-regenerator.js variations"
