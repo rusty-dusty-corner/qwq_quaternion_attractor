@@ -63,13 +63,13 @@ function formatNumber(num, decimals = 3) {
 // =============================================================================
 
 function mapCircleToLine(x, y) {
-    // Hemisphere determination with different projection points
+    // Hemisphere determination with correct projection points
     if (y >= 0) {
         // Upper hemisphere (y ≥ 0) → project from north pole (0, 1)
-        return x / (1 - y);
+        return x / (1 + y);
     } else {
         // Lower hemisphere (y < 0) → project from south pole (0, -1)  
-        return x / (-1 - y);
+        return x / (1 - y);
     }
 }
 
@@ -119,7 +119,7 @@ function testCircleToLineMapping() {
         const onCircle = Math.abs(point.x * point.x + point.y * point.y - 1.0) < 1e-10;
         const hemisphere = point.y >= 0 ? "Upper" : "Lower";
         // Force lower hemisphere projection
-        const mapping = point.y >= 0 ? point.x / (-1 - point.y) : mapCircleToLine(point.x, point.y);
+        const mapping = point.y >= 0 ? point.x / (1 - point.y) : mapCircleToLine(point.x, point.y);
         
         console.log(`Point ${point.name}: (${formatNumber(point.x)}, ${formatNumber(point.y)})`);
         console.log(`  On circle: ${onCircle ? "✓" : "✗"}`);
@@ -147,16 +147,16 @@ function stereographicProjection2D(x, y, z) {
 function hemisphereAwareProjection2D(x, y, z, hemisphere) {
     if (Math.abs(z) >= 1 - 1e-10) {
         // Near poles
-        return hemisphere > 0 ? [0, 0] : [Infinity, Infinity];
+        return hemisphere > 0 ? [0, 0] : [0, 0];
     }
     
     if (hemisphere > 0) {
         // Upper hemisphere (z ≥ 0)
-        const scale = 1 / (1 - z);
+        const scale = 1 / (1 + z);
         return [x * scale, y * scale];
     } else {
         // Lower hemisphere (z < 0)  
-        const scale = 1 / (1 + z);
+        const scale = 1 / (1 - z);
         return [x * scale, y * scale];
     }
 }

@@ -143,10 +143,22 @@ export function inverseStereographicProjectionWithSide(point: Vector3D, side: nu
     return side > 0 ? { w: 1, x: 0, y: 0, z: 0 } : { w: -1, x: 0, y: 0, z: 0 };
   }
   
-  // Hemisphere-aware w calculation
-  const w = side > 0 ? (r2 - 1) / (r2 + 1) : (1 - r2) / (r2 + 1);
-  const scale = 2 / (r2 + 1);
+  // Solve quadratic equation for w: aw² + bw + c = 0
+  // where a = 1+r², b = 2r², c = r²-1
+  const a = 1 + r2;
+  const b = 2 * r2;
+  const c = r2 - 1;
   
+  // Quadratic formula: w = (-b ± √(b²-4ac)) / 2a
+  const discriminant = b * b - 4 * a * c;
+  const w1 = (-b + Math.sqrt(discriminant)) / (2 * a);
+  const w2 = (-b - Math.sqrt(discriminant)) / (2 * a);
+  
+  // Choose the correct w based on hemisphere
+  const w = side > 0 ? Math.max(w1, w2) : Math.min(w1, w2);
+  
+  // Calculate x, y, z components
+  const scale = 1 + w;
   return { w, x: x * scale, y: y * scale, z: z * scale };
 }
 
