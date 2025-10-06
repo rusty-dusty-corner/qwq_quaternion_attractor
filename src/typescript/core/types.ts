@@ -41,6 +41,7 @@ export interface Point2D {
   side?: number;   // Hemisphere information (+1 or -1)
   index?: number;  // Point generation index
 }
+// TODO: please do not use color string here, and also alpha is usless (do not use it)
 
 // ============================================================================
 // CONSTANT PARAMETERS (Mathematical Core)

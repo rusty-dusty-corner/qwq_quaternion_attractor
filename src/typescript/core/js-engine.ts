@@ -140,7 +140,14 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
       }
 
       // Store the 3D point with side and index information (will be projected to 2D later)
-      points.push({ ...finalPoint, side: side, index: i });
+      const pointWithSide = { 
+        x: finalPoint.x, 
+        y: finalPoint.y, 
+        z: finalPoint.z, 
+        side: side, 
+        index: i 
+      };
+      points.push(pointWithSide);
 
       // Update current quaternion for next iteration
       // Use the side from the original projection (before any flipping)
@@ -156,7 +163,7 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
    * Apply camera rotation to 3D points
    */
   private applyCameraRotation(points: any[], cameraRotation: any): any[] {
-    return points.map(point => {
+    return points.map((point) => {
       // Convert 3D point to quaternion for rotation using hemisphere-aware projection
       const side = point.side || (point.w >= 0 ? 1 : -1); // Use stored side or determine from point
       const pointQuaternion = inverseStereographicProjectionWithSide(point, side);
@@ -164,7 +171,16 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
         multiplyQuaternions(cameraRotation, pointQuaternion),
         conjugateQuaternion(cameraRotation)
       );
-      return stereographicProjection(rotatedQuaternion);
+      const rotatedPoint = stereographicProjection(rotatedQuaternion);
+      
+      // Preserve side and index information
+      return {
+        x: rotatedPoint.x,
+        y: rotatedPoint.y,
+        z: rotatedPoint.z,
+        side: point.side,  // Preserve original side
+        index: point.index // Preserve original index
+      };
     });
   }
 
@@ -276,7 +292,7 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
     // Create color based on position and index
     const hue = (Math.atan2(point.y, point.x) + Math.PI) / (2 * Math.PI) * 360;
     const saturation = Math.min(100, Math.sqrt(point.x * point.x + point.y * point.y) * 50);
-    const lightness = 50 + Math.sin(index * 0.1) * 20;
+    const lightness = 50;
     
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   }

@@ -23,6 +23,7 @@ export interface ImageConfig {
   offsetY: number;      // Y offset for centering
   blurRadius: number;   // Blur radius for smoothing
 }
+// TODO: Add samples per point for out probablistic blur
 
 export interface RGBFloat {
   r: number;
@@ -495,7 +496,7 @@ export class SimplePNGRenderer {
     
     // Apply temporal gradient if index is available
     if (index !== undefined) {
-      const indexVariation = Math.sin(index * 0.1) * 10; // ±10° variation
+      const indexVariation = Math.sin(index * 0.1) * 40; // ±10° variation
       hue = (hue + indexVariation + 360) % 360;
     }
     
