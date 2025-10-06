@@ -39,15 +39,15 @@ We can map one hemisphere of the circle to one side of a line, and the other hem
 ```typescript
 // Circle hemisphere mapping
 function mapCircleToLine(x: number, y: number): number {
-  // Hemisphere determination with different projection points
+  // Hemisphere determination with swapped projection points
   if (y >= 0) {
     // Upper hemisphere (y ≥ 0) → project from north pole (0, 1)
     // Map to range [-1, +1]
-    return x / (1 - y);
+    return x / (1 + y);
   } else {
     // Lower hemisphere (y < 0) → project from south pole (0, -1)  
     // Map to range [-1, +1]
-    return x / (-1 - y);
+    return x / (1 - y);
   }
 }
 ```
@@ -58,13 +58,13 @@ For the upper hemisphere (y ≥ 0):
 - **Input:** Point (x, y) on circle where y ≥ 0
 - **Output:** Real number in [-1, +1]
 - **Projection point:** North pole (0, 1)
-- **Formula:** `t = x / (1 - y)`
+- **Formula:** `t = x / (1 + y)`
 
 For the lower hemisphere (y < 0):
 - **Input:** Point (x, y) on circle where y < 0
 - **Output:** Real number in [-1, +1]
 - **Projection point:** South pole (0, -1)
-- **Formula:** `t = x / (-1 - y)`
+- **Formula:** `t = x / (1 - y)`
 
 ### Worked Examples
 
@@ -73,30 +73,30 @@ For the lower hemisphere (y < 0):
 Point A: (1.0, 0.0) on circle (equator)
 - Check: 1.0² + 0.0² = 1.0 + 0.0 = 1.0 ✓
 - Hemisphere: y = 0.0 ≥ 0 → Upper hemisphere
-- Mapping: t = 1.0 / (1 - 0.0) = 1.0 / 1.0 = 1.0
+- Mapping: t = 1.0 / (1 + 0.0) = 1.0 / 1.0 = 1.0
 
 Point B: (0.0, 1.0) - North pole
 - Hemisphere: y = 1.0 ≥ 0 → Upper hemisphere  
-- Mapping: t = 0.0 / (1 - 1.0) = 0.0 / 0.0 → ∞ (singularity)
+- Mapping: t = 0.0 / (1 + 1.0) = 0.0 / 2.0 = 0.0
 
 Point C: (-1.0, 0.0) on circle (equator)
 - Hemisphere: y = 0.0 ≥ 0 → Upper hemisphere
-- Mapping: t = -1.0 / (1 - 0.0) = -1.0 / 1.0 = -1.0
+- Mapping: t = -1.0 / (1 + 0.0) = -1.0 / 1.0 = -1.0
 ```
 
 #### Example 2: Lower Hemisphere Points
 ```
-Point D: (1.0, 0.0) on circle (equator)
-- Hemisphere: y = 0.0 ≥ 0 → Upper hemisphere, but using lower projection
-- Mapping: t = 1.0 / (-1 - 0.0) = 1.0 / (-1) = -1.0
+Point D: (1.0, -0.5) on circle (lower hemisphere)
+- Hemisphere: y = -0.5 < 0 → Lower hemisphere
+- Mapping: t = 1.0 / (1 - (-0.5)) = 1.0 / 1.5 = 0.667
 
 Point E: (0.0, -1.0) - South pole
 - Hemisphere: y = -1.0 < 0 → Lower hemisphere
-- Mapping: t = 0.0 / (-1 - (-1.0)) = 0.0 / 0.0 → ∞ (singularity)
+- Mapping: t = 0.0 / (1 - (-1.0)) = 0.0 / 2.0 = 0.0
 
-Point F: (-1.0, 0.0) on circle (equator)
-- Hemisphere: y = 0.0 ≥ 0 → Upper hemisphere, but using lower projection
-- Mapping: t = -1.0 / (-1 - 0.0) = -1.0 / (-1) = 1.0
+Point F: (-1.0, -0.5) on circle (lower hemisphere)
+- Hemisphere: y = -0.5 < 0 → Lower hemisphere
+- Mapping: t = -1.0 / (1 - (-0.5)) = -1.0 / 1.5 = -0.667
 ```
 
 ## Sphere to Plane Projections

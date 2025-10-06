@@ -75,16 +75,32 @@ export function conjugateQuaternion(q: Quaternion): Quaternion {
 
 /**
  * Stereographic projection from 4D to 3D
+ * Uses hemisphere-aware projection to keep coordinates bounded
  */
 export function stereographicProjection(quaternion: Quaternion): Vector3D {
   const { w, x, y, z } = quaternion;
 
-  // Handle north pole singularity
+  // Handle pole singularities
   if (Math.abs(1 - w) < 1e-10) {
     return { x: 0, y: 0, z: 0 };
   }
+  if (Math.abs(-1 - w) < 1e-10) {
+    return { x: 0, y: 0, z: 0 };
+  }
 
-  const scale = 1 / (1 - w);
+  // Hemisphere-aware projection
+  // Determine hemisphere based on w component
+  const side = w >= 0 ? 1 : -1;
+  
+  let scale;
+  if (side > 0) {
+    // Upper hemisphere: project from north pole (1, 0, 0, 0)
+    scale = 1 / (1 + w);
+  } else {
+    // Lower hemisphere: project from south pole (-1, 0, 0, 0)
+    scale = 1 / (1 - w);
+  }
+  
   return {
     x: x * scale,
     y: y * scale,
