@@ -181,7 +181,7 @@ Current performance benchmarks:
 
 ### **🚧 Known Issues**
 - Browser integration (ES module issues) ✅ **FIXED**
-- Statistics-based normalization bug in Node.js renderer ⚠️ **CRITICAL**
+- Statistics-based normalization bug in Node.js renderer ✅ **FIXED** (Logarithmic + Sigmoid normalization implemented)
 - Code duplication between implementations
 
 ---
