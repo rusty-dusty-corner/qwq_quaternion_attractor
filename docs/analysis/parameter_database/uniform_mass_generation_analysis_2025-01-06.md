@@ -3,7 +3,7 @@
 **Session:** 2025-10-06T17-09-41-670Z  
 **Enhanced Scale:** 200.0 (increased from 150.0)  
 **Batch Multiplication:** 8x effective points  
-**Total Images Analyzed:** 9 high-interest images
+**Total Images Analyzed:** 18 high-interest images
 
 ## Summary of Findings
 
@@ -45,12 +45,66 @@
    - **Points:** 7,761 (62,088 effective)
    - **Special Features:** Loop structures, high complexity
 
+7. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_5664_flip_all_except_largest_simple_2270pts.png** - **Rating: 8/10**
+   - **Pattern:** 3D fractal with swirling spiral structures
+   - **Mode:** Flip All Except Largest
+   - **Points:** 2,270 (18,160 effective)
+   - **Special Features:** Blue/pink/purple colors, triangular symmetry, depth cues
+
+8. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_6216_plain_flip_simple_6627pts.png** - **Rating: 8/10**
+   - **Pattern:** Julia set with glowing blue and pink hues
+   - **Mode:** Plain Flip
+   - **Points:** 6,627 (53,016 effective)
+   - **Special Features:** Luminosity effect, intricate branching tendrils
+
+9. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_1139_flip_smallest_simple_5397pts.png** - **Rating: 8/10**
+   - **Pattern:** Mandelbrot-like set with radial symmetry
+   - **Mode:** Flip Smallest
+   - **Points:** 5,397 (43,176 effective)
+   - **Special Features:** Light blue/white hues, glowing effect, intricate details
+
+10. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_1913_flip_smallest_simple_2719pts.png** - **Rating: 8/10**
+    - **Pattern:** Menger sponge-like with three spherical structures
+    - **Mode:** Flip Smallest
+    - **Points:** 2,719 (21,752 effective)
+    - **Special Features:** Mesh-like structure, glowing centers, organic arrangement
+
+11. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_1361_flip_smallest_simple_2060pts.png** - **Rating: 8/10**
+    - **Pattern:** Swirling flower/butterfly-like fractal shapes
+    - **Mode:** Flip Smallest
+    - **Points:** 2,060 (16,480 effective)
+    - **Special Features:** Light blue-green lines, radial symmetry, organic beauty
+
+12. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_1346_flip_all_except_largest_simple_6417pts.png** - **Rating: 8/10**
+    - **Pattern:** Fractal aggregate with densely packed spheres
+    - **Mode:** Flip All Except Largest
+    - **Points:** 6,417 (51,336 effective)
+    - **Special Features:** Light blue-green clusters, organic arrangement, depth
+
+13. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_1839_plain_flip_simple_956pts.png** - **Rating: 8/10**
+    - **Pattern:** Julia set with speckled dust effect
+    - **Mode:** Plain Flip
+    - **Points:** 956 (7,648 effective)
+    - **Special Features:** Blue/purple speckles, swirling movement, atmospheric gradient
+
+14. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_2945_plain_flip_simple_919pts.png** - **Rating: 8/10**
+    - **Pattern:** Julia set with central white shape and radial blue dots
+    - **Mode:** Plain Flip
+    - **Points:** 919 (7,352 effective)
+    - **Special Features:** Central white nucleus, gradual density variation, radial symmetry
+
+15. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_0277_plain_flip_simple_7412pts.png** - **Rating: 8/10**
+    - **Pattern:** Julia set with crescent moon-like curved shape
+    - **Mode:** Plain Flip
+    - **Points:** 7,412 (59,296 effective)
+    - **Special Features:** Dense edge concentration, light blue/white points, Pac-Man-like shape
+
 ## Key Observations
 
 ### Mode Performance
-- **Flip Smallest:** 4 high-rated images - produces organic, galaxy-like patterns
-- **Plain Flip:** 3 high-rated images - creates symmetrical, swirling patterns
-- **Flip All Except Largest:** 1 high-rated image - generates complex loop structures
+- **Flip Smallest:** 7 high-rated images - produces organic, galaxy-like patterns
+- **Plain Flip:** 6 high-rated images - creates symmetrical, swirling patterns
+- **Flip All Except Largest:** 3 high-rated images - generates complex loop structures
 
 ### Scale Enhancement Effects
 - **Enhanced Scale (200.0):** Successfully increased visual complexity and detail
