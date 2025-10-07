@@ -40,7 +40,23 @@ Generates stunning mathematical attractor patterns using quaternion mathematics 
 - ✅ **High Performance**: 11,000+ points/second generation
 - ⚠️ **Cross-Platform**: Works in Node.js and browser (⚠️ rendering inconsistencies)
 
-### **Example Output**
+### **Best Examples** 🏆
+
+Our parameter database contains 21 high-rated fractal patterns (8-9/10) analyzed with AI vision:
+
+#### **🌳 Excellent Fractal Tree (8/10)**
+![Fractal Tree](output/uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_3521_flip_smallest_simple_2579pts.png)
+- **Pattern:** Fractal tree with three-fold branching symmetry
+- **Mode:** Flip Smallest
+- **Points:** 2,579 (20,632 effective)
+- **AI Analysis:** "Light blue-green branches, organic tree-like structure, self-similarity"
+
+**Regenerate this pattern:**
+```bash
+npm run regenerate:single output/uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_3521_flip_smallest_simple_2579pts_params.json
+```
+
+### **Performance Output**
 ```
 Performance Summary:
   500 points:   1193 pts/sec,  419ms total
