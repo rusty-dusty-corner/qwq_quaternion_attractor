@@ -33,15 +33,19 @@ export interface Quaternion {
 /**
  * 2D Point for rendering output
  */
+export interface RGBColor {
+  r: number;  // Red component (0-1)
+  g: number;  // Green component (0-1)
+  b: number;  // Blue component (0-1)
+}
+
 export interface Point2D {
   x: number;
   y: number;
-  color?: string;  // Optional color for visualization
-  alpha?: number;  // Optional transparency
-  side?: number;   // Hemisphere information (+1 or -1)
-  index?: number;  // Point generation index
+  color?: string;    // Color string (HSL/hex) for visualization - TODO: migrate to RGBColor
+  side?: number;     // Hemisphere information (+1 or -1)
+  index?: number;    // Point generation index
 }
-// TODO: please do not use color string here, and also alpha is usless (do not use it)
 
 // ============================================================================
 // CONSTANT PARAMETERS (Mathematical Core)
@@ -236,14 +240,12 @@ export function createVector3D(x: number, y: number, z: number): Vector3D {
 /**
  * Create a 2D point
  */
-export function createPoint2D(x: number, y: number, color?: string, alpha?: number, side?: number, index?: number): Point2D {
+export function createPoint2D(x: number, y: number, color?: string, _alpha?: number, side?: number, index?: number): Point2D {
   const point: Point2D = { x, y };
   if (color !== undefined) {
     point.color = color;
   }
-  if (alpha !== undefined) {
-    point.alpha = alpha;
-  }
+  // Note: alpha parameter is deprecated but kept for backward compatibility
   if (side !== undefined) {
     point.side = side;
   }

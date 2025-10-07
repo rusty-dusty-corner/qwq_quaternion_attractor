@@ -22,8 +22,8 @@ export interface ImageConfig {
   offsetX: number;      // X offset for centering
   offsetY: number;      // Y offset for centering
   blurRadius: number;   // Blur radius for smoothing
+  samplesPerPoint?: number; // Number of samples per point for probabilistic blur (default: 1)
 }
-// TODO: Add samples per point for out probablistic blur
 
 export interface RGBFloat {
   r: number;
@@ -68,7 +68,7 @@ export class SimplePNGRenderer {
     this.config = {
       width: config.width || 800,
       height: config.height || 600,
-      scale: config.scale || 100.0,
+      scale: config.scale || 150.0,
       offsetX: config.offsetX || 400,
       offsetY: config.offsetY || 300,
       blurRadius: config.blurRadius || 2.0,

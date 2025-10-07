@@ -288,7 +288,7 @@ export class JavaScriptAttractorEngine extends BaseAttractorEngine {
   /**
    * Generate color for point based on position and index
    */
-  private generateColor(point: any, index: number): string {
+  private generateColor(point: any, _index: number): string {
     // Create color based on position and index
     const hue = (Math.atan2(point.y, point.x) + Math.PI) / (2 * Math.PI) * 360;
     const saturation = Math.min(100, Math.sqrt(point.x * point.x + point.y * point.y) * 50);

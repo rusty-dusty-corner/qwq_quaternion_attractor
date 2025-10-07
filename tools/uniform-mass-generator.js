@@ -163,7 +163,7 @@ class UniformMassGenerator {
       };
 
       const renderParams = {
-        batchSize: parameterSet.batchSize,
+        batchSize: parameterSet.batchSize * 8,
         projectionType: parameterSet.projectionType === 'simple' ? ProjectionType.SIMPLE : ProjectionType.STEREOGRAPHIC,
         cameraRotation: createQuaternion(
           parameterSet.cameraRotation.w,
@@ -183,7 +183,7 @@ class UniformMassGenerator {
       console.log(`✅ Generated ${result.points.length.toLocaleString()} points`);
       
       // Create image renderer
-      const baseScale = 150.0;
+      const baseScale = 200.0;
       const baseSize = 800;
       const imageSize = parameterSet.imageSize;
       const scaleFactor = imageSize.width / baseSize;

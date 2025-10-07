@@ -115,9 +115,9 @@ export abstract class BaseAttractorEngine implements AttractorEngine {
       errors.push('Invalid camera rotation quaternion');
     }
 
-    if (renderParams.batchSize <= 0 || renderParams.batchSize > 10000) {
-      errors.push('Batch size must be between 1 and 10000');
-    }
+    //if (renderParams.batchSize <= 0 || renderParams.batchSize > 10000) {
+    //  errors.push('Batch size must be between 1 and 10000');
+    //}
 
     // Add warnings for extreme values
     if (renderParams.batchSize > 1000) {
