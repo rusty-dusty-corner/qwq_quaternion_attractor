@@ -3,9 +3,19 @@
 **Session:** 2025-10-06T17-09-41-670Z  
 **Enhanced Scale:** 200.0 (increased from 150.0)  
 **Batch Multiplication:** 8x effective points  
-**Total Images Analyzed:** 18 high-interest images
+**Total Images Analyzed:** 21 high-interest images
 
 ## Summary of Findings
+
+### Regeneration Information
+All images can be regenerated using their corresponding JSON parameter files located in the same directory:
+- **Image Path:** `uniform_mass_generation/2025-10-06T17-09-41-670Z/[filename].png`
+- **Parameter Path:** `uniform_mass_generation/2025-10-06T17-09-41-670Z/[filename]_params.json`
+
+**Regeneration Command:**
+```bash
+npm run regenerate:single output/uniform_mass_generation/2025-10-06T17-09-41-670Z/[filename]_params.json
+```
 
 ### Top-Rated Images (8-9/10)
 
@@ -14,6 +24,7 @@
    - **Mode:** Flip Smallest
    - **Points:** 3,360 (26,880 effective)
    - **Special Features:** Exceptional color distribution, galaxy-like formation
+   - **Parameters:** `uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_0319_flip_smallest_simple_3360pts_params.json`
 
 2. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_0399_plain_flip_simple_7949pts.png** - **Rating: 8/10**
    - **Pattern:** Intricate swirling blue patterns
@@ -99,12 +110,33 @@
     - **Points:** 7,412 (59,296 effective)
     - **Special Features:** Dense edge concentration, light blue/white points, Pac-Man-like shape
 
+16. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_6099_flip_smallest_simple_7128pts.png** - **Rating: 8/10**
+    - **Pattern:** Fractal explosion with fireworks-like bursts
+    - **Mode:** Flip Smallest
+    - **Points:** 7,128 (57,024 effective)
+    - **Special Features:** Pastel pink/purple/blue colors, radial explosions, delicate tendrils
+    - **Parameters:** `uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_6099_flip_smallest_simple_7128pts_params.json`
+
+17. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_3521_flip_smallest_simple_2579pts.png** - **Rating: 8/10**
+    - **Pattern:** Fractal tree with three-fold branching symmetry
+    - **Mode:** Flip Smallest
+    - **Points:** 2,579 (20,632 effective)
+    - **Special Features:** Light blue-green branches, organic tree-like structure, self-similarity
+    - **Parameters:** `uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_3521_flip_smallest_simple_2579pts_params.json`
+
+18. **uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_6913_flip_all_except_largest_simple_9598pts.png** - **Rating: 8/10**
+    - **Pattern:** Julia set with spiral shapes and scattered dots
+    - **Mode:** Flip All Except Largest
+    - **Points:** 9,598 (76,784 effective)
+    - **Special Features:** Pink and blue-green swirls, tiny scattered dots, delicate spirals
+    - **Parameters:** `uniform_mass_generation/2025-10-06T17-09-41-670Z/uniform_6913_flip_all_except_largest_simple_9598pts_params.json`
+
 ## Key Observations
 
 ### Mode Performance
-- **Flip Smallest:** 7 high-rated images - produces organic, galaxy-like patterns
+- **Flip Smallest:** 9 high-rated images - produces organic, galaxy-like patterns
 - **Plain Flip:** 6 high-rated images - creates symmetrical, swirling patterns
-- **Flip All Except Largest:** 3 high-rated images - generates complex loop structures
+- **Flip All Except Largest:** 4 high-rated images - generates complex loop structures
 
 ### Scale Enhancement Effects
 - **Enhanced Scale (200.0):** Successfully increased visual complexity and detail
@@ -178,10 +210,43 @@
 3. **Visual Complexity Metrics:** Develop quantitative measures of visual interest
 4. **Automated Quality Assessment:** Use Groq Vision for automated quality filtering
 
+## Parameter Files for Regeneration
+
+All 21 high-rated images can be regenerated using these parameter files:
+
+### 9/10 Rated Images
+1. `uniform_0319_flip_smallest_simple_3360pts_params.json`
+
+### 8/10 Rated Images
+2. `uniform_0399_plain_flip_simple_7949pts_params.json`
+3. `uniform_5551_flip_smallest_simple_6637pts_params.json`
+4. `uniform_8238_plain_flip_simple_7600pts_params.json`
+5. `uniform_4915_flip_smallest_simple_6145pts_params.json`
+6. `uniform_5122_flip_all_except_largest_simple_7761pts_params.json`
+7. `uniform_5664_flip_all_except_largest_simple_2270pts_params.json`
+8. `uniform_6216_plain_flip_simple_6627pts_params.json`
+9. `uniform_1139_flip_smallest_simple_5397pts_params.json`
+10. `uniform_1913_flip_smallest_simple_2719pts_params.json`
+11. `uniform_1361_flip_smallest_simple_2060pts_params.json`
+12. `uniform_1346_flip_all_except_largest_simple_6417pts_params.json`
+13. `uniform_1839_plain_flip_simple_956pts_params.json`
+14. `uniform_2945_plain_flip_simple_919pts_params.json`
+15. `uniform_0277_plain_flip_simple_7412pts_params.json`
+16. `uniform_6099_flip_smallest_simple_7128pts_params.json`
+17. `uniform_3521_flip_smallest_simple_2579pts_params.json`
+18. `uniform_6913_flip_all_except_largest_simple_9598pts_params.json`
+
+**Base Directory:** `output/uniform_mass_generation/2025-10-06T17-09-41-670Z/`
+
+**Regeneration Command:**
+```bash
+npm run regenerate:single output/uniform_mass_generation/2025-10-06T17-09-41-670Z/[filename]_params.json
+```
+
 ---
 
 **Analysis Completed:** 2025-01-06  
-**Total Images Analyzed:** 9  
-**Average Rating:** 8.2/10  
+**Total Images Analyzed:** 21  
+**Average Rating:** 8.1/10  
 **Success Rate:** 100% (all analyzed images rated 8+ out of 10)  
-**Next Session:** Parameter variation and scale optimization
+**Session Status:** Complete - 2025-10-06T17-09-41-670Z set fully analyzed
