@@ -9,12 +9,14 @@ Each sample is organized in its own directory with a descriptive name:
 ```
 docs/analysis/parameter_database/
 ├── README.md (this file)
+├── pending_analysis/
+│   └── pending_images_YYYY-MM-DD.md
 ├── sample_001_organized_fractal_tree/
 │   ├── parameters.json
 │   └── description.md
-├── sample_002_dense_neural_network/
-│   ├── parameters.json
+├── sample_002_vibrant_fractal_galaxy/
 │   └── description.md
+├── uniform_mass_generation_analysis_YYYY-MM-DD.md
 └── ...
 ```
 
@@ -61,15 +63,30 @@ This database serves multiple purposes:
 4. **Research:** Build understanding of parameter-to-visual relationships
 5. **Optimization:** Guide future parameter generation strategies
 
+## Pending Analysis
+
+The `pending_analysis/` folder contains images waiting for Groq Vision analysis:
+
+- **Purpose:** Buffer for images that need AI analysis when API is available
+- **Format:** `pending_images_YYYY-MM-DD.md`
+- **Contents:** Image paths, parameters, analysis commands, and status tracking
+- **Usage:** Run provided analysis commands when Groq API is available
+
+### Current Pending Items:
+- Images with API capacity issues (503 errors)
+- Images requiring retry after temporary failures
+- High-priority images for immediate analysis
+
 ## Contributing
 
 When adding new samples:
 
 1. Generate image with interesting visual characteristics
-2. Create new directory with descriptive name
-3. Save complete parameter set as `parameters.json`
-4. Write detailed description in `description.md`
-5. Update this README with any new patterns or insights
+2. If Groq analysis fails, add to `pending_analysis/` folder
+3. Create new directory with descriptive name once analyzed
+4. Save complete parameter set as `parameters.json`
+5. Write detailed description in `description.md`
+6. Update this README with any new patterns or insights
 
 ## Analysis Tools
 
